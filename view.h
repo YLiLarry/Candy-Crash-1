@@ -1,3 +1,8 @@
+/*
+    An super abstract class for GraphicView & TextView.
+    The Model class should hold pointers to this class for polymorphism.
+*/
+
 #ifndef __VIEW__H__
 #define __VIEW__H__
 
@@ -5,8 +10,10 @@
         protected:
             Model* model;
         public:
-            void update() const;
-            void draw() const;
+            virtual void update() const = 0;
+            virtual void draw() const = 0;
+            View();
+            ~View();
     };
     
 #endif
