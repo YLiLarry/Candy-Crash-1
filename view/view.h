@@ -5,15 +5,21 @@
 
 #ifndef __VIEW__H__
 #define __VIEW__H__
-
+#include "../Model/model.h"
     class View {
+        /* expecting :
+            model->player->score
+        */
         protected:
             Model* model;
-        public:
-            virtual void update() const = 0;
+            unsigned int score;
+            unsigned int movesLeft;
             virtual void draw() const = 0;
-            View();
+            
+        public:
+            View(Model*, int);
             ~View();
+            virtual void setScore() = 0;
     };
     
 #endif
