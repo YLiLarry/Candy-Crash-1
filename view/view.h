@@ -30,7 +30,7 @@
             
         public:
             // View(int);
-            virtual ~View();
+            virtual ~View() {};
             /* setters */
             virtual void setColour(int,int,COLOUR) = 0;
             virtual void setType(int,int,CELLTYPE) = 0;

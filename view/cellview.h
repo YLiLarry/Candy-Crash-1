@@ -7,7 +7,7 @@
             COLOUR colour;
             CELLTYPE cellType;
             CellView();
-            virtual ~CellView();
+            virtual ~CellView() {};
             virtual void draw() = 0;
             virtual bool empty() = 0;
     };

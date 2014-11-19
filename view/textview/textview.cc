@@ -18,7 +18,13 @@ void CellTextView:: draw() {
         case UNSTABLE : str += "b"; break;
         case PSYCHEDELIC : str += "p"; break;
     }
-    str += this->colour;
+    switch (this->colour) {
+        case EMPTY : str += "_"; break;
+        case WHITE : str += "0"; break;
+        case RED : str += "1"; break;
+        case GREEN : str += "2"; break;
+        case BLUE : str += "3"; break;
+    }
     cout << str;
 }
 
@@ -27,10 +33,25 @@ void CellTextView:: draw() {
     Description:  This constructor initilizes all cells to the white colour, basic squares.
 */
 TextView:: TextView(int size) {
+    #if DEBUG
+        cerr << ">> TEXTVIEW CONSTRUCTOR START" << endl;
+    #endif
+    
     this->size = size;
+    this->board = new CellTextView*[size];
+    
     for (int i = 0; i < this->size; i++) {
+        
+        #if DEBUG
+            cerr << ">> TEXTVIEW CONSTRUCTOR i = " << i << endl;
+        #endif
+        
         this->board[i] = new CellTextView[size];
     } 
+    
+    #if DEBUG
+        cerr << ">> TEXTVIEW CONSTRUCTOR DONE" << endl;
+    #endif
 };
 
 /* Destructor */
@@ -44,6 +65,7 @@ void TextView:: draw() const {
     for (int i = 0; i < this->size; i++) {
         for (int j = 0; j < this->size; j++) {
             this->board[i][j].draw();
+            cout << " ";
         }
         cout << endl;
     } 
