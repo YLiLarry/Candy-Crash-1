@@ -25,7 +25,10 @@
             unsigned int cellWidth;
             unsigned int size;
             CellView** board;
-        public:
+            
+        #if DEBUG
+            public:
+        #endif
             virtual void draw() const = 0;
             
         public:
