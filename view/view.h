@@ -2,12 +2,6 @@
     An super abstract class for GraphicView & TextView.
     The Model class should hold pointers to this class for polymorphism.
 */
-    
-/*
-    I just realized that since the GraphicView (if there's animation) should calls draw() on itself in a seperate thread 
-    with a fixed FPS, the TextView better calls draw() on itself too. That is, when you call `swap()` on both View, 
-    they change the positions of cells and display automatically. Only the `init()` method should not call `draw()`.
-*/
 
 #ifndef __VIEW__H__
 #define __VIEW__H__
@@ -26,10 +20,10 @@
             unsigned int size;
             CellView** board;
             
-        #if DEBUG
+        #if DEBUG_VIEW
             public:
         #endif
-            virtual void draw() const = 0;
+            virtual void draw() const = 0; // DO NOT CALL DRAW() FROM MODEL
             
         public:
             // View(int);

@@ -9,7 +9,6 @@ bool CellTextView:: empty() {
 }
 
 void CellTextView:: draw() {
-    if (this->empty()) {cout << "___"; return;}
     string str = "_";
     switch (this->cellType) {
         case BASIC : str += "_"; break;
@@ -42,14 +41,14 @@ TextView:: TextView(int size) {
     
     for (int i = 0; i < this->size; i++) {
         
-        #if DEBUG
+        #if DEBUG_VIEW
             cerr << ">> TEXTVIEW CONSTRUCTOR i = " << i << endl;
         #endif
         
         this->board[i] = new CellTextView[size];
     } 
     
-    #if DEBUG
+    #if DEBUG_VIEW
         cerr << ">> TEXTVIEW CONSTRUCTOR DONE" << endl;
     #endif
 };

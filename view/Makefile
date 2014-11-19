@@ -1,5 +1,5 @@
 CXX = g++
-CXXFLAGS = -Wall -MMD -DDEBUG
+CXXFLAGS = -Wall -MMD -DDEBUG_VIEW
 EXEC = test/test
 OBJECTS = test/test.o view.o cellview.o textview/textview.o 
 DEPENDS = ${OBJECTS:.o=.d}
