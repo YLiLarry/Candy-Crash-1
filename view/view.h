@@ -12,34 +12,37 @@
 #ifndef __VIEW__H__
 #define __VIEW__H__
 #include "../model/model.h"
+#include "cellview.h"
 
-    class CellView;
-    
     class View {
-
+        
         protected:
-            Model* model;
-            unsigned int m_score;
-            unsigned int m_movesRemain;
-            unsigned int m_level;
-            unsigned int m_hiScore;
-            std::vector< std::vector<CellView*> > m_board;
+            unsigned int score;
+            unsigned int movesRemain;
+            unsigned int level;
+            unsigned int hiScore;
+            unsigned int canvasWidth;
+            unsigned int cellWidth;
+            unsigned int size;
+            CellView** board;
+        public:
             virtual void draw() const = 0;
             
         public:
-            View(Model*, int size);
+            // View(int);
             virtual ~View();
-            virtual void changeColour(int,int,COLOUR) = 0;
-            virtual void changeType(int,int,CELLTYPE) = 0;
-            virtual void change(std::vector<Cell*>) = 0; // reqires the Cell class definition
-            virtual void score() = 0;
-            virtual void level() = 0;
-            virtual void movesRemain() = 0;
-            virtual void hiScore() = 0;
+            /* setters */
+            virtual void setColour(int,int,COLOUR) = 0;
+            virtual void setType(int,int,CELLTYPE) = 0;
+            virtual void set(std::vector<Cell*>) = 0; // requires the Cell class definition
+            virtual void setScore(int) = 0;
+            virtual void setLevel(int) = 0;
+            virtual void setMovesRemain(int) = 0;
+            virtual void setHiScore(int) = 0;
             
             virtual void swap(int,int,DIRECTION) = 0;
             virtual void destory(int,int) = 0;
-            virtual void destory(std::vector<Cell*>) = 0; // reqires the Cell class definition
+            virtual void destory(std::vector<Cell*>) = 0; // requires the Cell class definition
 
     };
     

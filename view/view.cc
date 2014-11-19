@@ -1,4 +1,3 @@
 #include "view.h"
-View:: View() {
-     
-}
+using namespace std;
+
