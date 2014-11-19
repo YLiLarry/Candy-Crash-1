@@ -4,11 +4,11 @@
 #include <vector>
 using namespace std;
 
-bool CellTextView:: empty() {
-    return (this->colour == EMPTY);
-}
+bool CellTextView:: empty() const {return (this->colour == EMPTY);}
+void CellTextView:: setEmpty() {this->colour = EMPTY;}
 
-void CellTextView:: draw() {
+
+void CellTextView:: draw() const {
     string str = "_";
     switch (this->cellType) {
         case BASIC : str += "_"; break;
@@ -72,9 +72,9 @@ void TextView:: draw() const {
 
 void TextView:: setColour(int row, int col, COLOUR c) {this->board[row][col].colour = c; this->draw();}
 void TextView:: setType(int row, int col, CELLTYPE t) {this->board[row][col].cellType = t; this->draw();}
-void TextView:: set(vector<Cell*>) {
-    // requires Cell* header
-}
+// void TextView:: set(vector<Cell*>) {
+//     // requires Cell* header
+// }
 void TextView:: setScore(int x) {this->score = x; this->draw();}
 void TextView:: setLevel(int x) {this->level = x; this->draw();}
 void TextView:: setMovesRemain(int x) {this->movesRemain = x; this->draw();}
@@ -119,8 +119,17 @@ void TextView:: swap(int r, int c, DIRECTION d) {
 }
 
 void TextView:: destory(int r, int c) {
+    this->board[r][c].setEmpty();
     this->draw();
 }
-void TextView:: destory(vector<Cell*>) {
-    // requires Cell* header
+// void TextView:: destory(vector<Cell*>) {
+//     // requires Cell* header
+// }
+
+void TextView:: drop(int column, COLOUR colour, CELLTYPE type = BASIC) {
+    int row = 0;
+    while (row < this->size && this->board[row][column].empty()) {row++;}
+    this->board[row][column].colour = colour;
+    this->board[row][column].cellType = type;
+    this->draw();
 }

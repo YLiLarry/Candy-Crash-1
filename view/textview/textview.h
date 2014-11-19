@@ -11,8 +11,9 @@
     
     class CellTextView : public CellView {
         public:
-            void draw();
-            bool empty();
+            void draw() const;
+            bool empty() const;
+            void setEmpty();
     };
     
     class TextView : public View {
@@ -21,12 +22,12 @@
             virtual void draw() const;
             
         public:
-            TextView(int size);
+            TextView(int);
             ~TextView();
             
             void setColour(int,int,COLOUR);
             void setType(int,int,CELLTYPE);
-            void set(std::vector<Cell*>); // requires the Cell class definition
+            // void set(std::vector<Cell*>); // requires the Cell class definition
             void setScore(int);
             void setLevel(int);
             void setMovesRemain(int);
@@ -34,7 +35,8 @@
             
             void swap(int,int,DIRECTION);
             void destory(int,int);
-            void destory(std::vector<Cell*>); // requires the Cell class definition
+            // void destory(std::vector<Cell*>); // requires the Cell class definition
+            void drop(int,COLOUR,CELLTYPE);
     };
 
 #endif

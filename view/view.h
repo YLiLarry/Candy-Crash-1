@@ -5,7 +5,7 @@
 
 #ifndef __VIEW__H__
 #define __VIEW__H__
-#include "../model/model.h"
+#include "../public/global.h"
 #include "cellview.h"
 
     class View {
@@ -38,7 +38,8 @@
             virtual void setHiScore(int) = 0;
             
             virtual void swap(int,int,DIRECTION) = 0;
-            // virtual void destory(int,int) = 0;
+            virtual void drop(int,COLOUR,CELLTYPE) = 0;
+            virtual void destory(int,int) = 0;
             // virtual void destory(std::vector<Cell*>) = 0; // requires the Cell class definition
 
     };

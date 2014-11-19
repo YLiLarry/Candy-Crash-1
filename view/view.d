@@ -1,1 +1,1 @@
-view.o: view.cc view.h ../model/model.h ../model/cell.h cellview.h
+view.o: view.h ../public/global.h cellview.h ../model/cell.h

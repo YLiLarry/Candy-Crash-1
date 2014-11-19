@@ -1,4 +1,4 @@
-#include "textview/textview.h"
+#include "../textview/textview.h"
 #include <iostream>
 using namespace std;
 
@@ -20,11 +20,11 @@ DIRECTION str2dir(string& str) {
 }
 
 CELLTYPE str2type(string& str) {
-    if (str == "bc") {return BASIC;}
-    if (str == "ll") {return LATERAL;}
-    if (str == "ut") {return UPRIGHT;}
-    if (str == "ue") {return UNSTABLE;}
-    if (str == "pc") {return PSYCHEDELIC;}
+    if (str == "_") {return BASIC;}
+    if (str == "h") {return LATERAL;}
+    if (str == "v") {return UPRIGHT;}
+    if (str == "b") {return UNSTABLE;}
+    if (str == "p") {return PSYCHEDELIC;}
     return BASIC;
 }
 
@@ -69,10 +69,15 @@ int main() {
             cin >> r;
             view->setHiScore(r);
         } else 
+        if (str == "dp") {
+            string str1, str2;
+            cin >> c >> str1 >> str2;
+            view->drop(c, str2colour(str1), str2type(str2));
+        } else 
         if (str == "dy") {
             cin >> r >> c;
             view->destory(r, c);
-        } if (str == "quit") {
+        } if (str == "qt") {
             break;
         }
     }

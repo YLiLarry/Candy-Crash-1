@@ -8,8 +8,9 @@
             CELLTYPE cellType;
             CellView();
             virtual ~CellView() {};
-            virtual void draw() = 0;
-            virtual bool empty() = 0;
+            virtual void draw() const = 0;
+            virtual bool empty() const = 0;
+            virtual void setEmpty() = 0;
     };
     
 #endif

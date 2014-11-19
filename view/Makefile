@@ -1,11 +1,12 @@
 CXX = g++
 CXXFLAGS = -Wall -MMD -DDEBUG_VIEW
 EXEC = test/test
-OBJECTS = test/test.o view.o cellview.o textview/textview.o 
+OBJECTS = test/test.o cellview.o textview/textview.o
 DEPENDS = ${OBJECTS:.o=.d}
 
+
 ${EXEC}: ${OBJECTS}
-	${CXX} ${CXXFLAGS} ${OBJECTS} -o ${EXEC}
+	 ${CXX} ${CXXFLAGS} ${OBJECTS} -o ${EXEC}
 
 -include ${DEPENDS}
 
