@@ -55,9 +55,15 @@ TextView:: TextView(int size) {
 
 /* Destructor */
 TextView:: ~TextView() {
+    #if DEBUG_VIEW
+        cerr << ">> TEXTVIEW DESTORIED" << endl;
+    #endif
+        
     for (int i = 0; i < this->size; i++) {
-            delete this->board[i];
-    } 
+            delete [] this->board[i];
+    }
+    
+    delete [] this->board;
 }
 
 void TextView:: draw() const {
@@ -95,22 +101,22 @@ void _swap(CellTextView a, CellTextView b) {
 void TextView:: swap(int r, int c, DIRECTION d) {
     switch (d) {
         case UP : {
-            if (r <= 0) {return;}
+            // if (r <= 0) {return;}
             _swap(this->board[r][c], this->board[r-1][c]);
             break;
         }
         case DOWN : {
-            if (r >= this->size - 1) {return;}
+            // if (r >= this->size - 1) {return;}
             _swap(this->board[r][c], this->board[r+1][c]);
             break;
         }
         case LEFT : {
-            if (c <= 0) {return;}
+            // if (c <= 0) {return;}
             _swap(this->board[r][c], this->board[r][c-1]);
             break;
         }
         case RIGHT : {
-            if (c >= this->size - 1) {return;}
+            // if (c >= this->size - 1) {return;}
             _swap(this->board[r][c], this->board[r][c+1]);
             break;
         }

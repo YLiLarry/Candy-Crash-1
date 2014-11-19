@@ -29,11 +29,16 @@ CELLTYPE str2type(string& str) {
 }
 
 int main() {
-    View* view = new TextView(5);
+    View* view = NULL;
     int r, c;
     string str;
     
     while (cin >> str) {
+        if (str == "new") {
+            cin >> r;
+            if (view) {delete view;}
+            view = new TextView(r);
+        } else
         if (str == "//") {
             cin.ignore(1024, '\n');
             continue;
@@ -77,9 +82,12 @@ int main() {
         if (str == "dy") {
             cin >> r >> c;
             view->destory(r, c);
-        } if (str == "qt") {
+        } else 
+        if (str == "qt") {
             break;
         }
     }
+    
+    delete view;
     return 0;
 }
