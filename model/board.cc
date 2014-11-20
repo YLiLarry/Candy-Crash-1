@@ -16,9 +16,18 @@ Board::Board(int n) : size(n) {
 	level = 0;
 	score = 0;
 
-	view =  new TextView(size);
+	view = new View(size);
 	loadLevel(level);
 	view->draw();
+}
+
+Board::~Board() {
+	for (int i = 0; i < size; i++) {
+		delete[] grid[i];
+	}
+	delete[] grid;
+
+	delete view;
 }
 
 void Board::loadLevel(int level) {
@@ -39,7 +48,7 @@ void Board::loadLevel(int level) {
 				//advanced = (square[0] == '_') ? 0 : (square[0] - '0');
 
 				Type type;
-				
+
 				switch (square[1]) {
 					case '_': type = Basic; break;
 					case 'h': type = Lateral; break;
@@ -64,3 +73,13 @@ void Board::loadLevel(int level) {
 		}
 	}
 }
+
+//void swapHelper(const Square &a, const Square &b) {
+	//int tRow = 
+//}
+
+/*void Grid::swap(int row, int col, Direction d) {*/
+	//switch (d) {
+		//case Up: 
+	//}
+/*}*/

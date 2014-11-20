@@ -1,2 +1,2 @@
-cellviewabstract.o: cellviewabstract.cc cellviewabstract.h \
-  ../public/global.h
+view/cellviewabstract.o: view/cellviewabstract.cc view/cellviewabstract.h \
+ view/../public/global.h

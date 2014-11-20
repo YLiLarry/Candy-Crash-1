@@ -1,3 +1,3 @@
-textview/textview.o: textview/textview.cc textview/textview.h \
-  textview/../viewabstract.h textview/../../public/global.h \
-  textview/../cellviewabstract.h
+view/textview/textview.o: view/textview/textview.cc \
+ view/textview/textview.h view/textview/../viewabstract.h \
+ view/textview/../../public/global.h view/textview/../cellviewabstract.h

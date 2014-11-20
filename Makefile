@@ -1,18 +1,16 @@
-ss5k: main.o game.o board.o textview.o cellview.o
-	g++ main.o game.o board.o textview.o cellview.o -o ss5k
+CXX = g++
+CXXFLAGS = -Wall -MMD -DDEBUG_VIEW
+EXEC = main
+OBJECTS = view/cellviewabstract.o view/textview/textview.o view/view.o control/game.o model/board.o main.o
+DEPENDS = ${OBJECTS:.o=.d}
 
-main.o: main.cc
-	g++ -c main.cc
 
-game.o: control/game.cc control/game.h
-	g++ -c control/game.cc
+${EXEC}: ${OBJECTS}
+	 ${CXX} ${CXXFLAGS} ${OBJECTS} -o ${EXEC}
 
-board.o: model/board.cc model/board.h
-	g++ -c model/board.cc
+-include ${DEPENDS}
 
-textview.o: view/textview/textview.cc view/textview/textview.h
-	g++ -c view/textview/textview.cc
+.PHONY: clean
 
-cellview.o: view/cellview.cc view/cellview.h
-	g++ -c view/cellview.cc
-	
+clean:
+	rm ${OBJECTS} ${EXEC} ${DEPENDS}

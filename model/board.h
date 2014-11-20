@@ -71,7 +71,7 @@ class Board {
 	public:
 	Board(int n);
 	~Board();
-	void swap(int x, int y, Direction d);
+	void swap(int row, int col, Direction d);
 	void hint();
 	void scramble();
 	void levelUp();
