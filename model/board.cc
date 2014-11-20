@@ -15,7 +15,10 @@ Board::Board(int n) : size(n) {
 
 	level = 0;
 	score = 0;
-	//movesRemain = ??
+
+	view =  new TextView(size);
+	loadLevel(level);
+	view->draw();
 }
 
 void Board::loadLevel(int level) {
@@ -24,11 +27,40 @@ void Board::loadLevel(int level) {
 
 		ifstream file("sequence.txt");
 
-		char strSquare;
-		file >> strSquare;
+		string square;
 
-		int advanced;
+		for (int i = 0; i < size; i++) {
+			for (int j = 0; j < size; j++) {
 
-		// THIS IS A TEST
+				file >> square;
+
+				// not used at the moment
+				//int advanced;
+				//advanced = (square[0] == '_') ? 0 : (square[0] - '0');
+
+				Type type;
+				
+				switch (square[1]) {
+					case '_': type = Basic; break;
+					case 'h': type = Lateral; break;
+					case 'v': type = Upright; break;
+					case 'b': type = Unstable; break;
+					case 'p': type = Psychedelic; break;
+				}
+
+				Colour colour;
+				colour = (Colour)(square[2] - '0');
+
+				grid[i][j].row = i;
+				grid[i][j].col = j;
+				grid[i][j].colour = colour;
+				grid[i][j].type = type;
+
+				view->setColour(i, j, colour);
+				view->setType(i, j, type);
+				view->setScore(score);
+				view->setLevel(level);
+			}
+		}
 	}
 }

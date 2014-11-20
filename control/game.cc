@@ -1,5 +1,5 @@
 #include "game.h"
-#include "../enums.h"
+#include "../public/global.h"
 
 using namespace std;
 
@@ -16,19 +16,22 @@ bool isValidSwap(int row, int col, int dir) {
 // the main command interpreter
 void Game::startGame() {
 
-	board = new Board();
+	board = new Board(10);
 	string command;
 
-	while (cin >> command) {
-
-		if (command == "swap") {
-
-			int row, col, dir;
-			cin >> row >> col >> dir;
-
-			// check for valid parameters
-			if (isValidSwap(row, col, dir))
-			board->swap(row, col, (Direction)dir);
-		}
-	}
+	cin >> command;
+/*
+ *    while (cin >> command) {
+ *
+ *        if (command == "swap") {
+ *
+ *            int row, col, dir;
+ *            cin >> row >> col >> dir;
+ *
+ *            // check for valid parameters
+ *            if (isValidSwap(row, col, dir))
+ *            board->swap(row, col, (Direction)dir);
+ *        }
+ *    }
+ */
 }
