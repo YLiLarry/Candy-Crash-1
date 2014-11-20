@@ -4,11 +4,7 @@
 #include <vector>
 using namespace std;
 
-bool CellTextView:: empty() const {return (this->colour == EMPTY);}
-void CellTextView:: setEmpty() {this->colour = EMPTY;}
-
-
-void CellTextView:: draw() const {
+void TextCell:: draw() const {
     string str = "_";
     switch (this->cellType) {
         case BASIC : str += "_"; break;
@@ -32,38 +28,12 @@ void CellTextView:: draw() const {
     Description:  This constructor initilizes all cells to the white colour, basic squares.
 */
 TextView:: TextView(int size) {
-    #if DEBUG
-        cerr << ">> TEXTVIEW CONSTRUCTOR START" << endl;
-    #endif
-    
-    this->size = size;
-    this->board = new CellTextView*[size];
-    
-    for (int i = 0; i < this->size; i++) {
-        
-        #if DEBUG_VIEW
-            cerr << ">> TEXTVIEW CONSTRUCTOR i = " << i << endl;
-        #endif
-        
-        this->board[i] = new CellTextView[size];
-    } 
-    
-    #if DEBUG_VIEW
-        cerr << ">> TEXTVIEW CONSTRUCTOR DONE" << endl;
-    #endif
+    this->init(size);
 };
 
 /* Destructor */
 TextView:: ~TextView() {
-    #if DEBUG_VIEW
-        cerr << ">> TEXTVIEW DESTORIED" << endl;
-    #endif
-        
-    for (int i = 0; i < this->size; i++) {
-            delete [] this->board[i];
-    }
-    
-    delete [] this->board;
+    this->end();
 }
 
 void TextView:: draw() const {
@@ -76,18 +46,18 @@ void TextView:: draw() const {
     } 
 }
 
-void TextView:: setColour(int row, int col, COLOUR c) {this->board[row][col].colour = c; this->draw();}
-void TextView:: setType(int row, int col, CELLTYPE t) {this->board[row][col].cellType = t; this->draw();}
+void TextView:: setColour(int row, int col, COLOUR c) {this->board[row][col].colour = c;}
+void TextView:: setType(int row, int col, CELLTYPE t) {this->board[row][col].cellType = t;}
 // void TextView:: set(vector<Cell*>) {
 //     // requires Cell* header
 // }
-void TextView:: setScore(int x) {this->score = x; this->draw();}
-void TextView:: setLevel(int x) {this->level = x; this->draw();}
-void TextView:: setMovesRemain(int x) {this->movesRemain = x; this->draw();}
-void TextView:: setHiScore(int x) {this->hiScore = x; this->draw();}
+void TextView:: setScore(int x) {this->score = x;}
+void TextView:: setLevel(int x) {this->level = x;}
+void TextView:: setMovesRemain(int x) {this->movesRemain = x;}
+void TextView:: setHiScore(int x) {this->hiScore = x;}
 
 
-void _swap(CellTextView a, CellTextView b) {
+void _swap(TextCell a, TextCell b) {
     COLOUR c;
     c = a.colour;
     a.colour = b.colour;
@@ -121,21 +91,59 @@ void TextView:: swap(int r, int c, DIRECTION d) {
             break;
         }
     }
-    this->draw();
 }
-
-void TextView:: destory(int r, int c) {
-    this->board[r][c].setEmpty();
-    this->draw();
-}
-// void TextView:: destory(vector<Cell*>) {
-//     // requires Cell* header
-// }
 
 void TextView:: drop(int column, COLOUR colour, CELLTYPE type = BASIC) {
     int row = 0;
     while (row < this->size && this->board[row][column].empty()) {row++;}
     this->board[row][column].colour = colour;
     this->board[row][column].cellType = type;
-    this->draw();
+}
+
+void TextView:: fall(int r, int c, int d) {
+    _swap(this->board[r][c], this->board[r+d][c]);
+};
+
+
+void TextView:: destory(int r, int c) {
+    this->board[r][c].setEmpty();
+}
+
+void TextView:: init(int size) {
+    #if DEBUG
+        cerr << ">> TEXTVIEW CONSTRUCTOR START" << endl;
+    #endif
+    
+    this->size = size;
+    this->board = new TextCell*[size];
+    
+    for (int i = 0; i < this->size; i++) {
+        
+        #if DEBUG_VIEW
+            cerr << ">> TEXTVIEW CONSTRUCTOR i = " << i << endl;
+        #endif
+        
+        this->board[i] = new TextCell[size];
+    } 
+    
+    #if DEBUG_VIEW
+        cerr << ">> TEXTVIEW CONSTRUCTOR DONE" << endl;
+    #endif
+}
+
+void TextView:: end() {
+    #if DEBUG_VIEW
+        cerr << ">> TEXTVIEW DESTORIED" << endl;
+    #endif
+        
+    for (int i = 0; i < this->size; i++) {
+            delete [] this->board[i];
+    }
+    
+    delete [] this->board;
+}
+
+void TextView:: restart(int size = 0) {
+    size ? this->init(size) : this->init(this->size);
+    this->end();
 }
