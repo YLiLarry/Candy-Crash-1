@@ -7,18 +7,18 @@ using namespace std;
 void TextCell:: draw() const {
     string str = "_";
     switch (this->cellType) {
-        case BASIC : str += "_"; break;
-        case LATERAL : str += "h"; break;
-        case UPRIGHT : str += "v"; break;
-        case UNSTABLE : str += "b"; break;
-        case PSYCHEDELIC : str += "p"; break;
+        case Basic : str += "_"; break;
+        case Lateral : str += "h"; break;
+        case Upright : str += "v"; break;
+        case Unstable : str += "b"; break;
+        case Psychedelic : str += "p"; break;
     }
     switch (this->colour) {
-        case EMPTY : str += "_"; break;
-        case WHITE : str += "0"; break;
-        case RED : str += "1"; break;
-        case GREEN : str += "2"; break;
-        case BLUE : str += "3"; break;
+        case Empty : str += "_"; break;
+        case White : str += "0"; break;
+        case Red : str += "1"; break;
+        case Green : str += "2"; break;
+        case Blue : str += "3"; break;
     }
     cout << str;
 }
@@ -46,8 +46,8 @@ void TextView:: draw() const {
     } 
 }
 
-void TextView:: setColour(int row, int col, COLOUR c) {this->board[row][col].colour = c;}
-void TextView:: setType(int row, int col, CELLTYPE t) {this->board[row][col].cellType = t;}
+void TextView:: setColour(int row, int col, Colour c) {this->board[row][col].colour = c;}
+void TextView:: setType(int row, int col, CellType t) {this->board[row][col].cellType = t;}
 // void TextView:: set(vector<Cell*>) {
 //     // requires Cell* header
 // }
@@ -58,34 +58,34 @@ void TextView:: setHiScore(int x) {this->hiScore = x;}
 
 
 void _swap(TextCell a, TextCell b) {
-    COLOUR c;
+    Colour c;
     c = a.colour;
     a.colour = b.colour;
     b.colour = c;
-    CELLTYPE t;
+    CellType t;
     t = a.cellType;
     a.cellType = b.cellType;
     b.cellType = t;
 }
 
-void TextView:: swap(int r, int c, DIRECTION d) {
+void TextView:: swap(int r, int c, Direction d) {
     switch (d) {
-        case UP : {
+        case Up : {
             // if (r <= 0) {return;}
             _swap(this->board[r][c], this->board[r-1][c]);
             break;
         }
-        case DOWN : {
+        case Down : {
             // if (r >= this->size - 1) {return;}
             _swap(this->board[r][c], this->board[r+1][c]);
             break;
         }
-        case LEFT : {
+        case Left : {
             // if (c <= 0) {return;}
             _swap(this->board[r][c], this->board[r][c-1]);
             break;
         }
-        case RIGHT : {
+        case Right : {
             // if (c >= this->size - 1) {return;}
             _swap(this->board[r][c], this->board[r][c+1]);
             break;
@@ -93,7 +93,7 @@ void TextView:: swap(int r, int c, DIRECTION d) {
     }
 }
 
-void TextView:: drop(int column, COLOUR colour, CELLTYPE type = BASIC) {
+void TextView:: drop(int column, Colour colour, CellType type = Basic) {
     int row = 0;
     while (row < this->size && this->board[row][column].empty()) {row++;}
     this->board[row][column].colour = colour;
