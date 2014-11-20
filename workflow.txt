@@ -1,0 +1,5 @@
+before work pull master
+make a new branch - just back up
+make changes - still on local master
+pull master again
+push origin master
