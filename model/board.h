@@ -6,11 +6,10 @@
 #include "square.h"
 #include "model.h"
 #include "../view/view.h"
-#include "../enums.h"
-
+#include "../public/global.h"
 
 class Board {
-	// pointer to View abstract class
+	// pointer to views
 	View *view;
 
 	// the grid of squares

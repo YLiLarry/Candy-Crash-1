@@ -2,11 +2,12 @@
 #define __SQUARE_H__
 
 #include "cell.h"
-#include "../enums.h"
+#include "../public/global.h"
+
 class Square {
 	public:
-	int x;
-	int y;
+	int row;
+	int col;
 	Colour colour;
 	Type type;
 
