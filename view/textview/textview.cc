@@ -57,7 +57,7 @@ void TextView:: setMovesRemain(int x) {this->movesRemain = x;}
 void TextView:: setHiScore(int x) {this->hiScore = x;}
 
 
-void _swap(TextCell a, TextCell b) {
+void _swap(TextCell& a, TextCell& b) {
     Colour c;
     c = a.colour;
     a.colour = b.colour;
