@@ -49,6 +49,7 @@ class Board {
 	//
 	// note: clearSquares() will call clear(int x, int y)
 	// to handle clearing with a special square
+	// that requires to clear squares NOT in matched
 	int clearSquares(std::vector<Square *> matched);
 
 	// clears squares at x, y coordinates
