@@ -146,6 +146,13 @@ void Board::swap(int row, int col, Direction d) {
 
 }
 
+vector<Square> Board::findMatches(int row, int col) {
+	vector<Square> matched;
+
+	matched.push_back(grid[0][0]);
+
+	return matched;
+}
 
 string Board:: validMove() {
 	ostringstream ss;
@@ -184,7 +191,6 @@ string Board:: validMove() {
     }
     return string();
 }
-
 
 bool Board:: hasMove() {
     return this->validMove().length();
