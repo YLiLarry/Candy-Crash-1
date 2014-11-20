@@ -16,9 +16,9 @@
 
     enum Colour { 
 		White = 0, 
-		Blue, 
-		Green, 
 		Red, 
+		Green, 
+		Blue, 
 		Empty 
 	};
 
