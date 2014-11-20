@@ -41,7 +41,6 @@ void Game::startGame() {
 
 			// check for valid parameters
 			if (isValidSwap(row, col, (Direction)dir)) {
-				cerr << "swapping" << endl;
 				board->swap(row, col, (Direction)dir);
 			}
 		}

@@ -1,4 +1,3 @@
-#define DEBUG
 #include <fstream>
 #include "board.h"
 #include "../view/textview/textview.h"
