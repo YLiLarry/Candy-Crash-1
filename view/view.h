@@ -37,8 +37,14 @@
             virtual void draw() const = 0; 
             
             /* setters */
+<<<<<<< HEAD
             virtual void setColour(int,int,COLOUR) = 0;
             virtual void setType(int,int,CELLTYPE) = 0;
+=======
+            virtual void setColour(int,int,Colour) = 0;
+            virtual void setType(int,int,Celltype) = 0;
+            // virtual void set(std::vector<Cell*>) = 0; // requires the Cell class definition
+>>>>>>> origin/wrahim-11-19
             virtual void setScore(int) = 0;
             virtual void setLevel(int) = 0;
             virtual void setMovesRemain(int) = 0;
