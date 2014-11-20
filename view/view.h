@@ -29,8 +29,8 @@
             // View(int);
             virtual ~View() {};
             /* setters */
-            virtual void setColour(int,int,COLOUR) = 0;
-            virtual void setType(int,int,CELLTYPE) = 0;
+            virtual void setColour(int,int,Colour) = 0;
+            virtual void setType(int,int,Celltype) = 0;
             // virtual void set(std::vector<Cell*>) = 0; // requires the Cell class definition
             virtual void setScore(int) = 0;
             virtual void setLevel(int) = 0;

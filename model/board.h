@@ -6,6 +6,8 @@
 #include "square.h"
 #include "model.h"
 #include "../view/view.h"
+#include "../enums.h"
+
 
 class Board {
 	// pointer to View abstract class
@@ -31,6 +33,10 @@ class Board {
 	/*
 	 * methods
 	 */
+
+	// loads level, either randomly generated
+	// or from provided file
+	void loadLevel(int level);
 
 	// appends matched squares to matched vector
 	// should be used after swap
@@ -61,10 +67,13 @@ class Board {
 	// when there are no matches (matched is empty)
 	void chainReaction();
 
+	// make changes to the view
+	void notifyView();
+
 	public:
 	Board();
 	~Board();
-	void swap(int x, int y, DIRECTION d);
+	void swap(int x, int y, Direction d);
 	void hint();
 	void scramble();
 	void levelUp();

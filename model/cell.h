@@ -15,7 +15,7 @@
     
     class Psychedelic : public Cell {};
     
-    enum CELLTYPE {BASIC, LATERAL, UPRIGHT, UNSTABLE, PSYCHEDELIC};
-    enum COLOUR {WHITE, BLUE, GREEN, RED, EMPTY};
-    
+	enum Celltype {Basic = 0, Lateral, Upright, Unstable, Psychedelic};
+	//enum COLOUR {WHITE, BLUE, GREEN, RED, EMPTY};
+	
 #endif
