@@ -17,6 +17,7 @@ class Board {
 	// note: turns out it's better to make 2d-arrays this way
 	Square **grid;
 
+	// size of the grid
 	int size;
 
 	// current level
@@ -69,7 +70,7 @@ class Board {
 	void notifyView();
 
 	public:
-	Board();
+	Board(int n);
 	~Board();
 	void swap(int x, int y, Direction d);
 	void hint();

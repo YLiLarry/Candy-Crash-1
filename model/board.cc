@@ -1,16 +1,16 @@
 #include <fstream>
 #include "board.h"
 #include "../view/textview/textview.h"
+#include "../public/global.h"
 
 using namespace std;
 
-Board::Board() {
+Board::Board(int n) : size(n) {
 	// initializing grid
-	grid = new Square *[10];
+	grid = new Square *[size];
 
-	for (int i = 0; i < 10; i++) {
-		grid[i] = new Square[10];
-
+	for (int i = 0; i < size; i++) {
+		grid[i] = new Square[size];
 	}
 
 	level = 0;
@@ -24,6 +24,9 @@ void Board::loadLevel(int level) {
 
 		ifstream file("sequence.txt");
 
-		for (int i = 0; i < 
+		char strSquare;
+		file >> strSquare;
+
+		int advanced = (strS
 	}
 }
