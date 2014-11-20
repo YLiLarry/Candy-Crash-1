@@ -36,11 +36,11 @@ class Board {
 	// or from provided file
 	void loadLevel(int level);
 
-	// appends matched squares to matched vector
-	// should be used after swap
-	void hMatch(int x, int y);
-	void vMatch(int x, int y);
-
+	// takes in the coordinates of a square anc checks
+	// if it is matching set, if it is then findMatches
+	// returns a vector of squares that should be cleared
+	std::vector<Square *> findMatches(int row, int col);
+	
 	// clears squares stored in matched vector
 	// and empties matched vector after
 	// also determines where to place special square
@@ -48,7 +48,7 @@ class Board {
 	//
 	// note: clearSquares() will call clear(int x, int y)
 	// to handle clearing with a special square
-	int clearSquares();
+	int clearSquares(std::vector<Square *> matched);
 
 	// clears squares at x, y coordinates
 	// should be used for speacial clearing
