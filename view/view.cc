@@ -1,4 +1,6 @@
 #include "view.h"
+using namespace std;
+
 View:: View(int size) {
     tv = new TextView(size);
     // gv = new GraphicView(size);
@@ -78,3 +80,8 @@ void View:: restart(int size) {
     tv->restart(size);
     // gv->restart(size);
 };
+
+void View:: print(const string& str) {
+    tv->print(str);
+    // gv->print(str);
+}

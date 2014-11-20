@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include <vector>
+#include <string>
 #include "square.h"
 #include "model.h"
 #include "../view/view.h"
@@ -69,11 +70,14 @@ class Board {
 	Board(int n);
 	~Board();
 	void swap(int row, int col, Direction d);
-	void hint();
 	void scramble();
 	void levelUp();
 	void levelDown();
 	void restart();
+	std::string validMove();
+	std::vector<Square*>findMatches(int,int);
+	bool hasMove();
+	void hint();
 	friend std::ostream &operator<<(std::ostream &out, const Board &board);
 };
 
