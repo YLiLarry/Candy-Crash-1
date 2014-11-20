@@ -17,6 +17,8 @@ class Board {
 	// note: turns out it's better to make 2d-arrays this way
 	Square **grid;
 
+	int size;
+
 	// current level
 	int level;
 
@@ -29,10 +31,6 @@ class Board {
 
 	// matched squares
 	std::vector<Square> matched;
-
-	/*
-	 * methods
-	 */
 
 	// loads level, either randomly generated
 	// or from provided file
