@@ -24,10 +24,17 @@ void Board::loadLevel(int level) {
 
 		ifstream file("sequence.txt");
 
-		char strSquare;
-		file >> strSquare;
+		string square;
+		file >> square;
 
-		int advanced
+		// not used at the moment
+		int advanced;
+
+		CellType type;
+		Colour color;
+
+		advanced = (square[0] == '_') ? 0 : (square[0] - '0');
+		type = (square[1] == '_') ? (Colour)0 : (Colour)square[1];
 
 		// this is another change
 	}
