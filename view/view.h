@@ -38,7 +38,7 @@
             
             /* setters */
             virtual void setColour(int,int,Colour) = 0;
-            virtual void setType(int,int,CellType) = 0;
+            virtual void setType(int,int,Type) = 0;
 
             virtual void setScore(int) = 0;
             virtual void setLevel(int) = 0;
@@ -46,7 +46,7 @@
             virtual void setHiScore(int) = 0;
             
             virtual void swap(int,int,Direction) = 0;
-            virtual void drop(int,Colour,CellType) = 0;
+            virtual void drop(int,Colour,Type) = 0;
             virtual void fall(int,int,int) = 0;
             virtual void destory(int,int) = 0;
             virtual void restart(int) = 0;

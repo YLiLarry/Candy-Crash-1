@@ -19,7 +19,7 @@ Direction str2dir(string& str) {
     return Up;
 }
 
-CellType str2type(string& str) {
+Type str2type(string& str) {
     if (str == "_") {return Basic;}
     if (str == "h") {return Lateral;}
     if (str == "v") {return Upright;}

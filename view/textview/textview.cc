@@ -47,7 +47,7 @@ void TextView:: draw() const {
 }
 
 void TextView:: setColour(int row, int col, Colour c) {this->board[row][col].colour = c;}
-void TextView:: setType(int row, int col, CellType t) {this->board[row][col].cellType = t;}
+void TextView:: setType(int row, int col, Type t) {this->board[row][col].cellType = t;}
 // void TextView:: set(vector<Cell*>) {
 //     // requires Cell* header
 // }
@@ -62,7 +62,7 @@ void _swap(TextCell a, TextCell b) {
     c = a.colour;
     a.colour = b.colour;
     b.colour = c;
-    CellType t;
+    Type t;
     t = a.cellType;
     a.cellType = b.cellType;
     b.cellType = t;
@@ -93,7 +93,7 @@ void TextView:: swap(int r, int c, Direction d) {
     }
 }
 
-void TextView:: drop(int column, Colour colour, CellType type = Basic) {
+void TextView:: drop(int column, Colour colour, Type type = Basic) {
     int row = 0;
     while (row < this->size && this->board[row][column].empty()) {row++;}
     this->board[row][column].colour = colour;

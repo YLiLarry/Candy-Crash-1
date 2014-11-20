@@ -6,5 +6,12 @@ pull master again ? might not need this step
 push origin master
 
 2. Work on seperate branches
-before work pull master
+`git checkout <name>`
+pull `git pull origin master` -- to this branch
+*makechanges
+pull `git pull origin master` -- might ask u to merge
+`git push origin master
 
+-- Does this even work??
+
+3. 
