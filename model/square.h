@@ -2,12 +2,13 @@
 #define __SQUARE_H__
 
 #include "cell.h"
+#include "../enums.h"
 class Square {
 	public:
 	int x;
 	int y;
-	COLOR color; // let's keep the spelling consistent
-	CELLTYPE type;
+	Colour colour;
+	CellType type;
 
 	void drop(); // drop if hole below
 };

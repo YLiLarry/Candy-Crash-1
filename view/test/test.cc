@@ -2,30 +2,30 @@
 #include <iostream>
 using namespace std;
 
-COLOUR str2colour(string& str) {
-    if (str == "-1") {return EMPTY;}
-    if (str == "0") {return WHITE;}
-    if (str == "1") {return RED;}
-    if (str == "2") {return GREEN;}
-    if (str == "3") {return BLUE;}
-    return WHITE;
+Colour str2colour(string& str) {
+    if (str == "-1") {return Empty;}
+    if (str == "0") {return White;}
+    if (str == "1") {return Red;}
+    if (str == "2") {return Green;}
+    if (str == "3") {return Blue;}
+    return White;
 };
 
-DIRECTION str2dir(string& str) {
-    if (str == "up") {return UP;}
-    if (str == "dn") {return DOWN;}
-    if (str == "lt") {return LEFT;}
-    if (str == "rt") {return RIGHT;}
-    return UP;
+Direction str2dir(string& str) {
+    if (str == "up") {return Up;}
+    if (str == "dn") {return Down;}
+    if (str == "lt") {return Left;}
+    if (str == "rt") {return Right;}
+    return Up;
 }
 
-CELLTYPE str2type(string& str) {
-    if (str == "_") {return BASIC;}
-    if (str == "h") {return LATERAL;}
-    if (str == "v") {return UPRIGHT;}
-    if (str == "b") {return UNSTABLE;}
-    if (str == "p") {return PSYCHEDELIC;}
-    return BASIC;
+CellType str2type(string& str) {
+    if (str == "_") {return Basic;}
+    if (str == "h") {return Lateral;}
+    if (str == "v") {return Upright;}
+    if (str == "b") {return Unstable;}
+    if (str == "p") {return Psychedelic;}
+    return Basic;
 }
 
 int main() {

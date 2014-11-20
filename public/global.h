@@ -6,8 +6,8 @@
 #ifndef __GLOBAL_H__    
 #define __GLOBAL_H__
 
-    enum CELLTYPE {BASIC, LATERAL, UPRIGHT, UNSTABLE, PSYCHEDELIC};
-    enum COLOUR {WHITE, BLUE, GREEN, RED, EMPTY};
-    enum DIRECTION {UP = 0, DOWN = 1, LEFT = 2, RIGHT = 3};
+    enum CellType {Basic, Lateral, Upright, Unstable, Psychedelic};
+    enum Colour {White, Blue, Green, Red, Empty};
+    enum Direction {Up, Down, Left, Right};
 
 #endif
