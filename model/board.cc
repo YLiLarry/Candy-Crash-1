@@ -124,7 +124,12 @@ void swapWith(Square &a, Square &b) {
 }
 
 void Board::swap(int row, int col, Direction d) {
-
+    
+    if (row == 0 && d == Up) {return;}
+    if (col == 0 && d == Left) {return;}
+    if (row == this->size - 1 && d == Down) {return;}
+    if (col == this->size - 1 && d == Right) {return;}
+    
 	switch (d) {
 		case Up: swapWith(grid[row][col], grid[row - 1][col]); break;
 		case Down: swapWith(grid[row][col], grid[row + 1][col]); break;
@@ -155,6 +160,9 @@ vector<Square> Board::findMatches(int row, int col) {
 }
 
 string Board:: validMove() {
+    #if DEBUG_BOARD
+        fprintf(stderr,"BOARD:: validMove()\n");
+    #endif
 	ostringstream ss;
     Board b(this->size);
     for (int i = 0; i < this->size; i++) {
@@ -197,5 +205,9 @@ bool Board:: hasMove() {
 }
 
 void Board:: hint() {
-    this->view->print(this->validMove());
+    string str = this->validMove();
+    #if DEBUG_BOARD
+        fprintf(stderr,"BOARD hint(%s)\n",str.c_str());
+    #endif
+    this->view->print(str);
 }
