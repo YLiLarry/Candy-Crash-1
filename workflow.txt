@@ -1,5 +1,10 @@
+1. Work directly on master
 before work pull master
-make a new branch - just back up
+make a new branch - just for backup
 make changes - still on local master
-pull master again
+pull master again ? might not need this step
 push origin master
+
+2. Work on seperate branches
+before work pull master
+
