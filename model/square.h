@@ -8,7 +8,7 @@ class Square {
 	int x;
 	int y;
 	Colour colour;
-	CellType type;
+	Type type;
 
 	void drop(); // drop if hole below
 };
