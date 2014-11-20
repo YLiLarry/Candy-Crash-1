@@ -1,3 +1,4 @@
+#define DEBUG
 #include <fstream>
 #include "board.h"
 #include "../view/textview/textview.h"
@@ -19,6 +20,15 @@ Board::Board(int n) : size(n) {
 	view = new View(size);
 	loadLevel(level);
 	view->draw();
+
+#ifdef DEBUG
+	for (int i = 0; i < size; i++) {
+		for (int j = 0; j < size; j++) {
+			cerr << grid[i][j].colour << " ";
+		}
+		cerr << endl;
+	}
+#endif
 }
 
 Board::~Board() {
@@ -74,12 +84,64 @@ void Board::loadLevel(int level) {
 	}
 }
 
-//void swapHelper(const Square &a, const Square &b) {
-	//int tRow = 
-//}
+void swapWith(Square &a, Square &b) {
+#ifdef DEBUG
+	cerr << "square a: " << endl;
+	cerr << "row: " << a.row << " col: "<< a.col << endl;
+	cerr << "colour: " << a.colour << " type: " << a.type << endl;
 
-/*void Grid::swap(int row, int col, Direction d) {*/
-	//switch (d) {
-		//case Up: 
-	//}
-/*}*/
+	cerr << endl << "square b: " << endl;
+	cerr << "row: " << b.row << " col: "<< b.col << endl;
+	cerr << "colour: " << b.colour << " type: " << b.type << endl;
+#endif
+
+	int tRow = a.row; 
+	int tCol = a.col; 
+	Colour tColour = a.colour; 
+	Type tType = a.type;
+
+	a.row = b.row;
+	a.col = b.col;
+	a.colour = b.colour;
+	a.type = b.type;
+	
+	b.row = tRow;
+	b.col = tCol;
+	b.colour = tColour;
+	b.type = tType;
+
+#ifdef DEBUG
+	cerr << endl;
+
+	cerr << "square a: " << endl;
+	cerr << "row: " << a.row << " col: "<< a.col << endl;
+	cerr << "colour: " << a.colour << " type: " << a.type << endl;
+
+	cerr << endl << "square b: " << endl;
+	cerr << "row: " << b.row << " col: "<< b.col << endl;
+	cerr << "colour: " << b.colour << " type: " << b.type << endl;
+#endif
+}
+
+void Board::swap(int row, int col, Direction d) {
+
+	switch (d) {
+		case Up: swapWith(grid[row][col], grid[row - 1][col]); break;
+		case Down: swapWith(grid[row][col], grid[row + 1][col]); break;
+		case Left: swapWith(grid[row][col], grid[row][col - 1]); break;
+		case Right: swapWith(grid[row][col], grid[row][col + 1]); break;
+	}
+
+	view->swap(row, col, d);
+	view->draw();
+
+#ifdef DEBUG
+	for (int i = 0; i < size; i++) {
+		for (int j = 0; j < size; j++) {
+			cerr << grid[i][j].colour << " ";
+		}
+		cerr << endl;
+	}
+#endif
+
+}

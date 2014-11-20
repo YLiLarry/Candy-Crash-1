@@ -30,7 +30,7 @@ class Board {
 	int movesRemain;
 
 	// matched squares
-	std::vector<Square> matched;
+	std::vector<Square *> matched;
 
 	// loads level, either randomly generated
 	// or from provided file
@@ -64,9 +64,6 @@ class Board {
 	// calls checkMatch() again. Will stop
 	// when there are no matches (matched is empty)
 	void chainReaction();
-
-	// make changes to the view
-	void notifyView();
 
 	public:
 	Board(int n);
