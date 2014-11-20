@@ -31,7 +31,7 @@ class Board {
 	int movesRemain;
 
 	// matched squares
-	std::vector<Square *> matched;
+	//std::vector<Square *> matched;
 
 	// loads level, either randomly generated
 	// or from provided file
@@ -40,7 +40,7 @@ class Board {
 	// takes in the coordinates of a square anc checks
 	// if it is matching set, if it is then findMatches
 	// returns a vector of squares that should be cleared
-	std::vector<Square *> findMatches(int row, int col);
+	std::vector<Square> findMatches(int row, int col);
 	
 	// clears squares stored in matched vector
 	// and empties matched vector after
@@ -50,7 +50,7 @@ class Board {
 	// note: clearSquares() will call clear(int x, int y)
 	// to handle clearing with a special square
 	// that requires to clear squares NOT in matched
-	int clearSquares(std::vector<Square *> matched);
+	int clearSquares(std::vector<Square> matched);
 
 	// clears squares at x, y coordinates
 	// should be used for speacial clearing
@@ -67,6 +67,10 @@ class Board {
 	// when there are no matches (matched is empty)
 	void chainReaction();
 
+	std::string validMove();
+
+	bool hasMove();
+
 	public:
 	Board(int n);
 	~Board();
@@ -75,9 +79,7 @@ class Board {
 	void levelUp();
 	void levelDown();
 	void restart();
-	std::string validMove();
-	std::vector<Square*>findMatches(int,int);
-	bool hasMove();
+	//std::vector<Square*>findMatches(int,int);
 	void hint();
 	friend std::ostream &operator<<(std::ostream &out, const Board &board);
 };

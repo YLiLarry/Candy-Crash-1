@@ -44,5 +44,11 @@ void Game::startGame() {
 				board->swap(row, col, (Direction)dir);
 			}
 		}
+
+		// TEST
+		
+		if (command == "hint") {
+			board->hint();
+		}
 	}
 }
