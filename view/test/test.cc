@@ -1,4 +1,4 @@
-#include "../textview/textview.h"
+#include "../view.h"
 #include <iostream>
 using namespace std;
 
@@ -37,7 +37,7 @@ int main() {
         if (str == "new") {
             cin >> r;
             if (view) {delete view;}
-            view = new TextView(r);
+            view = new View(r);
         } else
         if (str == "//") {
             cin.ignore(1024, '\n');

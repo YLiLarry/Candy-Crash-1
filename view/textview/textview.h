@@ -6,15 +6,14 @@
 #ifndef __TEXTVIEW__H__
 #define __TEXTVIEW__H__
 #include <vector>
-#include "../view.h"
-#include "../cellview.h"    
+#include "../viewabstract.h"
     
-    class TextCell : public CellView {
+    class TextCell : public CellViewAbstract {
         public:
             void draw() const;
     };
     
-    class TextView : public View {
+    class TextView : public ViewAbstract {
         protected:
             TextCell** board;
             void init();
@@ -28,7 +27,6 @@
             
             void setColour(int,int,Colour);
             void setType(int,int,Type);
-            // void set(std::vector<Cell*>); // requires the Cell class definition
             void setScore(int);
             void setLevel(int);
             void setMovesRemain(int);

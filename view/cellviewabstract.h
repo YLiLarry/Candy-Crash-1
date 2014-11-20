@@ -1,13 +1,12 @@
 #ifndef __CELLVIEW__H__
 #define __CELLVIEW__H__
-#include "../model/cell.h"
-
-    class CellView {
+    #include "../public/global.h"
+    class CellViewAbstract {
         public:
             Colour colour;
             Type cellType;
-            CellView();
-            virtual ~CellView() {};
+            CellViewAbstract();
+            virtual ~CellViewAbstract() {};
             virtual void draw() const = 0;
             bool empty() const;
             void setEmpty();

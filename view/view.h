@@ -5,52 +5,36 @@
 
 #ifndef __VIEW__H__
 #define __VIEW__H__
-#include "../public/global.h"
-#include "cellview.h"
-    
-    class prepare;
-    class fall;
-    class destory;
+#include "viewabstract.h"
+#include "textview/textview.h"
+// #include "graphicview/graphicview.h"
 
-    class View {
-        
-        protected:
-            
-        #if DEBUG_VIEW
-            public:
-        #endif
-                
-            int score;
-            int movesRemain;
-            int level;
-            int hiScore;
-            int canvasWidth;
-            int cellWidth;
-            int size;
-            CellView** board;
+    class View : public ViewAbstract {
+        private:
+            TextView* tv;
+            // GraphicView* gv;
             
         public:
-            // View(int);
-            virtual ~View() {};
-            
-            virtual void init(int) = 0;
-            virtual void draw() const = 0; 
-            
-            /* setters */
-            virtual void setColour(int,int,Colour) = 0;
-            virtual void setType(int,int,Type) = 0;
+            View(int);
+            ~View();
 
-            virtual void setScore(int) = 0;
-            virtual void setLevel(int) = 0;
-            virtual void setMovesRemain(int) = 0;
-            virtual void setHiScore(int) = 0;
+            void init(int);
+            void draw() const;
             
-            virtual void swap(int,int,Direction) = 0;
-            virtual void drop(int,Colour,Type) = 0;
-            virtual void fall(int,int,int) = 0;
-            virtual void destory(int,int) = 0;
-            virtual void restart(int) = 0;
-
+            void setColour(int,int,Colour);
+            void setType(int,int,Type);
+            void setScore(int);
+            void setLevel(int);
+            void setMovesRemain(int);
+            void setHiScore(int);
+            
+            void swap(int,int,Direction);
+            void drop(int,Colour,Type);
+            void fall(int,int,int);
+            void destory(int,int);
+            
+            void end();
+            void restart(int);
     };
     
 #endif
