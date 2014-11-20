@@ -8,10 +8,18 @@
 
 #include "view.h"
 
+    class GraphicCell : public CellView {
+        protected:
+            int x;
+            int y;
+        public:
+            GraphicCell(int,int);
+            ~GraphicCell();
+    }
+
     class GraphicView : public View {
         protected:
-            int mapX(int);
-            int mapY(int);
+            
     };
     
 #endif

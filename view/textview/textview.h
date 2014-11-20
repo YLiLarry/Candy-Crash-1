@@ -9,21 +9,22 @@
 #include "../view.h"
 #include "../cellview.h"    
     
-    class CellTextView : public CellView {
+    class TextCell : public CellView {
         public:
             void draw() const;
-            bool empty() const;
-            void setEmpty();
     };
     
     class TextView : public View {
         protected:
-            CellTextView** board;
-            virtual void draw() const;
+            TextCell** board;
+            void init();
             
         public:
             TextView(int);
             ~TextView();
+            
+            void init(int);
+            void draw() const;
             
             void setColour(int,int,COLOUR);
             void setType(int,int,CELLTYPE);
@@ -34,9 +35,12 @@
             void setHiScore(int);
             
             void swap(int,int,DIRECTION);
-            void destory(int,int);
-            // void destory(std::vector<Cell*>); // requires the Cell class definition
             void drop(int,COLOUR,CELLTYPE);
+            void fall(int,int,int);
+            void destory(int,int);
+            
+            void end();
+            void restart(int);
     };
 
 #endif

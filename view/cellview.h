@@ -9,8 +9,8 @@
             CellView();
             virtual ~CellView() {};
             virtual void draw() const = 0;
-            virtual bool empty() const = 0;
-            virtual void setEmpty() = 0;
+            bool empty() const;
+            void setEmpty();
     };
     
 #endif
