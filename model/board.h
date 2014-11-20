@@ -29,9 +29,6 @@ class Board {
 	// players moves remaining
 	int movesRemain;
 
-	// matched squares
-	std::vector<Square *> matched;
-
 	// loads level, either randomly generated
 	// or from provided file
 	void loadLevel(int level);
@@ -57,7 +54,7 @@ class Board {
 	void clear(int x, int y);
 
 	// scans the grid for matches
-	// should be used to detect chain reactions
+	// shouldint row, int col be used to detect chain reactions
 	// after swap, not for "swap matches"
 	//
 	// append matched vector with all matches

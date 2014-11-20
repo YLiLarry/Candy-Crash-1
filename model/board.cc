@@ -94,16 +94,16 @@ void swapWith(Square &a, Square &b) {
 	cerr << "colour: " << b.colour << " type: " << b.type << endl;
 #endif
 
-	int tRow = a.row; 
-	int tCol = a.col; 
-	Colour tColour = a.colour; 
+	int tRow = a.row;
+	int tCol = a.col;
+	Colour tColour = a.colour;
 	Type tType = a.type;
 
 	a.row = b.row;
 	a.col = b.col;
 	a.colour = b.colour;
 	a.type = b.type;
-	
+
 	b.row = tRow;
 	b.col = tCol;
 	b.colour = tColour;
@@ -124,15 +124,34 @@ void swapWith(Square &a, Square &b) {
 
 void Board::swap(int row, int col, Direction d) {
 
+	vector<Square *> matched;
 	switch (d) {
-		case Up: swapWith(grid[row][col], grid[row - 1][col]); break;
-		case Down: swapWith(grid[row][col], grid[row + 1][col]); break;
-		case Left: swapWith(grid[row][col], grid[row][col - 1]); break;
-		case Right: swapWith(grid[row][col], grid[row][col + 1]); break;
+		case Up: swapWith(grid[row][col], grid[row - 1][col]);
+				 matched = findMatches(row - 1, col);
+				 break;
+		case Down: swapWith(grid[row][col], grid[row + 1][col]);
+				   matched = findMatches(row + 1, col);
+				   break;
+		case Left: swapWith(grid[row][col], grid[row][col - 1]);
+				   matched = findMatches(row, col - 1);
+				   break;
+		case Right: swapWith(grid[row][col], grid[row][col + 1]);
+					matched = findMatches(row, col + 1);
+					break;
 	}
 
 	view->swap(row, col, d);
 	view->draw();
+
+	// test
+
+	cerr << "----matched---" << endl;
+	for (int i = 0; i < (int)matched.size(); i++) {
+		//cerr << "row: " << matched[i]->row 
+			//<< " col: " << matched[i]->col << endl;
+		cerr << "colour: " << matched[i]->colour << endl;
+		//cerr << "type: " << matched[i]->colour << endl;
+	}
 
 #ifdef DEBUG
 	for (int i = 0; i < size; i++) {
@@ -143,4 +162,54 @@ void Board::swap(int row, int col, Direction d) {
 	}
 #endif
 
+}
+
+vector<Square *> Board::findMatches(int row, int col) {
+	vector<Square *> matched;
+
+	Colour colour = grid[row][col].colour;
+	//Type type = swapped->type;
+
+	// check horizontally for matching set of three
+	for (int c = 0; c < size; c++) {
+		if (c + 1 < size && c + 2 < size) {
+			if (grid[row][c].colour == colour &&
+					grid[row][c + 1].colour == colour &&
+					grid[row][c + 2].colour == colour) {
+
+				matched.push_back(&grid[row][c]);
+				matched.push_back(&grid[row][c + 1]);
+				matched.push_back(&grid[row][c + 2]);
+
+				// add the rest (if any to matched vector)
+				c++;
+				while (grid[row][c].colour == colour) {
+					matched.push_back(&grid[row][c]);
+					c++;
+				}
+			}
+		}
+	}
+
+	// check vertically for matching set of three
+	for (int r = 0; r < size; r++) {
+		if (r + 1 < size && r + 2 < size) {
+			if (grid[r][col].colour == colour &&
+					grid[r + 1][col].colour == colour &&
+					grid[r + 2][col].colour == colour) {
+
+				matched.push_back(&grid[r][col]);
+				matched.push_back(&grid[r + 1][col]);
+				matched.push_back(&grid[r + 2][col]);
+
+				r++;
+				while (grid[r][col].colour == colour) {
+					matched.push_back(&grid[r][col]);
+					r++;
+				}
+			}
+		}
+	}
+
+	return matched;
 }
