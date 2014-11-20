@@ -5,7 +5,7 @@
     class CellView {
         public:
             Colour colour;
-            CellType cellType;
+            Type cellType;
             CellView();
             virtual ~CellView() {};
             virtual void draw() const = 0;

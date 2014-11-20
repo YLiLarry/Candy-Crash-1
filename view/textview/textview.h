@@ -27,7 +27,7 @@
             void draw() const;
             
             void setColour(int,int,Colour);
-            void setType(int,int,CellType);
+            void setType(int,int,Type);
             // void set(std::vector<Cell*>); // requires the Cell class definition
             void setScore(int);
             void setLevel(int);
@@ -35,7 +35,7 @@
             void setHiScore(int);
             
             void swap(int,int,Direction);
-            void drop(int,Colour,CellType);
+            void drop(int,Colour,Type);
             void fall(int,int,int);
             void destory(int,int);
             
