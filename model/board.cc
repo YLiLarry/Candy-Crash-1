@@ -27,8 +27,8 @@ void Board::loadLevel(int level) {
 		char strSquare;
 		file >> strSquare;
 
-		int advanced;
+		int advanced
 
-		// THIS IS A TEST
+		// this is another change
 	}
 }
