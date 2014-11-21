@@ -184,25 +184,25 @@ string Board:: validMove() {
     }
     for (int i = 0; i < this->size; i++) {
         for (int j = 0; j < this->size; j++) {
-            b.swap(i,j,Up);
+            b.swapMechanism(i,j,Up);
             if (! b.findMatches(i,j).empty()) {
             	ss << i << " " << j << " " << (int)Up;
             	return ss.str();
             };
-            b.swap(i,j,Up);
-            b.swap(i,j,Down);
+            b.swapMechanism(i,j,Up);
+            b.swapMechanism(i,j,Down);
             if (! b.findMatches(i,j).empty()) {
             	ss << i << " " << j << " " << (int)Down;
             	return ss.str();
             };
-            b.swap(i,j,Down);
-            b.swap(i,j,Left);
+            b.swapMechanism(i,j,Down);
+            b.swapMechanism(i,j,Left);
             if (! b.findMatches(i,j).empty()) {
             	ss << i << " " << j << " " << (int)Left;
             	return ss.str();
             };
-            b.swap(i,j,Left);
-            b.swap(i,j,Right);
+            b.swapMechanism(i,j,Left);
+            b.swapMechanism(i,j,Right);
             if (! b.findMatches(i,j).empty()) {
             	ss << i << " " << j << " " << (int)Right;
             	return ss.str();
@@ -217,11 +217,11 @@ bool Board:: hasMove() {
 }
 
 void Board:: hint() {
-    string str = this->validMove();
+    string str = validMove();
     #if DEBUG_BOARD
         fprintf(stderr,"BOARD hint(%s)\n",str.c_str());
     #endif
-    this->view->print(str);
+    view->print(str);
 }
 
 void Board::scramble() {
