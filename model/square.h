@@ -6,6 +6,7 @@
 
 class Square {
 	public:
+
 	int row;
 	int col;
 	Colour colour;

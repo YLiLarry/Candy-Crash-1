@@ -2,9 +2,10 @@
     This file contains global definitions used by Control, Model and Views,
     for efficient data transfer between them.
 */
-        
+
 #ifndef __GLOBAL_H__    
 #define __GLOBAL_H__
+#include <cstdlib>
 
     enum Type { 
 		Basic = 0,

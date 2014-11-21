@@ -147,3 +147,7 @@ void TextView:: restart(int size = 0) {
     size ? this->init(size) : this->init(this->size);
     this->end();
 }
+
+void TextView:: print(const string& str) {
+    cout << str << endl;
+}

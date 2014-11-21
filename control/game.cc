@@ -43,6 +43,15 @@ void Game::startGame() {
 			if (isValidSwap(row, col, (Direction)dir)) {
 				board->swap(row, col, (Direction)dir);
 			}
+
+		} else if (command == "hint") {
+
+			board->hint();
+
+		} else if (command == "scramble") {
+
+			board->scramble();
+
 		}
 	}
 }

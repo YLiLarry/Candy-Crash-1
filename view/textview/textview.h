@@ -32,6 +32,7 @@
             void setMovesRemain(int);
             void setHiScore(int);
             
+            void print(const std::string&);
             void swap(int,int,Direction);
             void drop(int,Colour,Type);
             void fall(int,int,int);

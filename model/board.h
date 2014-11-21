@@ -3,6 +3,8 @@
 
 #include <iostream>
 #include <vector>
+#include <string>
+#include <algorithm>
 #include "square.h"
 #include "model.h"
 #include "../view/view.h"
@@ -26,8 +28,11 @@ class Board {
 	// determines when to auto level up/down
 	int score;
 
-	// players moves remaining
-	int movesRemain;
+	// matched squares
+	//std::vector<Square *> matched;
+
+	// sets the values of a particular square
+	void setSquare(int row, int col, Colour colour, Type type);
 
 	// loads level, either randomly generated
 	// or from provided file
@@ -46,7 +51,7 @@ class Board {
 	// note: clearSquares() will call clear(int x, int y)
 	// to handle clearing with a special square
 	// that requires to clear squares NOT in matched
-	int clearSquares(std::vector<Square *> matched);
+	int clearSquares(std::vector<Square> matched);
 
 	// clears squares at x, y coordinates
 	// should be used for speacial clearing
@@ -63,16 +68,27 @@ class Board {
 	// when there are no matches (matched is empty)
 	void chainReaction();
 
+	std::string validMove();
+
+	bool hasMove();
+
+
 	public:
+
 	Board(int n);
 	~Board();
+
+	void swapMechanism(int row, int col, Direction d);
 	void swap(int row, int col, Direction d);
-	void hint();
+
 	void scramble();
+
 	void levelUp();
 	void levelDown();
+
 	void restart();
-	friend std::ostream &operator<<(std::ostream &out, const Board &board);
+
+	void hint();
 };
 
 #endif

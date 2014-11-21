@@ -7,6 +7,7 @@
 #define __VIEWINTERFACE__H__
 #include "../public/global.h"
 #include "cellviewabstract.h"
+#include <string>
 
     class ViewAbstract {
         
@@ -41,6 +42,7 @@
             virtual void setMovesRemain(int) = 0;
             virtual void setHiScore(int) = 0;
             
+            virtual void print(const std::string&) = 0;
             virtual void swap(int,int,Direction) = 0;
             virtual void drop(int,Colour,Type) = 0;
             virtual void fall(int,int,int) = 0;
