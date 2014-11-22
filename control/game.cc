@@ -29,7 +29,7 @@ bool isValidSwap(int row, int col, Direction dir) {
 // the main command interpreter
 void Game::startGame() {
 
-	board = new Board(10);
+	board = new Board(5);
 	string command;
 
 	while (cin >> command) {

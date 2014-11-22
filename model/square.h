@@ -11,7 +11,9 @@ class Square {
 	int col;
 	Colour colour;
 	Type type;
+	Square *neighbours[4];
 
+	Square();
 	void drop(); // drop if hole below
 };
 

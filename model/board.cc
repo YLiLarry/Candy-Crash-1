@@ -6,6 +6,10 @@
 
 using namespace std;
 
+/*
+ * Board constructor
+ * n is for building an n x n grid
+ */
 Board::Board(int n) : size(n) {
 
 	grid = new Square *[size];
@@ -23,6 +27,9 @@ Board::Board(int n) : size(n) {
 	view->draw();
 }
 
+/*
+ * Board destructor
+ */
 Board::~Board() {
 	for (int i = 0; i < size; i++) {
 		delete[] grid[i];
@@ -32,6 +39,23 @@ Board::~Board() {
 	delete view;
 }
 
+void Board::setNeighbours(Square *s) {
+
+	int row = s->row;
+	int col = s->col;
+
+	if (row - 1 >= 0) s->neighbours[Up] = &grid[row][col - 1];
+	if (row + 1 < size) s->neighbours[Down] = &grid[row][col + 1];
+	if (col - 1 >= 0) s->neighbours[Left] = &grid[row - 1][col];
+	if (col + 1 < size) s->neighbours[Right] = &grid[row + 1][col];
+}
+
+/*
+ * loadLevel(level) changes current level
+ * to match the level parameter
+ *
+ * level 0 is loaded from sequence.txt
+ */
 void Board::loadLevel(int level) {
 
 	if (level == 0) {
@@ -63,6 +87,14 @@ void Board::loadLevel(int level) {
 				grid[i][j].colour = colour;
 				grid[i][j].type = type;
 
+
+				grid[i][j].neighbours[Up] = (i - 1 >= 0)? &grid[i - 1][j] : 0;
+				grid[i][j].neighbours[Down] =  (i + 1 < size)? &grid[i + 1][j] : 0;
+				grid[i][j].neighbours[Left] = (j - 1 >= 0)? &grid[i][j - 1] : 0;
+				grid[i][j].neighbours[Right] = (j + 1 < size)? &grid[i][j + 1] : 0;
+
+				//setNeighbours(&grid[i][j]);
+
 				view->setColour(i, j, colour);
 				view->setType(i, j, type);
 				view->setScore(score);
@@ -70,9 +102,22 @@ void Board::loadLevel(int level) {
 			}
 		}
 	}
+
+	for (int i = 0; i < size; i++) {
+		for (int j = 0; j < size; j++) {
+			cerr << i << "," << j << ": ";
+			cerr << "asl;kdjafskldfjal;ski;kjsdfl;jkU=" << grid[i][j].neighbours[(int)Up]->colour;
+			cerr << "D=" << grid[i][j].neighbours[(int)Down]->colour;
+			cerr << "L=" << grid[i][j].neighbours[(int)Left]->colour;
+			cerr << "R=" << grid[i][j].neighbours[(int)Right]->colour;
+			cerr << endl;
+		}
+	}
 }
 
-// helper. swaps member values of a and b
+/* 
+ * swaps member values of a and b
+ */
 void _swap(Square &a, Square &b) {
 	int tRow = a.row;
 	int tCol = a.col;
@@ -90,6 +135,13 @@ void _swap(Square &a, Square &b) {
 	b.type = tType;
 }
 
+/*
+ * swapMechanism(row, col, d) is the core mechanism
+ * needed to perform the swap
+ *
+ * it has been made seperate as other methods can use
+ * this mechanism, specifically hint()
+ */
 void Board::swapMechanism(int row, int col, Direction d) {
 
 	// safe guard against invalid swaps
@@ -101,7 +153,8 @@ void Board::swapMechanism(int row, int col, Direction d) {
 		return;
 	}
 
-	Square a = grid[row][col], b;
+	Square a = grid[row][col];
+	Square b = Square();
 
 	switch (d) {
 		case Up: b = grid[row - 1][col]; break;
@@ -113,6 +166,10 @@ void Board::swapMechanism(int row, int col, Direction d) {
 	_swap(a, b);
 }
 
+/*
+ * uses swapMechanism to make the swap
+ * draws the updated grid after
+ */
 void Board::swap(int row, int col, Direction d) {
 
 	swapMechanism(row, col, d);

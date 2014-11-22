@@ -32,7 +32,10 @@ class Board {
 	//std::vector<Square *> matched;
 
 	// sets the values of a particular square
-	void setSquare(int row, int col, Colour colour, Type type);
+	//void setSquare(int row, int col, Colour colour, Type type);
+
+	// sets the neighbours of s
+	void setNeighbours(Square *s);
 
 	// loads level, either randomly generated
 	// or from provided file
