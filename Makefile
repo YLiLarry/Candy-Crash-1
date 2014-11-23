@@ -1,7 +1,7 @@
 CXX = g++
-CXXFLAGS = -Wall -MMD -DDEBUG_VIEW
+CXXFLAGS = -Wall -MMD -DEBUG #-DDEBUG_VIEW
 EXEC = main
-OBJECTS = view/cellviewabstract.o view/textview/textview.o view/view.o control/game.o model/board.o main.o
+OBJECTS = view/cellviewabstract.o view/textview/textview.o view/view.o control/game.o model/board.o model/square.o main.o
 DEPENDS = ${OBJECTS:.o=.d}
 
 

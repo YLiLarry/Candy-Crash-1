@@ -33,6 +33,8 @@ class Board {
 	// or from provided file
 	void loadLevel(int level);
 
+	std::vector<Square *> matched;
+
 	// takes in the coordinates of a square anc checks
 	// if it is matching set, if it is then findMatches
 	// returns a vector of squares that should be cleared
@@ -63,6 +65,7 @@ class Board {
 	// when there are no matches (matched is empty)
 	void chainReaction();
 
+	void clearSquares();
 	public:
 	Board(int n);
 	~Board();

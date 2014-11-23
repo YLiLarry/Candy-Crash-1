@@ -8,7 +8,6 @@ using namespace std;
 Board::Board(int n) : size(n) {
 	// initializing grid
 	grid = new Square *[size];
-
 	for (int i = 0; i < size; i++) {
 		grid[i] = new Square[size];
 	}
@@ -19,15 +18,6 @@ Board::Board(int n) : size(n) {
 	view = new View(size);
 	loadLevel(level);
 	view->draw();
-
-#ifdef DEBUG
-	for (int i = 0; i < size; i++) {
-		for (int j = 0; j < size; j++) {
-			cerr << grid[i][j].colour << " ";
-		}
-		cerr << endl;
-	}
-#endif
 }
 
 Board::~Board() {
@@ -52,10 +42,6 @@ void Board::loadLevel(int level) {
 
 				file >> square;
 
-				// not used at the moment
-				//int advanced;
-				//advanced = (square[0] == '_') ? 0 : (square[0] - '0');
-
 				Type type;
 
 				switch (square[1]) {
@@ -66,13 +52,20 @@ void Board::loadLevel(int level) {
 					case 'p': type = Psychedelic; break;
 				}
 
-				Colour colour;
-				colour = (Colour)(square[2] - '0');
+				Colour colour = (Colour)(square[2] - '0');
 
 				grid[i][j].row = i;
 				grid[i][j].col = j;
 				grid[i][j].colour = colour;
 				grid[i][j].type = type;
+				grid[i][j].view = view;
+
+				// setting neighbours
+				
+				if (i - 1 >= 0) grid[i][j].neighbour[Up] = &grid[i - 1][j];
+				if (i + 1 < size) grid[i][j].neighbour[Down] = &grid[i + 1][j];
+				if (j - 1 >= 0) grid[i][j].neighbour[Left] = &grid[i][j - 1];
+				if (i + 1 < size) grid[i][j].neighbour[Right] = &grid[i][j + 1];
 
 				view->setColour(i, j, colour);
 				view->setType(i, j, type);
@@ -83,85 +76,10 @@ void Board::loadLevel(int level) {
 	}
 }
 
-void swapWith(Square &a, Square &b) {
-#ifdef DEBUG
-	cerr << "square a: " << endl;
-	cerr << "row: " << a.row << " col: "<< a.col << endl;
-	cerr << "colour: " << a.colour << " type: " << a.type << endl;
-
-	cerr << endl << "square b: " << endl;
-	cerr << "row: " << b.row << " col: "<< b.col << endl;
-	cerr << "colour: " << b.colour << " type: " << b.type << endl;
-#endif
-
-	int tRow = a.row;
-	int tCol = a.col;
-	Colour tColour = a.colour;
-	Type tType = a.type;
-
-	a.row = b.row;
-	a.col = b.col;
-	a.colour = b.colour;
-	a.type = b.type;
-
-	b.row = tRow;
-	b.col = tCol;
-	b.colour = tColour;
-	b.type = tType;
-
-#ifdef DEBUG
-	cerr << endl;
-
-	cerr << "square a: " << endl;
-	cerr << "row: " << a.row << " col: "<< a.col << endl;
-	cerr << "colour: " << a.colour << " type: " << a.type << endl;
-
-	cerr << endl << "square b: " << endl;
-	cerr << "row: " << b.row << " col: "<< b.col << endl;
-	cerr << "colour: " << b.colour << " type: " << b.type << endl;
-#endif
-}
-
 void Board::swap(int row, int col, Direction d) {
 
-	vector<Square *> matched;
-	switch (d) {
-		case Up: swapWith(grid[row][col], grid[row - 1][col]);
-				 matched = findMatches(row - 1, col);
-				 break;
-		case Down: swapWith(grid[row][col], grid[row + 1][col]);
-				   matched = findMatches(row + 1, col);
-				   break;
-		case Left: swapWith(grid[row][col], grid[row][col - 1]);
-				   matched = findMatches(row, col - 1);
-				   break;
-		case Right: swapWith(grid[row][col], grid[row][col + 1]);
-					matched = findMatches(row, col + 1);
-					break;
-	}
-
-	view->swap(row, col, d);
+	grid[row][col].swapWith(d);
 	view->draw();
-
-	// test
-
-	cerr << "----matched---" << endl;
-	for (int i = 0; i < (int)matched.size(); i++) {
-		//cerr << "row: " << matched[i]->row 
-			//<< " col: " << matched[i]->col << endl;
-		cerr << "colour: " << matched[i]->colour << endl;
-		//cerr << "type: " << matched[i]->colour << endl;
-	}
-
-#ifdef DEBUG
-	for (int i = 0; i < size; i++) {
-		for (int j = 0; j < size; j++) {
-			cerr << grid[i][j].colour << " ";
-		}
-		cerr << endl;
-	}
-#endif
-
 }
 
 vector<Square *> Board::findMatches(int row, int col) {
