@@ -95,58 +95,162 @@ void Board::swap(int row, int col, Direction d) {
 	for (int i = 0; i < size; i++) {
 		for (int j = 0; j < size; j++) {
 
-			cerr << grid[i][j].ready << " ";
+			cerr << grid[i][j].notified << grid[i][j].ready << " ";
 		}
 		cerr << endl;
 	}
+
+	// swap location
+	clearSquares(*grid[row][col].neighbour[d]);
+	// original location
+	clearSquares(grid[row][col]);
+
+	view->draw();
 }
+/*
+ *bool isBasicHorizontal(Square &root) {
+ *    int sum = 0;
+ *}
+ *
+ *bool isUnstable(Square &root) {
+ *    if (root.neighbour[Up] && root.neighbour[Right]) {
+ *
+ *    } else if (root.neighbour[Up] && root.neighbour[Left]) {
+ *
+ *    } else if (root.neighbour[Down] && root.neighbour[Right]) {
+ *
+ *    } else if (root.neighbour[Down] && root.neighbour[Left]) {
+ *
+ *    } else {
+ *        return false;
+ *    }
+ *}
+ */
 
-vector<Square *> Board::findMatches(int row, int col) {
-	vector<Square *> matched;
+void Board::clearSquares(Square &root) {
+	hMatch.clear();
+	vMatch.clear();
 
-	Colour colour = grid[row][col].colour;
-	//Type type = swapped->type;
+	int row = root.row;
+	int col = root.col;
 
-	// check horizontally for matching set of three
-	for (int c = 0; c < size; c++) {
-		if (c + 1 < size && c + 2 < size) {
-			if (grid[row][c].colour == colour &&
-					grid[row][c + 1].colour == colour &&
-					grid[row][c + 2].colour == colour) {
+	// left side
+	for (int c = col - 1; c >= 0; c--) {
+		if (grid[row][c].ready) {
+			hMatch.push_back(&grid[row][c]);
+		}
+	}
 
-				matched.push_back(&grid[row][c]);
-				matched.push_back(&grid[row][c + 1]);
-				matched.push_back(&grid[row][c + 2]);
+	// self
+	if (grid[row][col].ready) {
+		hMatch.push_back(&grid[row][col]);
+	}
 
-				// add the rest (if any to matched vector)
-				c++;
-				while (grid[row][c].colour == colour) {
-					matched.push_back(&grid[row][c]);
-					c++;
+	// right	
+	for (int c = col + 1; c < size; c++) {
+		if (grid[row][c].ready) {
+			hMatch.push_back(&grid[row][c]);
+		}
+	}
+
+	// up
+	for (int r = row - 1; r >= 0; r--) {
+		if (grid[r][col].ready) {
+			vMatch.push_back(&grid[r][col]);
+		}
+	}
+
+	// self
+	if (grid[row][col].ready) {
+		vMatch.push_back(&grid[row][col]);
+	}
+
+	// down
+	for (int r = row + 1; r < size; r++) {
+		if (grid[r][col].ready) {
+			vMatch.push_back(&grid[r][col]);
+		}
+	}
+
+	if (hMatch.size() >= 3 && vMatch.size() >= 3) {
+		cerr << "L MATCH" << endl;
+
+		for (int i = 0; i < (int)hMatch.size(); i++) {
+			cerr << "clearing: (" << hMatch[i]->row << "," << hMatch[i]->col << ")" << endl;
+		}
+
+		for (int i = 0; i < (int)vMatch.size(); i++) {
+			cerr << "clearing: (" << vMatch[i]->row << "," << vMatch[i]->col << ")" << endl;
+		}
+	}
+
+	if (hMatch.size() >= 3 && vMatch.size() < 3) {
+		cerr << "HORIZONTAL MATCH" << endl;
+
+		if (vMatch.size() == 4) {
+			cerr << "LATERAL SQUARE" << endl; 
+			for (int i = 0; i < (int)hMatch.size(); i++) {
+				cerr << "clearing: (" << hMatch[i]->row << "," << hMatch[i]->col << ")" << endl;
+
+				// set type
+				if (i == 1) {
+					// if basic type
+					hMatch[i]->type = Lateral;
+					// else
+				} else {
+					// if Basic type
+					hMatch[i]->colour = Empty;
+					// else
 				}
 			}
 		}
 	}
 
-	// check vertically for matching set of three
-	for (int r = 0; r < size; r++) {
-		if (r + 1 < size && r + 2 < size) {
-			if (grid[r][col].colour == colour &&
-					grid[r + 1][col].colour == colour &&
-					grid[r + 2][col].colour == colour) {
+	if (hMatch.size() < 3 && vMatch.size() >=3) {
+		cerr << "VERTICAL MATCH" << endl;
 
-				matched.push_back(&grid[r][col]);
-				matched.push_back(&grid[r + 1][col]);
-				matched.push_back(&grid[r + 2][col]);
+		if (vMatch.size() == 4) {
+			cerr << "UPRIGHT SQUARE" << endl;
+			for (int i = 0; i < (int)vMatch.size(); i++) {
+				cerr << "clearing: (" << vMatch[i]->row << "," << vMatch[i]->col << ")" << endl;
 
-				r++;
-				while (grid[r][col].colour == colour) {
-					matched.push_back(&grid[r][col]);
-					r++;
+				// set type
+				if (i == 1) {
+					// if basic type
+					vMatch[i]->type = Upright;
+					// else
+				} else {
+					// if basic type
+					vMatch[i]->colour = Empty;
+					// else
+				}
+			}
+		}
+
+		if (vMatch.size() == 5) {
+			cerr << "PSYCHEDELIC SQUARE" << endl;
+
+			for (int i = 0; i < (int)vMatch.size(); i++) {
+				cerr << "clearing: (" << vMatch[i]->row << "," << vMatch[i]->col << ")" << endl;
+
+				if (vMatch[i]->type == Basic) {
+					vMatch[i]->setColour(Empty);
+					vMatch[i]->notified = false;
+					vMatch[i]->ready = false;
+				} else if (vMatch[i]->type == Lateral) {
+
+				} else if (vMatch[i]->type == Upright) {
+
+				} else if (vMatch[i]->type == Unstable) {
+
+				} else if (vMatch[i]->type == Psychedelic) {
+
 				}
 			}
 		}
 	}
 
-	return matched;
+	if (hMatch.size() < 3 && vMatch.size() < 3) {
+		cerr << "NO MATCH" << endl;
+	}
 }

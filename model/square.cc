@@ -35,7 +35,7 @@ void Square::swapWith(Direction d) {
 
 void Square::notify() {
 
-	cerr << "I have been notified (" << row << "," << col << ")" << endl;
+	//cerr << "I have been notified (" << row << "," << col << ")" << endl;
 
 	notified = true;
 
@@ -66,10 +66,15 @@ void Square::notify() {
 
 void Square::notifyNeighbours() {
 	for (int i = 0; i < 4; i++) {
-		if (neighbour[i] && neighbour[i]->colour == colour && !neighbour[i]->notified) {
+		if (neighbour[i] && neighbour[i]->colour == colour && !neighbour[i]->notified && neighbour[i]->colour != Empty) {
 			neighbour[i]->notify();
 		}
 	}
+}
+
+void Square::setColour(Colour c) {
+	this->colour = c;
+	view->setColour(this->row, this->col, this->colour);
 }
 
 void Square::printInfo() {
@@ -80,3 +85,4 @@ void Square::printInfo() {
 	cerr << "notified: " << notified << endl;
 	cerr << "----------------------" << endl;
 }
+

@@ -28,6 +28,7 @@ class Square {
 	void notifyNeighbours();
 	void drop(); // drop if hole below
 
+	void setColour(Colour c);
 #define SQUAREDEBUG
 #ifdef SQUAREDEBUG
 	void printInfo();
