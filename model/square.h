@@ -8,6 +8,7 @@
 
 class Square {
 	void notify();
+	void notify(Direction d);
 
 	public:
 	int row;
@@ -20,10 +21,17 @@ class Square {
 
 	bool ready;
 
+	bool notified;
+
 	Square();
 	void swapWith(Direction d);
 	void notifyNeighbours();
 	void drop(); // drop if hole below
+
+#define SQUAREDEBUG
+#ifdef SQUAREDEBUG
+	void printInfo();
+#endif
 };
 
 #endif

@@ -30,10 +30,17 @@ Board::~Board() {
 }
 
 void Board::loadLevel(int level) {
-
 	if (level == 0) {
 
+#ifdef MATCH_TEST
+		cerr << "file name: ";
+		string f;
+		cin >> f;
+		ifstream file(("levels/" + f).c_str());
+#else
 		ifstream file("sequence.txt");
+#endif
+
 
 		string square;
 
@@ -62,10 +69,14 @@ void Board::loadLevel(int level) {
 
 				// setting neighbours
 				
-				if (i - 1 >= 0) grid[i][j].neighbour[Up] = &grid[i - 1][j];
-				if (i + 1 < size) grid[i][j].neighbour[Down] = &grid[i + 1][j];
-				if (j - 1 >= 0) grid[i][j].neighbour[Left] = &grid[i][j - 1];
-				if (i + 1 < size) grid[i][j].neighbour[Right] = &grid[i][j + 1];
+				if (i - 1 >= 0) 
+					grid[i][j].neighbour[Up] = &grid[i - 1][j];
+				if (i + 1 < size) 
+					grid[i][j].neighbour[Down] = &grid[i + 1][j];
+				if (j - 1 >= 0) 
+					grid[i][j].neighbour[Left] = &grid[i][j - 1];
+				if (j + 1 < size) 
+					grid[i][j].neighbour[Right] = &grid[i][j + 1];
 
 				view->setColour(i, j, colour);
 				view->setType(i, j, type);
@@ -80,6 +91,14 @@ void Board::swap(int row, int col, Direction d) {
 
 	grid[row][col].swapWith(d);
 	view->draw();
+
+	for (int i = 0; i < size; i++) {
+		for (int j = 0; j < size; j++) {
+
+			cerr << grid[i][j].ready << " ";
+		}
+		cerr << endl;
+	}
 }
 
 vector<Square *> Board::findMatches(int row, int col) {
