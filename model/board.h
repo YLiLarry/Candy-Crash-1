@@ -41,6 +41,9 @@ class Board {
 	// or from provided file
 	void loadLevel(int level);
 
+	std::vector<Square *> hMatch;
+	std::vector<Square *> vMatch;
+
 	// takes in the coordinates of a square anc checks
 	// if it is matching set, if it is then findMatches
 	// returns a vector of squares that should be cleared
@@ -75,6 +78,10 @@ class Board {
 
 	bool hasMove();
 
+
+	void clearSquares(Square &root, Direction d);
+	void clearSquares(Square &root);
+	void getMatches(Square &root);
 
 	public:
 

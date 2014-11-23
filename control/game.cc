@@ -29,7 +29,7 @@ bool isValidSwap(int row, int col, Direction dir) {
 // the main command interpreter
 void Game::startGame() {
 
-	board = new Board(5);
+	board = new Board(10);
 	string command;
 
 	while (cin >> command) {
@@ -46,7 +46,7 @@ void Game::startGame() {
 
 		} else if (command == "hint") {
 
-			board->hint();
+			//board->hint();
 
 		} else if (command == "scramble") {
 

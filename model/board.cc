@@ -11,7 +11,7 @@ using namespace std;
  * n is for building an n x n grid
  */
 Board::Board(int n) : size(n) {
-
+	// initializing grid
 	grid = new Square *[size];
 	for (int i = 0; i < size; i++) {
 		grid[i] = new Square[size];
@@ -23,7 +23,6 @@ Board::Board(int n) : size(n) {
 	view = new View(size);
 
 	loadLevel(level);
-
 	view->draw();
 }
 
@@ -57,10 +56,17 @@ void Board::setNeighbours(Square *s) {
  * level 0 is loaded from sequence.txt
  */
 void Board::loadLevel(int level) {
-
 	if (level == 0) {
 
+#ifdef MATCH_TEST
+		cerr << "file name: ";
+		string f;
+		cin >> f;
+		ifstream file(("levels/" + f).c_str());
+#else
 		ifstream file("sequence.txt");
+#endif
+
 
 		string square;
 
@@ -79,13 +85,24 @@ void Board::loadLevel(int level) {
 					case 'p': type = Psychedelic; break;
 				}
 
-				Colour colour;
-				colour = (Colour)(square[2] - '0');
+				Colour colour = (Colour)(square[2] - '0');
 
 				grid[i][j].row = i;
 				grid[i][j].col = j;
 				grid[i][j].colour = colour;
 				grid[i][j].type = type;
+				grid[i][j].view = view;
+
+				// setting neighbours
+
+				if (i - 1 >= 0) 
+					grid[i][j].neighbour[Up] = &grid[i - 1][j];
+				if (i + 1 < size) 
+					grid[i][j].neighbour[Down] = &grid[i + 1][j];
+				if (j - 1 >= 0) 
+					grid[i][j].neighbour[Left] = &grid[i][j - 1];
+				if (j + 1 < size) 
+					grid[i][j].neighbour[Right] = &grid[i][j + 1];
 
 
 				grid[i][j].neighbours[Up] = (i - 1 >= 0)? &grid[i - 1][j] : 0;
@@ -102,184 +119,197 @@ void Board::loadLevel(int level) {
 			}
 		}
 	}
-
-	for (int i = 0; i < size; i++) {
-		for (int j = 0; j < size; j++) {
-			cerr << i << "," << j << ": ";
-			cerr << "asl;kdjafskldfjal;ski;kjsdfl;jkU=" << grid[i][j].neighbours[(int)Up]->colour;
-			cerr << "D=" << grid[i][j].neighbours[(int)Down]->colour;
-			cerr << "L=" << grid[i][j].neighbours[(int)Left]->colour;
-			cerr << "R=" << grid[i][j].neighbours[(int)Right]->colour;
-			cerr << endl;
-		}
-	}
 }
 
-/* 
- * swaps member values of a and b
- */
-void _swap(Square &a, Square &b) {
-	int tRow = a.row;
-	int tCol = a.col;
-	Colour tColour = a.colour;
-	Type tType = a.type;
 
-	a.row = b.row;
-	a.col = b.col;
-	a.colour = b.colour;
-	a.type = b.type;
-
-	b.row = tRow;
-	b.col = tCol;
-	b.colour = tColour;
-	b.type = tType;
-}
-
-/*
- * swapMechanism(row, col, d) is the core mechanism
- * needed to perform the swap
- *
- * it has been made seperate as other methods can use
- * this mechanism, specifically hint()
- */
-void Board::swapMechanism(int row, int col, Direction d) {
-
-	// safe guard against invalid swaps
-	if ((row == 0 && d == Up) ||
-		(col == 0 && d == Left) ||
-		(row == size - 1 && d == Down) ||
-		(col == size - 1 && d == Right)) {
-
-		return;
-	}
-
-	Square a = grid[row][col];
-	Square b = Square();
-
-	switch (d) {
-		case Up: b = grid[row - 1][col]; break;
-		case Down: b = grid[row + 1][col]; break;
-		case Left: b = grid[row][col - 1]; break;
-		case Right: b = grid[row][col + 1]; break;
-	}
-
-	_swap(a, b);
-}
-
-/*
- * uses swapMechanism to make the swap
- * draws the updated grid after
- */
 void Board::swap(int row, int col, Direction d) {
 
-	swapMechanism(row, col, d);
+	grid[row][col].swapWith(d);
+	view->draw();
 
-	view->swap(row, col, d);
+	clearSquares(*grid[row][col].neighbour[d]);
+	clearSquares(grid[row][col]);
+
 	view->draw();
 }
 
-vector<Square *> Board::findMatches(int row, int col) {
-	vector<Square *> matched;
+/*
+ *bool isBasicHorizontal(Square &root) {
+ *    int sum = 0;
+ *}
+ *
+ *bool isUnstable(Square &root) {
+ *    if (root.neighbour[Up] && root.neighbour[Right]) {
+ *
+ *    } else if (root.neighbour[Up] && root.neighbour[Left]) {
+ *
+ *    } else if (root.neighbour[Down] && root.neighbour[Right]) {
+ *
+ *    } else if (root.neighbour[Down] && root.neighbour[Left]) {
+ *
+ *    } else {
+ *        return false;
+ *    }
+ *}
+ */
 
-	Colour colour = grid[row][col].colour;
-	//Type type = swapped->type;
+void _clearVec(vector<Square *> match) {
 
-	// check horizontally for matching set of three
-	for (int c = 0; c < size; c++) {
-		if (c + 1 < size && c + 2 < size) {
-			if (grid[row][c].colour == colour &&
-					grid[row][c + 1].colour == colour &&
-					grid[row][c + 2].colour == colour) {
+	for (int i = 0; i < (int)match.size(); i++) {
+		cerr << "clearing: (" << match[i]->row << "," << match[i]->col << ")" << endl;
 
-				matched.push_back(&grid[row][c]);
-				matched.push_back(&grid[row][c + 1]);
-				matched.push_back(&grid[row][c + 2]);
+		if (match[i]->type == Basic) {
+			match[i]->setColour(Empty);
+			match[i]->notified = false;
+			match[i]->ready = false;
+		} else if (match[i]->type == Lateral) {
 
-				// add the rest (if any to matched vector)
-				c++;
-				while (grid[row][c].colour == colour) {
-					matched.push_back(&grid[row][c]);
-					c++;
-				}
-			}
+		} else if (match[i]->type == Upright) {
+
+		} else if (match[i]->type == Unstable) {
+
+		} else if (match[i]->type == Psychedelic) {
+
+		}
+	}
+}
+
+void Board::clearSquares(Square &root) {
+	hMatch.clear();
+	vMatch.clear();
+
+	int row = root.row;
+	int col = root.col;
+
+	// left
+	for (int c = col - 1; c >= 0; c--) {
+		if (grid[row][c].ready) {
+			hMatch.push_back(&grid[row][c]);
+		}
+	}
+	// self
+	if (grid[row][col].ready) {
+		hMatch.push_back(&grid[row][col]);
+	}
+	// right	
+	for (int c = col + 1; c < size; c++) {
+		if (grid[row][c].ready) {
+			hMatch.push_back(&grid[row][c]);
+		}
+	}
+	// up
+	for (int r = row - 1; r >= 0; r--) {
+		if (grid[r][col].ready) {
+			vMatch.push_back(&grid[r][col]);
+		}
+	}
+	// self
+	if (grid[row][col].ready) {
+		vMatch.push_back(&grid[row][col]);
+	}
+	// down
+	for (int r = row + 1; r < size; r++) {
+		if (grid[r][col].ready) {
+			vMatch.push_back(&grid[r][col]);
 		}
 	}
 
-	// check vertically for matching set of three
-	for (int r = 0; r < size; r++) {
-		if (r + 1 < size && r + 2 < size) {
-			if (grid[r][col].colour == colour &&
-					grid[r + 1][col].colour == colour &&
-					grid[r + 2][col].colour == colour) {
+	if (hMatch.size() == 3 && vMatch.size() == 3) {
+		cerr << "L MATCH" << endl;
 
-				matched.push_back(&grid[r][col]);
-				matched.push_back(&grid[r + 1][col]);
-				matched.push_back(&grid[r + 2][col]);
+		_clearVec(hMatch);
+		_clearVec(vMatch);
 
-				r++;
-				while (grid[r][col].colour == colour) {
-					matched.push_back(&grid[r][col]);
-					r++;
-				}
-			}
+		root.setType(Unstable);
+	}
+
+	if (hMatch.size() >= 3 && vMatch.size() < 3) {
+		cerr << "HORIZONTAL MATCH" << endl;
+
+		_clearVec(hMatch);
+
+		if (vMatch.size() == 4) {
+			cerr << "LATERAL SQUARE" << endl; 
+			root.setType(Lateral);
+		} else if (vMatch.size() == 5) {
+			cerr << "PSYCHEDELIC SQUARE" << endl;
+			root.setType(Psychedelic);
 		}
 	}
 
-	return matched;
+	if (hMatch.size() < 3 && vMatch.size() >=3) {
+		cerr << "VERTICAL MATCH" << endl;
+
+		_clearVec(vMatch);
+
+		if (vMatch.size() == 4) {
+			cerr << "UPRIGHT SQUARE" << endl;
+			root.setType(Upright);
+		} else if (vMatch.size() == 5) {
+			cerr << "PSYCHEDELIC SQUARE" << endl;
+			root.setType(Psychedelic);
+		}
+	}
+
+	if (hMatch.size() < 3 && vMatch.size() < 3) {
+		cerr << "NO MATCH" << endl;
+	}
 }
 
-string Board:: validMove() {
-    #if DEBUG_BOARD
-        fprintf(stderr,"BOARD:: validMove()\n");
-    #endif
-	ostringstream ss;
-    Board b(this->size);
-    for (int i = 0; i < this->size; i++) {
-        for (int j = 0; j < this->size; j++) {
-            b.grid[i][j] = this->grid[i][j];
-        }
-    }
-    for (int i = 0; i < this->size; i++) {
-        for (int j = 0; j < this->size; j++) {
-            b.swapMechanism(i,j,Up);
-            if (! b.findMatches(i,j).empty()) {
-            	ss << i << " " << j << " " << (int)Up;
-            	return ss.str();
-            };
-            b.swapMechanism(i,j,Up);
-            b.swapMechanism(i,j,Down);
-            if (! b.findMatches(i,j).empty()) {
-            	ss << i << " " << j << " " << (int)Down;
-            	return ss.str();
-            };
-            b.swapMechanism(i,j,Down);
-            b.swapMechanism(i,j,Left);
-            if (! b.findMatches(i,j).empty()) {
-            	ss << i << " " << j << " " << (int)Left;
-            	return ss.str();
-            };
-            b.swapMechanism(i,j,Left);
-            b.swapMechanism(i,j,Right);
-            if (! b.findMatches(i,j).empty()) {
-            	ss << i << " " << j << " " << (int)Right;
-            	return ss.str();
-            };
-        }
-    }
-    return string();
-}
-
-bool Board:: hasMove() {
-    return this->validMove().length();
-}
-
-void Board:: hint() {
-    string str = validMove();
-    #if DEBUG_BOARD
-        fprintf(stderr,"BOARD hint(%s)\n",str.c_str());
-    #endif
-    view->print(str);
-}
+/*
+ *string Board:: validMove() {
+ *    #if DEBUG_BOARD
+ *        fprintf(stderr,"BOARD:: validMove()\n");
+ *    #endif
+ *    ostringstream ss;
+ *    Board b(this->size);
+ *    for (int i = 0; i < this->size; i++) {
+ *        for (int j = 0; j < this->size; j++) {
+ *            b.grid[i][j] = this->grid[i][j];
+ *        }
+ *    }
+ *    for (int i = 0; i < this->size; i++) {
+ *        for (int j = 0; j < this->size; j++) {
+ *            b.swapMechanism(i,j,Up);
+ *            if (! b.findMatches(i,j).empty()) {
+ *            	ss << i << " " << j << " " << (int)Up;
+ *            	return ss.str();
+ *            };
+ *            b.swapMechanism(i,j,Up);
+ *            b.swapMechanism(i,j,Down);
+ *            if (! b.findMatches(i,j).empty()) {
+ *            	ss << i << " " << j << " " << (int)Down;
+ *            	return ss.str();
+ *            };
+ *            b.swapMechanism(i,j,Down);
+ *            b.swapMechanism(i,j,Left);
+ *            if (! b.findMatches(i,j).empty()) {
+ *            	ss << i << " " << j << " " << (int)Left;
+ *            	return ss.str();
+ *            };
+ *            b.swapMechanism(i,j,Left);
+ *            b.swapMechanism(i,j,Right);
+ *            if (! b.findMatches(i,j).empty()) {
+ *            	ss << i << " " << j << " " << (int)Right;
+ *            	return ss.str();
+ *            };
+ *        }
+ *    }
+ *    return string();
+ *}
+ *
+ *bool Board:: hasMove() {
+ *    return this->validMove().length();
+ *}
+ *
+ *void Board:: hint() {
+ *    string str = validMove();
+ *    #if DEBUG_BOARD
+ *        fprintf(stderr,"BOARD hint(%s)\n",str.c_str());
+ *    #endif
+ *    view->print(str);
+ *}
+ */
 
 void Board::scramble() {
 
