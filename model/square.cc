@@ -16,8 +16,7 @@ Square::Square() {
 	view = NULL;
 }
 
-void Square::swapWith(Direction d) {
-
+void Square::swap(Direction d) {
 	Colour tColour = colour;
 	Type tType = type;
 
@@ -27,15 +26,22 @@ void Square::swapWith(Direction d) {
 	neighbour[d]->colour =tColour;
 	neighbour[d]->type = tType;
 
+	view->swap(row, col, d);
+}
+
+void Square::swapWith(Direction d) {
+
+	swap(d);
+
 	neighbour[d]->notify();
 	notify();
-
-	view->swap(row, col, d);
 }
 
 void Square::notify() {
 
 	//cerr << "I have been notified (" << row << "," << col << ")" << endl;
+
+	//printInfo();
 
 	notified = true;
 
@@ -44,6 +50,7 @@ void Square::notify() {
 		if (neighbour[Left]->colour == colour &&
 			neighbour[Right]->colour == colour) {
 
+			cerr << "a horizontal match" << endl;
 			ready = true;
 			neighbour[Left]->ready = true;
 			neighbour[Right]->ready = true;
@@ -55,6 +62,7 @@ void Square::notify() {
 		if (neighbour[Up]->colour == colour &&
 			neighbour[Down]->colour == colour) {
 
+			cerr << "a vertical match" << endl;
 			ready = true;
 			neighbour[Up]->ready = true;
 			neighbour[Down]->ready = true;
@@ -66,10 +74,43 @@ void Square::notify() {
 
 void Square::notifyNeighbours() {
 	for (int i = 0; i < 4; i++) {
-		if (neighbour[i] && neighbour[i]->colour == colour && !neighbour[i]->notified && neighbour[i]->colour != Empty) {
+		if (neighbour[i] && // not null
+			neighbour[i]->colour == this->colour && // same colour
+			neighbour[i]->colour != Empty && // not empty
+			neighbour[i]->notified == false) { // not notified 
 			neighbour[i]->notify();
 		}
 	}
+}
+
+void Square::unNotifyNeighbours() {
+	//cerr << "unnotifying (" << row << "," << col << ")" << endl;
+	this->notified = false;
+
+	for (int i = 0; i < 4; i++) {
+		if (neighbour[i] && neighbour[i]->notified) {
+			neighbour[i]->unNotifyNeighbours();
+		}
+	}
+}
+
+int Square::getRow() {
+	return this->row;
+}
+void Square::setRow(int r) {
+	this->row = r;
+}
+
+int Square::getCol() {
+	return this->col;
+}
+
+void Square::setCol(int c) {
+	this->col = c;
+}
+
+Colour Square::getColour() {
+	return this->colour;
 }
 
 void Square::setColour(Colour c) {
@@ -77,10 +118,24 @@ void Square::setColour(Colour c) {
 	view->setColour(this->row, this->col, this->colour);
 }
 
+Type Square::getType() {
+	return this->type;
+}
+
 void Square::setType(Type t) {
 	this->type = t;
 	view->setType(this->row, this->col, this->type);
 }
+
+void Square::setNeighbour(Square *neighbour, Direction d) {
+	this->neighbour[d] = neighbour;
+}
+
+void Square::setView(View *v) {
+	this->view = v;
+}
+
+
 
 void Square::printInfo() {
 	cerr << "---- Square (" << this->row << "," << this->col << ") ----" << endl;

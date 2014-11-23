@@ -7,8 +7,9 @@
 #include <vector>
 
 class Square {
+	
 	void notify();
-	void notify(Direction d);
+	void notifyNeighbours();
 
 	public:
 
@@ -16,22 +17,37 @@ class Square {
 	int col;
 	Colour colour;
 	Type type;
-	Square *neighbours[4];
 
-	Square *neighbour[4];
 	View *view;
 
-	bool ready;
 
+	Square *neighbour[4];
+
+	bool ready;
 	bool notified;
 
 	Square();
+	void swap(Direction d);
 	void swapWith(Direction d);
-	void notifyNeighbours();
+
+	void unNotifyNeighbours();
+
 	void drop(); // drop if hole below
 
+	int getRow();
+	void setRow(int r);
+
+	int getCol();
+	void setCol(int c);
+
+	Colour getColour();
 	void setColour(Colour c);
+
+	Type getType();
 	void setType(Type t);
+
+	void setNeighbour(Square *neighbour, Direction d);
+	void setView(View *v);
 
 #define SQUAREDEBUG
 #ifdef SQUAREDEBUG

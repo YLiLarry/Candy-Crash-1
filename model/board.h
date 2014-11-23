@@ -28,6 +28,8 @@ class Board {
 	// determines when to auto level up/down
 	int score;
 
+	int turnScore;
+
 	// matched squares
 	//std::vector<Square *> matched;
 
@@ -80,8 +82,9 @@ class Board {
 
 
 	void clearSquares(Square &root, Direction d);
-	void clearSquares(Square &root);
+	bool clearSquares(Square &root);
 	void getMatches(Square &root);
+	int appendMatchVectors(Square &root);
 
 	public:
 
@@ -99,6 +102,9 @@ class Board {
 	void restart();
 
 	void hint();
+
+	// development
+	void printGridInfo();
 };
 
 #endif
