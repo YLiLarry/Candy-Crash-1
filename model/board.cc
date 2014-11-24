@@ -115,7 +115,8 @@ void Board::printGridInfo() {
 
 void Board::swap(int row, int col, Direction d) {
 
-	turnScore = 0;
+	//turnScore = 0;
+	//nMatch = 0;
 
 	grid[row][col].swapWith(d);
 	view->draw();
@@ -127,6 +128,7 @@ void Board::swap(int row, int col, Direction d) {
 
 	if (m1 || m2) {
 		cerr << "turn score: " << turnScore << endl;
+		cerr << nMatch << endl;
 	} else {
 		grid[row][col].swap(d);
 	}
@@ -138,41 +140,104 @@ void Board::swap(int row, int col, Direction d) {
 	view->draw();
 }
 
-void _emptyColours(vector<Square *> matched, Square *except) {
 
-	int n = matched.size();
 
-	for (int i = 0; i < n; i++) {
 
-		if (matched[i] != except) {
-			matched[i]->setColour(Empty);
+void Board::clearSquare(Square &sq) {
+
+	sq.setColour(Empty);
+	sq.ready = false;
+	nMatch++;
+
+	if (sq.getType() == Lateral) {
+
+		sq.setType(Basic);
+		clearRow(sq.getRow());
+
+	} else if (sq.getType() == Upright) {
+
+		sq.setType(Basic);
+		clearCol(sq.getCol());
+
+	} else if (sq.getType() == Unstable) {
+
+		int rad;
+
+		if (hMatch.size() > vMatch.size()) {
+			rad = hMatch.size();
+		} else {
+			rad = vMatch.size();
 		}
-		matched[i]->ready = false;
+
+		sq.setType(Basic);
+		clearRad(sq.getRow(), sq.getCol(), rad);
+
+	} else if (sq.getType() == Psychedelic) {
+
+		sq.setType(Basic);
+		clearColour(sq.getColour());
 	}
 }
 
-bool Board::clearSquares(Square &root) {
+void Board::clearRow(int row) {
+	for (int c = 0; c < size; c++) {
+		clearSquare(grid[row][c]);
+	}
+}
+
+void Board::clearCol(int col) {
+
+	for (int r = 0; r < size; r++) {
+		clearSquare(grid[r][col]);
+	}
+}
+
+void Board::clearRad(int row, int col, int rad) {
+
+	int rMin = (row - rad >= 0)? row - rad : 0;
+	int rMax = (row + rad < size)? row + rad : size - 1;
+	int cMin = (col - rad >= 0)? col - rad : 0;
+	int cMax = (col + rad < size)? col + rad : size - 1;
+
+	for (int r = rMin; r <= rMax; r++) {
+		for (int c = cMin; c <= cMax; c++) {
+			clearSquare(grid[r][c]);
+		}
+	}
+}
+
+void Board::clearColour(Colour c) {
+
+	for (int i = 0; i < size; i++) {
+		for (int j = 0; j < size; j++) {
+
+			if (grid[i][j].getColour() == c) {
+				clearSquare(grid[i][j]);
+			}
+		}
+	}
+}
+
+void Board::emptyColours(vector<Square *> matched) {
+
+	for (int i = 0; i < (int)matched.size(); i++) {
+		if (matched[i]->ready) {
+			clearSquare(*matched[i]);
+		}
+	}
+}
+
+void Board::appendMatchVectors(Square &root) {
 	hMatch.clear();
 	vMatch.clear();
 
 	int row = root.row;
 	int col = root.col;
 
-	// left
-	for (int c = col - 1; c >= 0; c--) {
-		if (grid[row][c].ready) {
-			hMatch.push_back(&grid[row][c]);
-		}
-	}
 	// self
 	if (grid[row][col].ready) {
-		hMatch.push_back(&grid[row][col]);
-	}
-	// right
-	for (int c = col + 1; c < size; c++) {
-		if (grid[row][c].ready) {
-			hMatch.push_back(&grid[row][c]);
-		}
+		hMatch.push_back(&root);
+		vMatch.push_back(&root);
 	}
 	// up
 	for (int r = row - 1; r >= 0; r--) {
@@ -180,75 +245,109 @@ bool Board::clearSquares(Square &root) {
 			vMatch.push_back(&grid[r][col]);
 		}
 	}
-	// self
-	if (grid[row][col].ready) {
-		vMatch.push_back(&grid[row][col]);
-	}
 	// down
 	for (int r = row + 1; r < size; r++) {
 		if (grid[r][col].ready) {
 			vMatch.push_back(&grid[r][col]);
 		}
 	}
+	// left
+	for (int c = col - 1; c >= 0; c--) {
+		if (grid[row][c].ready) {
+			hMatch.push_back(&grid[row][c]);
+		}
+	}
+	// right
+	for (int c = col + 1; c < size; c++) {
+		if (grid[row][c].ready) {
+			hMatch.push_back(&grid[row][c]);
+		}
+	}
+}
+
+bool Board::clearSquares(Square &root) {
+
+	appendMatchVectors(root);
+
+	// no match
+	if (hMatch.size() < 3 && vMatch.size() < 3) return false;
 
 	if (hMatch.size() == 3 && vMatch.size() == 3) {
 		cerr << "L MATCH" << endl;
 
-		_emptyColours(hMatch, &root); 
-		_emptyColours(vMatch, &root);
+		Colour backup = hMatch[0]->getColour();
 
+		emptyColours(hMatch);
+		emptyColours(vMatch);
+
+		root.setColour(backup);
 		root.setType(Unstable);
-		
-		turnScore += 15;
 
 		return true;
-	}
-
-	if (hMatch.size() >= 3 && vMatch.size() < 3) {
+	} else if (hMatch.size() >= 3 && vMatch.size() < 3) {
 		cerr << "HORIZONTAL MATCH" << endl;
 
 
-		if (vMatch.size() == 4) {
+		if (hMatch.size() == 4) {
+
 			cerr << "LATERAL SQUARE" << endl; 
-			_emptyColours(hMatch, &root);
+
+			Colour backup = hMatch[0]->getColour();
+
+			emptyColours(hMatch);
+
+			root.setColour(backup);
 			root.setType(Lateral);
-			turnScore += 8;
-		} else if (vMatch.size() == 5) {
+
+		} else if (hMatch.size() == 5) {
+
 			cerr << "PSYCHEDELIC SQUARE" << endl;
-			_emptyColours(hMatch, &root);
+
+			Colour backup = hMatch[0]->getColour();
+
+			emptyColours(hMatch);
+
+			root.setColour(backup);
 			root.setType(Psychedelic);
-			turnScore += 15;
+
 		} else {
-			_emptyColours(hMatch, NULL);
-			turnScore += 3;
+
+			emptyColours(hMatch);
+
 		}
 
 		return true;
-	}
-
-	if (hMatch.size() < 3 && vMatch.size() >=3) {
+	} else if (hMatch.size() < 3 && vMatch.size() >=3) {
 		cerr << "VERTICAL MATCH" << endl;
 
 		if (vMatch.size() == 4) {
+
 			cerr << "UPRIGHT SQUARE" << endl;
-			_emptyColours(vMatch, &root);
+
+			Colour backup = vMatch[0]->getColour();
+
+			emptyColours(vMatch);
+
+			root.setCol(backup);
 			root.setType(Upright);
+
 		} else if (vMatch.size() == 5) {
+
 			cerr << "PSYCHEDELIC SQUARE" << endl;
-			_emptyColours(vMatch, &root);
+
+			Colour backup = vMatch[0]->getColour();
+
+			emptyColours(vMatch);
+
+			root.setColour(backup);
 			root.setType(Psychedelic);
 		} else {
-			_emptyColours(vMatch, NULL);
-			turnScore += 3;
+			
+			emptyColours(vMatch);
+
 		}
 
 		return true;
-	}
-
-	if (hMatch.size() < 3 && vMatch.size() < 3) {
-		cerr << "NO MATCH" << endl;
-
-		return false;
 	}
 
 	// redundant

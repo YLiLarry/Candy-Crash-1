@@ -49,6 +49,8 @@ class Square {
 	void setNeighbour(Square *neighbour, Direction d);
 	void setView(View *v);
 
+	void makeReady();
+
 #define SQUAREDEBUG
 #ifdef SQUAREDEBUG
 	void printInfo();

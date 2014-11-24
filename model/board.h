@@ -43,8 +43,11 @@ class Board {
 	// or from provided file
 	void loadLevel(int level);
 
+	int nMatch;
 	std::vector<Square *> hMatch;
 	std::vector<Square *> vMatch;
+
+	void emptyColours(std::vector<Square *> matched);
 
 	// takes in the coordinates of a square anc checks
 	// if it is matching set, if it is then findMatches
@@ -83,8 +86,15 @@ class Board {
 
 	void clearSquares(Square &root, Direction d);
 	bool clearSquares(Square &root);
-	void getMatches(Square &root);
-	int appendMatchVectors(Square &root);
+	//void getMatches(Square &root);
+	void appendMatchVectors(Square &root);
+
+	void clearRow(int row);
+	void clearCol(int col);
+	void clearRad(int row, int col, int rad);
+	void clearColour(Colour c);
+
+	void clearSquare(Square &sq);
 
 	public:
 

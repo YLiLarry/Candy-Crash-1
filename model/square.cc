@@ -51,7 +51,8 @@ void Square::notify() {
 			neighbour[Right]->colour == colour) {
 
 			cerr << "a horizontal match" << endl;
-			ready = true;
+
+			this->ready = true;
 			neighbour[Left]->ready = true;
 			neighbour[Right]->ready = true;
 		}
