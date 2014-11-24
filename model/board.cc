@@ -123,12 +123,12 @@ void Board::swap(int row, int col, Direction d) {
 
 	printGridInfo();
 
-	bool m1 = clearSquares(*grid[row][col].neighbour[d]);
-	bool m2 = clearSquares(grid[row][col]);
+	bool swap = clearSquares(*grid[row][col].neighbour[d]);
+	bool swapee = clearSquares(grid[row][col]);
 
-	if (m1 || m2) {
-		cerr << "turn score: " << turnScore << endl;
-		cerr << nMatch << endl;
+	if (swap || swapee) {
+		//cerr << "turn score: " << turnScore << endl;
+		cerr << "nMatch = " <<  nMatch << endl;
 	} else {
 		grid[row][col].swap(d);
 	}
@@ -140,59 +140,25 @@ void Board::swap(int row, int col, Direction d) {
 	view->draw();
 }
 
-
-
-
-void Board::clearSquare(Square &sq) {
-
-	sq.setColour(Empty);
-	sq.ready = false;
-	nMatch++;
-
-	if (sq.getType() == Lateral) {
-
-		sq.setType(Basic);
-		clearRow(sq.getRow());
-
-	} else if (sq.getType() == Upright) {
-
-		sq.setType(Basic);
-		clearCol(sq.getCol());
-
-	} else if (sq.getType() == Unstable) {
-
-		int rad;
-
-		if (hMatch.size() > vMatch.size()) {
-			rad = hMatch.size();
-		} else {
-			rad = vMatch.size();
-		}
-
-		sq.setType(Basic);
-		clearRad(sq.getRow(), sq.getCol(), rad);
-
-	} else if (sq.getType() == Psychedelic) {
-
-		sq.setType(Basic);
-		clearColour(sq.getColour());
-	}
-}
-
 void Board::clearRow(int row) {
+
 	for (int c = 0; c < size; c++) {
+		cerr << "--clearing row--" << endl;
 		clearSquare(grid[row][c]);
 	}
 }
 
 void Board::clearCol(int col) {
 
+
 	for (int r = 0; r < size; r++) {
+		cerr << "--clearing column--" << endl;
 		clearSquare(grid[r][col]);
 	}
 }
 
 void Board::clearRad(int row, int col, int rad) {
+
 
 	int rMin = (row - rad >= 0)? row - rad : 0;
 	int rMax = (row + rad < size)? row + rad : size - 1;
@@ -201,6 +167,7 @@ void Board::clearRad(int row, int col, int rad) {
 
 	for (int r = rMin; r <= rMax; r++) {
 		for (int c = cMin; c <= cMax; c++) {
+			cerr << "--clearing radius of size " << rad << "--" << endl;
 			clearSquare(grid[r][c]);
 		}
 	}
@@ -208,10 +175,15 @@ void Board::clearRad(int row, int col, int rad) {
 
 void Board::clearColour(Colour c) {
 
+
 	for (int i = 0; i < size; i++) {
 		for (int j = 0; j < size; j++) {
 
+			cerr << "clearing all colour: " << c << endl;
+			cerr << "checking (" << grid[i][j].getRow() << "," << grid[i][j].getCol() << ")" << endl;
+
 			if (grid[i][j].getColour() == c) {
+				cerr << "matched (" << grid[i][j].getRow() << "," << grid[i][j].getCol() << ")" << endl;
 				clearSquare(grid[i][j]);
 			}
 		}
@@ -265,6 +237,63 @@ void Board::appendMatchVectors(Square &root) {
 	}
 }
 
+void Board::clearSquare(Square &sq) {
+
+	cerr << "============================================" << endl << endl;
+
+
+
+	
+	Colour backupColour = sq.getColour();
+	sq.setColour(Empty); // also sets on view
+	sq.ready = false;
+
+	nMatch++;
+
+	if (sq.getType() == Lateral) {
+
+		cerr << "LATERAL SQUARE" << endl;
+
+		sq.setType(Basic);
+		clearRow(sq.getRow());
+
+	} else if (sq.getType() == Upright) {
+
+		cerr << "UPRIGHT SQUARE" << endl;
+
+		sq.setType(Basic);
+		clearCol(sq.getCol());
+
+	} else if (sq.getType() == Unstable) {
+
+		cerr << "UNSTABLE SQUARE" << endl;
+
+		int rad;
+
+		if (hMatch.size() > vMatch.size()) {
+			rad = hMatch.size();
+		} else {
+			rad = vMatch.size();
+		}
+
+		sq.setType(Basic);
+		clearRad(sq.getRow(), sq.getCol(), rad);
+
+	} else if (sq.getType() == Psychedelic) {
+
+		cerr << "PSYCHELIC SQUARE" << endl;
+
+		sq.setType(Basic);
+		clearColour(backupColour);
+	}
+
+	cerr << "clearing square (" << sq.getRow() << "," << sq.getCol() << ")" << endl;
+	view->draw();
+	cerr << "type " << sq.getType() << endl;
+	cerr << "============================================" << endl << endl;
+
+}
+
 bool Board::clearSquares(Square &root) {
 
 	appendMatchVectors(root);
@@ -294,7 +323,11 @@ bool Board::clearSquares(Square &root) {
 
 			Colour backup = hMatch[0]->getColour();
 
-			emptyColours(hMatch);
+			for (int i = 0; i < (int)hMatch.size(); i++) { 
+				clearSquare(*hMatch[i]);
+			}
+
+			//emptyColours(hMatch);
 
 			root.setColour(backup);
 			root.setType(Lateral);
@@ -312,8 +345,9 @@ bool Board::clearSquares(Square &root) {
 
 		} else {
 
-			emptyColours(hMatch);
-
+			for (int i = 0; i < (int)hMatch.size(); i++) {
+				clearSquare(*hMatch[i]);
+			}
 		}
 
 		return true;
