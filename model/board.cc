@@ -116,10 +116,10 @@ int Board::clearSquares(Square &root) {
 		view->print("L match");
 
 		for (int i = 0; i < 3; i++) {
-			clear(*hMatch[i]);
+			hMatch[i]->clear(cleared, turnScore);
 		}
 		for (int i = 0; i < 3; i++) {
-			clear(*vMatch[i]);
+			vMatch[i]->clear(cleared, turnScore);
 		}
 
 		root.setColour(backup);
@@ -129,69 +129,39 @@ int Board::clearSquares(Square &root) {
 	
 		view->print("Horizontal match");
 
-		if (hMatch.size() == 4) {
+		int n = (int)hMatch.size();
 
-			view->print("Lateral");
-
-			for (int i = 0; i < 4; i++) { 
-				clear(*hMatch[i]);
-			}
-
-			root.setColour(backup);
-			root.setType(Lateral);
-
-		} else if (hMatch.size() == 5) {
-
-			view->print("Psychedelic");
-
-			for (int i = 0; i < 5; i++) {
-			
-			}
-
-			root.setColour(backup);
-			root.setType(Psychedelic);
-
-		} else {
-
-			for (int i = 0; i < 3; i++) {
-				clear(*hMatch[i]);
-			}
+		for (int i = 0; i < n; i++) {
+			hMatch[i]->clear(cleared, turnScore);
 		}
+
+		switch (n) {
+			case 4: root.setColour(backup);
+					root.setType(Lateral); 
+					break;
+			case 5: root.setColour(backup);
+					root.setType(Psychedelic);
+					break;
+		}
+
 	} else if (hMatch.size() < 3 && vMatch.size() >=3) {
 
 		view->print("Vertical match");
 
-		if (vMatch.size() == 4) {
+		int n = (int)vMatch.size();
 
-			view->print("Upright");
-
-			for (int i = 0; i < 4; i++) {
-				clear(*vMatch[i]);
-			}
-
-			root.setCol(backup);
-			root.setType(Upright);
-
-		} else if (vMatch.size() == 5) {
-
-			view->print("Psychedelic");
-
-			Colour backup = vMatch[0]->getColour();
-
-			for (int i = 0; i < 5; i++) {
-				clear(*vMatch[i]);
-			}
-
-			root.setColour(backup);
-			root.setType(Psychedelic);
-
-		} else {
-
-			for (int i = 0; i < 3; i++) {
-				clear(*vMatch[i]);
-			}
+		for (int i = 0; i < n; i++) {
+			vMatch[i]->clear(cleared, turnScore);
 		}
 
+		switch (n) {
+			case 4: root.setColour(backup);
+					root.setType(Upright); 
+					break;
+			case 5: root.setColour(backup);
+					root.setType(Psychedelic);
+					break;
+		}
 	}
 
 	return true;
@@ -236,91 +206,93 @@ void Board::collectMatched(Square &root) {
 	}
 }
 
-void Board::clear(Square &sq) {
-
-	Colour tColour = sq.getColour();
-	Type tType = sq.getType();
-
-	if (tColour == Empty) return;
-
-	sq.setColour(Empty);
-	sq.setType(Basic);
-	sq.setReady(false);
-
-	cleared++;
-
-	if (cleared == 3) turnScore = 3;
-	if (cleared == 4) turnScore = 8;
-	if (cleared == 5) turnScore = 15;
-	if (cleared > 5) turnScore = 4 * cleared;
-
-	if (tType == Lateral) {
-
-		view->print("LATERAL");
-		clearRow(sq.getRow());
-
-	} else if (tType == Upright) {
-
-		view->print("UPRIGHT");
-		clearCol(sq.getCol());
-
-	} else if (tType == Unstable) {
-
-		int rad = (hMatch.size() > 3 || vMatch.size() > 3)? 5 : 3;
-		clearRad(sq.getRow(), sq.getCol(), rad);
-
-	} else if (tType == Psychedelic) {
-
-		view->print("PSYCHEDELIC");
-		clearColour(tColour);
-	}
-
-	view->draw();
-}
-
-void Board::clearRow(int row) {
-
-	for (int c = 0; c < size; c++) {
-		view->print("clearing row");
-		clear(grid[row][c]);
-	}
-}
-
-void Board::clearCol(int col) {
-
-	for (int r = 0; r < size; r++) {
-		view->print("clearing column");
-		clear(grid[r][col]);
-	}
-}
-
-void Board::clearRad(int row, int col, int rad) {
-
-
-	int sz = size; // looks pretty
-
-	int rMin = (row - rad >= 0)? row - rad : 0;
-	int rMax = (row + rad < sz)? row + rad : sz - 1;
-	int cMin = (col - rad >= 0)? col - rad : 0;
-	int cMax = (col + rad < sz)? col + rad : sz - 1;
-
-	for (int r = rMin; r <= rMax; r++) {
-		for (int c = cMin; c <= cMax; c++) {
-			clear(grid[r][c]);
-		}
-	}
-}
-
-void Board::clearColour(Colour c) {
-
-	for (int i = 0; i < size; i++) {
-		for (int j = 0; j < size; j++) {
-			if (grid[i][j].getColour() == c) {
-				clear(grid[i][j]);
-			}
-		}
-	}
-}
+/*
+ *void Board::clear(Square &sq) {
+ *
+ *    Colour tColour = sq.getColour();
+ *    Type tType = sq.getType();
+ *
+ *    if (tColour == Empty) return;
+ *
+ *    sq.setColour(Empty);
+ *    sq.setType(Basic);
+ *    sq.setReady(false);
+ *
+ *    cleared++;
+ *
+ *    if (cleared == 3) turnScore = 3;
+ *    if (cleared == 4) turnScore = 8;
+ *    if (cleared == 5) turnScore = 15;
+ *    if (cleared > 5) turnScore = 4 * cleared;
+ *
+ *    if (tType == Lateral) {
+ *
+ *        view->print("LATERAL");
+ *        clearRow(sq.getRow());
+ *
+ *    } else if (tType == Upright) {
+ *
+ *        view->print("UPRIGHT");
+ *        clearCol(sq.getCol());
+ *
+ *    } else if (tType == Unstable) {
+ *
+ *        int rad = (hMatch.size() > 3 || vMatch.size() > 3)? 5 : 3;
+ *        clearRad(sq.getRow(), sq.getCol(), rad);
+ *
+ *    } else if (tType == Psychedelic) {
+ *
+ *        view->print("PSYCHEDELIC");
+ *        clearColour(tColour);
+ *    }
+ *
+ *    view->draw();
+ *}
+ *
+ *void Board::clearRow(int row) {
+ *
+ *    for (int c = 0; c < size; c++) {
+ *        view->print("clearing row");
+ *        clear(grid[row][c]);
+ *    }
+ *}
+ *
+ *void Board::clearCol(int col) {
+ *
+ *    for (int r = 0; r < size; r++) {
+ *        view->print("clearing column");
+ *        clear(grid[r][col]);
+ *    }
+ *}
+ *
+ *void Board::clearRad(int row, int col, int rad) {
+ *
+ *
+ *    int sz = size; // looks pretty
+ *
+ *    int rMin = (row - rad >= 0)? row - rad : 0;
+ *    int rMax = (row + rad < sz)? row + rad : sz - 1;
+ *    int cMin = (col - rad >= 0)? col - rad : 0;
+ *    int cMax = (col + rad < sz)? col + rad : sz - 1;
+ *
+ *    for (int r = rMin; r <= rMax; r++) {
+ *        for (int c = cMin; c <= cMax; c++) {
+ *            clear(grid[r][c]);
+ *        }
+ *    }
+ *}
+ *
+ *void Board::clearColour(Colour c) {
+ *
+ *    for (int i = 0; i < size; i++) {
+ *        for (int j = 0; j < size; j++) {
+ *            if (grid[i][j].getColour() == c) {
+ *                clear(grid[i][j]);
+ *            }
+ *        }
+ *    }
+ *}
+ */
 
 
 string Board:: validMove() {
