@@ -12,7 +12,7 @@
 		Lateral,
 		Upright,
 		Unstable, 
-		Psychedelic 
+		Psychedelic,
 	};
 
     enum Colour { 
@@ -20,14 +20,14 @@
 		Red, 
 		Green, 
 		Blue, 
-		Empty 
+		Empty,
 	};
 
     enum Direction { 
 		Up = 0, 
 		Down, 
 		Left, 
-		Right 
+		Right,
 	};
 
 #endif

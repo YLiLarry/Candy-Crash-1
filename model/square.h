@@ -1,39 +1,46 @@
 #ifndef __SQUARE_H__
 #define __SQUARE_H__
 
-#include "cell.h"
 #include "../view/view.h"
 #include "../public/global.h"
 #include <vector>
 
 class Square {
-	
-	void notify();
-	void notifyNeighbours();
-
-	public:
 
 	int row;
 	int col;
 	Colour colour;
 	Type type;
 
-	View *view;
-
-
-	Square *neighbour[4];
+	int gridSize;
 
 	bool ready;
 	bool notified;
 
+	View *view;
+	Square **grid;
+
+	void notify();
+	void notifyNeighbours();
+
+	public:
+
+	Square *neighbour[4];
+
 	Square();
+	void init(int row, int col, int size, Square **grid, View *view);
+
+	void setNeighbours();
+
 	void swap(Direction d);
 	void swapWith(Direction d);
 
-	void unNotifyNeighbours();
+	void clearNotifications();
 
-	void drop(); // drop if hole below
+	void clear();
 
+	void drop();
+	
 	int getRow();
 	void setRow(int r);
 
@@ -51,10 +58,12 @@ class Square {
 
 	void makeReady();
 
-#define SQUAREDEBUG
-#ifdef SQUAREDEBUG
+	bool isReady();
+	void setReady(bool);
+
+	bool isNotified();
+
 	void printInfo();
-#endif
 };
 
 #endif

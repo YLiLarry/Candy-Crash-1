@@ -6,37 +6,21 @@
 #include <string>
 #include <algorithm>
 #include "square.h"
-#include "model.h"
 #include "../view/view.h"
 #include "../public/global.h"
 
 class Board {
-	// pointer to views
+
 	View *view;
 
-	// the grid of squares
-	// note: turns out it's better to make 2d-arrays this way
 	Square **grid;
-
-	// size of the grid
 	int size;
 
-	// current level
 	int level;
-
-	// player score
-	// determines when to auto level up/down
 	int score;
-
+	int cleared;
 	int turnScore;
 
-	// matched squares
-	//std::vector<Square *> matched;
-
-	// sets the values of a particular square
-	//void setSquare(int row, int col, Colour colour, Type type);
-
-	// sets the neighbours of s
 	void setNeighbours(Square *s);
 
 	// loads level, either randomly generated
@@ -47,27 +31,7 @@ class Board {
 	std::vector<Square *> hMatch;
 	std::vector<Square *> vMatch;
 
-	void emptyColours(std::vector<Square *> matched);
 
-	// takes in the coordinates of a square anc checks
-	// if it is matching set, if it is then findMatches
-	// returns a vector of squares that should be cleared
-	std::vector<Square *> findMatches(int row, int col);
-	
-	// clears squares stored in matched vector
-	// and empties matched vector after
-	// also determines where to place special square
-	// returns the score obtained in that turn
-	//
-	// note: clearSquares() will call clear(int x, int y)
-	// to handle clearing with a special square
-	// that requires to clear squares NOT in matched
-	int clearSquares(std::vector<Square> matched);
-
-	// clears squares at x, y coordinates
-	// should be used for speacial clearing
-	// e.g. clear entire row/col, 5x5 hole
-	void clear(int x, int y);
 
 	// scans the grid for matches
 	// shouldint row, int col be used to detect chain reactions
@@ -84,17 +48,16 @@ class Board {
 	bool hasMove();
 
 
-	void clearSquares(Square &root, Direction d);
-	bool clearSquares(Square &root);
 	//void getMatches(Square &root);
-	void appendMatchVectors(Square &root);
+	void collectMatched(Square &root);
 
 	void clearRow(int row);
 	void clearCol(int col);
 	void clearRad(int row, int col, int rad);
 	void clearColour(Colour c);
 
-	void clearSquare(Square &sq);
+	void clear(Square &root);
+	int clearSquares(Square &root);
 
 	public:
 
