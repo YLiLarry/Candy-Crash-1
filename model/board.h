@@ -64,6 +64,7 @@ class Board {
 	Board(int n);
 	~Board();
 
+	void start();
 	void swap(int row, int col, Direction d);
 
 	void scramble();

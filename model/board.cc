@@ -8,7 +8,6 @@ using namespace std;
 
 Board::Board(int n) {
 
-	view = new View(n);
 	grid = new Square *[n];
 	for (int r = 0; r < n; r++) {
 		grid[r] = new Square[n];
@@ -22,9 +21,6 @@ Board::Board(int n) {
 	level = 0;
 	score = 0;
 	turnScore = 0;
-
-	loadLevel(level);
-	view->draw();
 }
 
 Board::~Board() {
@@ -37,6 +33,14 @@ Board::~Board() {
 	delete[] grid;
 
 	delete view;
+}
+
+void Board::start() {
+
+	view = new View(size);
+
+	loadLevel(level);
+	view->draw();
 }
 
 void Board::loadLevel(int level) {
@@ -83,7 +87,6 @@ void Board::swap(int row, int col, Direction d) {
 	clearSquares(*grid[row][col].neighbour[d]);
 	clearSquares(grid[row][col]);
 
-	view->draw();
 
 	if (cleared) {
 		cerr << "cleared: " << cleared << endl;
@@ -94,6 +97,7 @@ void Board::swap(int row, int col, Direction d) {
 
 	grid[row][col].clearNotifications();
 
+	view->draw();
 }
 
 int Board::clearSquares(Square &root) {
