@@ -60,8 +60,8 @@ void Square::swap(Direction d) {
 	Colour tColour = colour;
 	Type tType = type;
 
-	colour = neighbour[d]->getColour();
-	type = neighbour[d]->getType();
+	setColour(neighbour[d]->getColour());
+	setType(neighbour[d]->getType());
 
 	neighbour[d]->setColour(tColour);
 	neighbour[d]->setType(tType);
@@ -72,8 +72,17 @@ void Square::swap(Direction d) {
 
 void Square::swapWith(Direction d) {
 
-	swap(d);
-	view->swap(row, col, d);
+	Colour tColour = colour;
+	Type tType = type;
+
+	setColour(neighbour[d]->getColour());
+	setType(neighbour[d]->getType());
+
+	neighbour[d]->setColour(tColour);
+	neighbour[d]->setType(tType);
+
+	neighbour[d]->notify();
+	notify();
 }
 
 void Square::notify() {
