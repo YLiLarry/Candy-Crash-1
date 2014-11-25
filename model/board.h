@@ -11,6 +11,10 @@
 
 class Board {
 
+	#if DEBUG_BOARD
+	    public:
+	#endif
+
 	View *view;
 
 	Square **grid;
