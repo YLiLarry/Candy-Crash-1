@@ -74,8 +74,8 @@ void Board::loadLevel(int level) {
 
 void Board::swap(int row, int col, Direction d) {
 
+	cleared = 0;
 	turnScore = 0;
-	nMatch = 0;
 
 	grid[row][col].swapWith(d);
 	view->draw();
@@ -335,26 +335,26 @@ void Board::clearColour(Colour c) {
  *        for (int j = 0; j < this->size; j++) {
  *            b.swapMechanism(i,j,Up);
  *            if (! b.findMatches(i,j).empty()) {
- *            	ss << i << " " << j << " " << (int)Up;
- *            	return ss.str();
+ *                ss << i << " " << j << " " << (int)Up;
+ *                return ss.str();
  *            };
  *            b.swapMechanism(i,j,Up);
  *            b.swapMechanism(i,j,Down);
  *            if (! b.findMatches(i,j).empty()) {
- *            	ss << i << " " << j << " " << (int)Down;
- *            	return ss.str();
+ *                ss << i << " " << j << " " << (int)Down;
+ *                return ss.str();
  *            };
  *            b.swapMechanism(i,j,Down);
  *            b.swapMechanism(i,j,Left);
  *            if (! b.findMatches(i,j).empty()) {
- *            	ss << i << " " << j << " " << (int)Left;
- *            	return ss.str();
+ *                ss << i << " " << j << " " << (int)Left;
+ *                return ss.str();
  *            };
  *            b.swapMechanism(i,j,Left);
  *            b.swapMechanism(i,j,Right);
  *            if (! b.findMatches(i,j).empty()) {
- *            	ss << i << " " << j << " " << (int)Right;
- *            	return ss.str();
+ *                ss << i << " " << j << " " << (int)Right;
+ *                return ss.str();
  *            };
  *        }
  *    }

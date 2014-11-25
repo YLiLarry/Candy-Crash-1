@@ -27,7 +27,7 @@ class Board {
 	// or from provided file
 	void loadLevel(int level);
 
-	int nMatch;
+
 	std::vector<Square *> hMatch;
 	std::vector<Square *> vMatch;
 
@@ -64,7 +64,6 @@ class Board {
 	Board(int n);
 	~Board();
 
-	void swapMechanism(int row, int col, Direction d);
 	void swap(int row, int col, Direction d);
 
 	void scramble();
