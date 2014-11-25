@@ -8,6 +8,7 @@ using namespace std;
 
 Board::Board(int n) {
 
+	view = new View(n);
 	grid = new Square *[n];
 	for (int r = 0; r < n; r++) {
 		grid[r] = new Square[n];
@@ -37,16 +38,24 @@ Board::~Board() {
 
 void Board::start() {
 
-	view = new View(size);
-
 	loadLevel(level);
 	view->draw();
 }
 
 void Board::loadLevel(int level) {
+
 	if (level == 0) {
 
+#ifdef DEBUG_BOARD
+		cerr << "file: ";
+
+		string f;
+		cin >> f;
+		
+		ifstream file(f.c_str());
+#else
 		ifstream file("sequence.txt");
+#endif
 		string square;
 
 		for (int i = 0; i < size; i++) {
