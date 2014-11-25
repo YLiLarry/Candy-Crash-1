@@ -319,60 +319,50 @@ void Board::clearColour(Colour c) {
 }
 
 
-/*
- *string Board:: validMove() {
- *    #if DEBUG_BOARD
- *        fprintf(stderr,"BOARD:: validMove()\n");
- *    #endif
- *    ostringstream ss;
- *    Board b(this->size);
- *    for (int i = 0; i < this->size; i++) {
- *        for (int j = 0; j < this->size; j++) {
- *            b.grid[i][j] = this->grid[i][j];
- *        }
- *    }
- *    for (int i = 0; i < this->size; i++) {
- *        for (int j = 0; j < this->size; j++) {
- *            b.swapMechanism(i,j,Up);
- *            if (! b.findMatches(i,j).empty()) {
- *                ss << i << " " << j << " " << (int)Up;
- *                return ss.str();
- *            };
- *            b.swapMechanism(i,j,Up);
- *            b.swapMechanism(i,j,Down);
- *            if (! b.findMatches(i,j).empty()) {
- *                ss << i << " " << j << " " << (int)Down;
- *                return ss.str();
- *            };
- *            b.swapMechanism(i,j,Down);
- *            b.swapMechanism(i,j,Left);
- *            if (! b.findMatches(i,j).empty()) {
- *                ss << i << " " << j << " " << (int)Left;
- *                return ss.str();
- *            };
- *            b.swapMechanism(i,j,Left);
- *            b.swapMechanism(i,j,Right);
- *            if (! b.findMatches(i,j).empty()) {
- *                ss << i << " " << j << " " << (int)Right;
- *                return ss.str();
- *            };
- *        }
- *    }
- *    return string();
- *}
- *
- *bool Board:: hasMove() {
- *    return this->validMove().length();
- *}
- *
- *void Board:: hint() {
- *    string str = validMove();
- *    #if DEBUG_BOARD
- *        fprintf(stderr,"BOARD hint(%s)\n",str.c_str());
- *    #endif
- *    view->print(str);
- *}
- */
+string Board:: validMove() {
+	#if DEBUG_BOARD
+		fprintf(stderr,"BOARD:: validMove()\n");
+	#endif
+	ostringstream ss;
+	Board b(this->size);
+
+	for (int i = 0; i < this->size; i++) {
+		for (int j = 0; j < this->size; j++) {
+			b.grid[i][j] = this->grid[i][j];
+		}
+	}
+
+	for (int i = 0; i < this->size; i++) {
+		for (int j = 0; j < this->size; j++) {
+			for (int d = 0; d < 4; d++) {
+
+				b.grid[i][j].swap((Direction)d);
+				b.collectMatched(*b.grid[i][j].neighbour[(Direction)d]);
+				b.collectMatched(b.grid[i][j]);
+
+				if (b.hMatch.size() >= 3 || b.vMatch.size() >= 3) {
+					ss << i << " " << j << " " << d;
+					return ss.str();
+				} else {
+
+				}
+			}
+		}
+	}
+	return string();
+}
+
+bool Board:: hasMove() {
+	return this->validMove().length();
+}
+
+void Board:: hint() {
+	string str = validMove();
+	#if DEBUG_BOARD
+		fprintf(stderr,"BOARD hint(%s)\n",str.c_str());
+	#endif
+	view->print(str);
+}
 
 void Board::scramble() {
 

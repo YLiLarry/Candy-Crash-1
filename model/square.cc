@@ -65,15 +65,15 @@ void Square::swap(Direction d) {
 
 	neighbour[d]->setColour(tColour);
 	neighbour[d]->setType(tType);
+
+	neighbour[d]->notify();
+	notify();
 }
 
 void Square::swapWith(Direction d) {
 
 	swap(d);
 	view->swap(row, col, d);
-
-	neighbour[d]->notify();
-	notify();
 }
 
 void Square::notify() {

@@ -45,8 +45,8 @@ void Game::startGame() {
 			}
 
 		} else if (command == "hint") {
-
-			//board->hint();
+			
+			board->hint();
 
 		} else if (command == "scramble") {
 
