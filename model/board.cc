@@ -45,8 +45,24 @@ void Board::start() {
 
 void Board::loadLevel(int level) {
 	if (level == 0) {
-
-		ifstream file("sequence.txt");
+		
+		// I need this to debug
+		
+		#if DEBUG_BOARD
+			string str;
+			cerr << "file: ";
+			cin >> str;
+			ifstream file(str.c_str());
+		#else
+			
+			ifstream file("sequence.txt");
+			
+		#endif
+			
+		if (! file.good()) {
+			throw ">> Bad level file";
+		}
+		
 		string square;
 
 		for (int i = 0; i < size; i++) {
@@ -61,18 +77,21 @@ void Board::loadLevel(int level) {
 					case 'v': type = Upright; break;
 					case 'b': type = Unstable; break;
 					case 'p': type = Psychedelic; break;
+					default: {throw string("unexpected square type: ") + square[1];}
 				}
 
 				Colour colour = (Colour)(square[2] - '0');
+				if (! colour) {throw string("unexpected square colour: ") + square[2];}
 
 				grid[i][j].setColour(colour);
 				grid[i][j].setType(type);
 				grid[i][j].setNeighbours();
 
-				view->setScore(score);
-				view->setLevel(level);
 			}
 		}
+		
+		view->setScore(score);
+		view->setLevel(level);
 	}
 }
 
