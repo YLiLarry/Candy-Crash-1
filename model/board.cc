@@ -8,6 +8,7 @@ using namespace std;
 
 Board::Board(int n) {
 
+	view = new View(n);
 	grid = new Square *[n];
 	for (int r = 0; r < n; r++) {
 		grid[r] = new Square[n];
@@ -21,6 +22,7 @@ Board::Board(int n) {
 	level = 0;
 	score = 0;
 	turnScore = 0;
+
 }
 
 Board::~Board() {
@@ -37,32 +39,25 @@ Board::~Board() {
 
 void Board::start() {
 
-	view = new View(size);
-
 	loadLevel(level);
 	view->draw();
 }
 
 void Board::loadLevel(int level) {
+
 	if (level == 0) {
+
+		#ifdef DEBUG_BOARD
+				cerr << "file: ";
 		
-		// I need this to debug
+				string f;
+				cin >> f;
 		
-		#if DEBUG_BOARD
-			string str;
-			cerr << "file: ";
-			cin >> str;
-			ifstream file(str.c_str());
+				ifstream file(f.c_str());
 		#else
-			
-			ifstream file("sequence.txt");
-			
+				ifstream file("sequence.txt");
 		#endif
-			
-		if (! file.good()) {
-			throw ">> Bad level file";
-		}
-		
+
 		string square;
 
 		for (int i = 0; i < size; i++) {
@@ -101,11 +96,9 @@ void Board::swap(int row, int col, Direction d) {
 	turnScore = 0;
 
 	grid[row][col].swapWith(d);
-	view->draw();
 
 	clearSquares(*grid[row][col].neighbour[d]);
 	clearSquares(grid[row][col]);
-
 
 	if (cleared) {
 		cerr << "cleared: " << cleared << endl;
@@ -124,9 +117,18 @@ int Board::clearSquares(Square &root) {
 	collectMatched(root);
 
 	Colour backup = root.getColour();
+	int radius = 0;
+	
+	if (hMatch.size() > 3 || vMatch.size() > 3) {
+		
+		radius = 4;
+	} else if (hMatch.size() == 3 || vMatch.size() == 3) {
+		
+		radius = 2;
+	}
 
 	if (hMatch.size() < 3 && vMatch.size() < 3) {
-		
+
 		view->print("no match");
 		return false;
 
@@ -135,23 +137,23 @@ int Board::clearSquares(Square &root) {
 		view->print("L match");
 
 		for (int i = 0; i < 3; i++) {
-			hMatch[i]->clear(cleared, turnScore);
+			hMatch[i]->clear(cleared, turnScore, radius);
 		}
 		for (int i = 0; i < 3; i++) {
-			vMatch[i]->clear(cleared, turnScore);
+			vMatch[i]->clear(cleared, turnScore, radius);
 		}
 
 		root.setColour(backup);
 		root.setType(Unstable);
 
 	} else if (hMatch.size() >= 3 && vMatch.size() < 3) {
-	
+
 		view->print("Horizontal match");
 
 		int n = (int)hMatch.size();
 
 		for (int i = 0; i < n; i++) {
-			hMatch[i]->clear(cleared, turnScore);
+			hMatch[i]->clear(cleared, turnScore, radius);
 		}
 
 		switch (n) {
@@ -170,7 +172,7 @@ int Board::clearSquares(Square &root) {
 		int n = (int)vMatch.size();
 
 		for (int i = 0; i < n; i++) {
-			vMatch[i]->clear(cleared, turnScore);
+			vMatch[i]->clear(cleared, turnScore, radius);
 		}
 
 		switch (n) {
@@ -315,9 +317,9 @@ void Board::collectMatched(Square &root) {
 
 
 string Board:: validMove() {
-	#if DEBUG_BOARD
-		fprintf(stderr,"BOARD:: validMove()\n");
-	#endif
+#if DEBUG_BOARD
+	fprintf(stderr,"BOARD:: validMove()\n");
+#endif
 	ostringstream ss;
 	Board b(this->size);
 
@@ -351,12 +353,40 @@ bool Board:: hasMove() {
 	return this->validMove().length();
 }
 
-void Board:: hint() {
-	string str = validMove();
-	#if DEBUG_BOARD
-		fprintf(stderr,"BOARD hint(%s)\n",str.c_str());
-	#endif
-	view->print(str);
+void Board::hint() {
+
+	for (int r = 0; r < size; r++) {
+		for (int c = 0; c < size; c++) {
+			for (int d = 0; d < 4; d++) {
+
+				if (grid[r][c].neighbour[d]) {
+
+					cerr << "checking: (" << r << "," << c << ") with " << d << endl;
+
+					grid[r][c].swapWith((Direction)d);
+					view->draw();
+					printGridInfo();
+
+					if (grid[r][c].isReady() ||
+						grid[r][c].neighbour[d]->isReady()) {
+
+						printGridInfo();
+
+						cerr << "hint: " << r << " " << c << " " << d << endl;
+
+						return;
+					}
+
+					cerr << "reverting back" << endl;
+
+					grid[r][c].swapWith((Direction)d);
+					grid[r][c].clearNotifications();
+					view->draw();
+					printGridInfo();
+				}
+			}
+		}
+	}
 }
 
 void Board::scramble() {
@@ -365,12 +395,12 @@ void Board::scramble() {
 		random_shuffle(&grid[i][0], &grid[i][size - 1]);
 	}
 
-	for (int i = 0; i < size; i++) {
-		for (int j = 0; j < size; j++) {
-			view->setColour(i, j, grid[i][j].getColour());
-			view->setType(i, j, grid[i][j].getType());
-		}
-	}
+	/*for (int i = 0; i < size; i++) {*/
+		//for (int j = 0; j < size; j++) {
+			//view->setColour(i, j, grid[i][j].getColour());
+			//view->setType(i, j, grid[i][j].getType());
+		//}
+	/*}*/
 
 	view->draw();
 }

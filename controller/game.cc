@@ -30,6 +30,8 @@ bool isValidSwap(int row, int col, Direction dir) {
 void Game::startGame() {
 
 	board = new Board(10);
+	board->start();
+
 	string command;
 
 	while (cin >> command) {
