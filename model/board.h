@@ -56,7 +56,7 @@ class Board {
 	void clearRad(int row, int col, int rad);
 	void clearColour(Colour c);
 
-	void clear(Square &root);
+	//void clear(Square &root);
 	int clearSquares(Square &root);
 
 	public:
