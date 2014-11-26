@@ -120,22 +120,17 @@ void Board::swap(int row, int col, Direction d) {
 	turnScore = 0;
 
 	grid[row][col].swapWith(d);
+	
+	view->draw();
 
 	clearSquares(*grid[row][col].neighbour[d]);
 	clearSquares(grid[row][col]);
 
-	if (cleared) {
-		cerr << "cleared: " << cleared << endl;
-		cerr << "turn score: " << turnScore << endl;
-	} else {
-		grid[row][col].swap(d);
-	}
+	if (!cleared) grid[row][col].swapWith(d);
 
 	grid[row][col].clearNotified();
 
 	view->draw();
-
-	cerr << endl << "drop test" << endl;
 
 	for (int c = 0; c < size; c++) {
 		grid[0][c].drop();

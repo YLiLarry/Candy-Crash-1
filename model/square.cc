@@ -244,13 +244,8 @@ void Square::drop() {
 			setColour(Empty);
 			setType(Basic);
 
-			if (neighbour[Up]) {
+			if (neighbour[Up]) neighbour[Up]->drop();
 
-				neighbour[Up]->drop();
-
-			} else {
-				//getNewSquare();
-			}
 		} else {
 			neighbour[Down]->drop();
 		}
