@@ -14,7 +14,7 @@ class Game {
 
 	public:
 	// processes player commands
-    void start(int);
+    Game(int);
     void restart();
     void hint();
     void scramble();

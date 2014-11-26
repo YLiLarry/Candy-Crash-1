@@ -3,13 +3,12 @@
 using namespace std;
 
 int main() {
-	Game game;
     #if DEBUG
         int i;
         cerr << "Size: ";
         cin >> i;
-        game.start(i);
+        Game game(i);
     #else
-       game.start(10);
+        Game game(10);
     #endif
 }

@@ -26,7 +26,7 @@ bool isValidSwap(int row, int col, Direction dir) {
 	return validRow && validCol && validDir;
 }
 
-void Game::start(int size) {
+Game::Game(int size) {
 
 	// if (board) {delete board;}
 	board = new Board(size);
