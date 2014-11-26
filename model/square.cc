@@ -61,11 +61,11 @@ void Square::swap(Direction d) {
 	Colour tColour = colour;
 	Type tType = type;
 
-	setColour(neighbour[d]->getColour());
-	setType(neighbour[d]->getType());
+	colour = neighbour[d]->colour;
+	type = neighbour[d]->type;
 
-	neighbour[d]->setColour(tColour);
-	neighbour[d]->setType(tType);
+	neighbour[d]->colour = tColour;
+	neighbour[d]->type = tType;
 
 	neighbour[d]->notify();
 	notify();
@@ -87,6 +87,8 @@ void Square::swapWith(Direction d) {
 }
 
 void Square::notify() {
+
+	if (colour == Empty) return;
 
 	notified = true;
 
@@ -117,23 +119,35 @@ void Square::notifyNeighbours() {
 
 	for (int d = 0; d < 4; d++) {
 		if (neighbour[d] &&
-				neighbour[d]->colour == this->colour &&
-				neighbour[d]->colour != Empty &&
-				neighbour[d]->notified == false) {
+			neighbour[d]->colour == this->colour &&
+			neighbour[d]->colour != Empty &&
+			neighbour[d]->notified == false) {
 
 			neighbour[d]->notify();
 		}
 	}
 }
 
-void Square::clearNotifications() {
+void Square::clearReady() {
+
+	ready = false;
+
+	for (int d = 0; d < NEIGHBOURS; d++) {
+
+		if (neighbour[d] && neighbour[d]->isReady()) {
+			neighbour[d]->clearReady();
+		}
+	}
+}
+
+void Square::clearNotified() {
 
 	notified = false;
 
-	for (int i = 0; i < 4; i++) {
-		if (neighbour[i] && neighbour[i]->isNotified()) {
+	for (int d = 0; d < NEIGHBOURS; d++) {
 
-			neighbour[i]->clearNotifications();
+		if (neighbour[d] && neighbour[d]->isNotified()) {
+			neighbour[d]->clearNotified();
 		}
 	}
 }

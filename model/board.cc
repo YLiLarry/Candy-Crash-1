@@ -56,7 +56,9 @@ void Board::loadLevel(int level) {
 				ifstream file("sequence.txt");
 		#endif
 
+#ifdef DEBUG_BOARD
 		if (! file.good()) {throw string("unable to read the sequence file: '") + f + "'";}
+#endif
 
 		string square;
 
@@ -108,7 +110,7 @@ void Board::swap(int row, int col, Direction d) {
 		grid[row][col].swap(d);
 	}
 
-	grid[row][col].clearNotifications();
+	grid[row][col].clearNotified();
 
 	view->draw();
 }
@@ -119,12 +121,12 @@ int Board::clearSquares(Square &root) {
 
 	Colour backup = root.getColour();
 	int radius = 0;
-	
+
 	if (hMatch.size() > 3 || vMatch.size() > 3) {
-		
+
 		radius = 4;
 	} else if (hMatch.size() == 3 || vMatch.size() == 3) {
-		
+
 		radius = 2;
 	}
 
@@ -228,167 +230,46 @@ void Board::collectMatched(Square &root) {
 	}
 }
 
-/*
- *void Board::clear(Square &sq) {
- *
- *    Colour tColour = sq.getColour();
- *    Type tType = sq.getType();
- *
- *    if (tColour == Empty) return;
- *
- *    sq.setColour(Empty);
- *    sq.setType(Basic);
- *    sq.setReady(false);
- *
- *    cleared++;
- *
- *    if (cleared == 3) turnScore = 3;
- *    if (cleared == 4) turnScore = 8;
- *    if (cleared == 5) turnScore = 15;
- *    if (cleared > 5) turnScore = 4 * cleared;
- *
- *    if (tType == Lateral) {
- *
- *        view->print("LATERAL");
- *        clearRow(sq.getRow());
- *
- *    } else if (tType == Upright) {
- *
- *        view->print("UPRIGHT");
- *        clearCol(sq.getCol());
- *
- *    } else if (tType == Unstable) {
- *
- *        int rad = (hMatch.size() > 3 || vMatch.size() > 3)? 5 : 3;
- *        clearRad(sq.getRow(), sq.getCol(), rad);
- *
- *    } else if (tType == Psychedelic) {
- *
- *        view->print("PSYCHEDELIC");
- *        clearColour(tColour);
- *    }
- *
- *    view->draw();
- *}
- *
- *void Board::clearRow(int row) {
- *
- *    for (int c = 0; c < size; c++) {
- *        view->print("clearing row");
- *        clear(grid[row][c]);
- *    }
- *}
- *
- *void Board::clearCol(int col) {
- *
- *    for (int r = 0; r < size; r++) {
- *        view->print("clearing column");
- *        clear(grid[r][col]);
- *    }
- *}
- *
- *void Board::clearRad(int row, int col, int rad) {
- *
- *
- *    int sz = size; // looks pretty
- *
- *    int rMin = (row - rad >= 0)? row - rad : 0;
- *    int rMax = (row + rad < sz)? row + rad : sz - 1;
- *    int cMin = (col - rad >= 0)? col - rad : 0;
- *    int cMax = (col + rad < sz)? col + rad : sz - 1;
- *
- *    for (int r = rMin; r <= rMax; r++) {
- *        for (int c = cMin; c <= cMax; c++) {
- *            clear(grid[r][c]);
- *        }
- *    }
- *}
- *
- *void Board::clearColour(Colour c) {
- *
- *    for (int i = 0; i < size; i++) {
- *        for (int j = 0; j < size; j++) {
- *            if (grid[i][j].getColour() == c) {
- *                clear(grid[i][j]);
- *            }
- *        }
- *    }
- *}
- */
+string Board::validMove() {
 
-
-string Board:: validMove() {
-#if DEBUG_BOARD
-	fprintf(stderr,"BOARD:: validMove()\n");
-#endif
 	ostringstream ss;
-	Board b(this->size);
-
-	for (int i = 0; i < this->size; i++) {
-		for (int j = 0; j < this->size; j++) {
-			b.grid[i][j] = this->grid[i][j];
-		}
-	}
-
-	for (int i = 0; i < this->size; i++) {
-		for (int j = 0; j < this->size; j++) {
-			for (int d = 0; d < 4; d++) {
-
-				b.grid[i][j].swap((Direction)d);
-				b.collectMatched(*b.grid[i][j].neighbour[(Direction)d]);
-				b.collectMatched(b.grid[i][j]);
-
-				if (b.hMatch.size() >= 3 || b.vMatch.size() >= 3) {
-					ss << i << " " << j << " " << d;
-					return ss.str();
-				} else {
-
-				}
-			}
-		}
-	}
-	return string();
-}
-
-bool Board:: hasMove() {
-	return this->validMove().length();
-}
-
-void Board::hint() {
+	bool foundMatch = false;
 
 	for (int r = 0; r < size; r++) {
 		for (int c = 0; c < size; c++) {
 			for (int d = 0; d < 4; d++) {
 
 				if (grid[r][c].neighbour[d]) {
-
-					// cerr << "checking: (" << r << "," << c << ") with " << d << endl;
-
-					grid[r][c].swapWith((Direction)d);
-					// view->draw();
-					// printGridInfo();
+					grid[r][c].swap((Direction)d);
 
 					if (grid[r][c].isReady() ||
 						grid[r][c].neighbour[d]->isReady()) {
 
-						// printGridInfo();
-						ostringstream ss;
-						ss << "hint: " << r << " " << c << " " << dir2str((Direction)d);
-						view->print(ss.str());
-
-						return;
+						ss << "swap " << r << " " << c << " " << d;
+						foundMatch = true;
 					}
 
-					// cerr << "reverting back" << endl;
+					grid[r][c].clearReady();
+					grid[r][c].clearNotified();
 
-					grid[r][c].swapWith((Direction)d);
-					grid[r][c].clearNotifications();
-					view->draw();
-					// printGridInfo();
+					grid[r][c].swap((Direction)d);
+
+					grid[r][c].clearReady();
+					grid[r][c].clearNotified();
+
+					if (foundMatch) return ss.str();
 				}
 			}
 		}
 	}
+
+	ss << "none";
+	return ss.str();
+}
+
+void Board::hint() {
+
+	view->print(validMove());
 }
 
 void Board::scramble() {
@@ -398,10 +279,10 @@ void Board::scramble() {
 	}
 
 	/*for (int i = 0; i < size; i++) {*/
-		//for (int j = 0; j < size; j++) {
-			//view->setColour(i, j, grid[i][j].getColour());
-			//view->setType(i, j, grid[i][j].getType());
-		//}
+	//for (int j = 0; j < size; j++) {
+	//view->setColour(i, j, grid[i][j].getColour());
+	//view->setType(i, j, grid[i][j].getType());
+	//}
 	/*}*/
 
 	view->draw();
