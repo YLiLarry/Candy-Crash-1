@@ -78,12 +78,9 @@ void Board::swap(int row, int col, Direction d) {
 	turnScore = 0;
 
 	grid[row][col].swapWith(d);
-	view->draw();
 
 	clearSquares(*grid[row][col].neighbour[d]);
 	clearSquares(grid[row][col]);
-
-	view->draw();
 
 	if (cleared) {
 		cerr << "cleared: " << cleared << endl;
@@ -94,6 +91,7 @@ void Board::swap(int row, int col, Direction d) {
 
 	grid[row][col].clearNotifications();
 
+	view->draw();
 }
 
 int Board::clearSquares(Square &root) {
@@ -101,6 +99,15 @@ int Board::clearSquares(Square &root) {
 	collectMatched(root);
 
 	Colour backup = root.getColour();
+	int radius = 0;
+	
+	if (hMatch.size() > 3 || vMatch.size() > 3) {
+		
+		radius = 4;
+	} else if (hMatch.size() == 3 || vMatch.size() == 3) {
+		
+		radius = 2;
+	}
 
 	if (hMatch.size() < 3 && vMatch.size() < 3) {
 		
@@ -112,10 +119,10 @@ int Board::clearSquares(Square &root) {
 		view->print("L match");
 
 		for (int i = 0; i < 3; i++) {
-			hMatch[i]->clear(cleared, turnScore);
+			hMatch[i]->clear(cleared, turnScore, radius);
 		}
 		for (int i = 0; i < 3; i++) {
-			vMatch[i]->clear(cleared, turnScore);
+			vMatch[i]->clear(cleared, turnScore, radius);
 		}
 
 		root.setColour(backup);
@@ -128,7 +135,7 @@ int Board::clearSquares(Square &root) {
 		int n = (int)hMatch.size();
 
 		for (int i = 0; i < n; i++) {
-			hMatch[i]->clear(cleared, turnScore);
+			hMatch[i]->clear(cleared, turnScore, radius);
 		}
 
 		switch (n) {
@@ -147,7 +154,7 @@ int Board::clearSquares(Square &root) {
 		int n = (int)vMatch.size();
 
 		for (int i = 0; i < n; i++) {
-			vMatch[i]->clear(cleared, turnScore);
+			vMatch[i]->clear(cleared, turnScore, radius);
 		}
 
 		switch (n) {

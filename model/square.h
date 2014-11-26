@@ -37,7 +37,7 @@ class Square {
 
 	void clearNotifications();
 
-	void clear(int &clear, int &turnScore, int r = 0);
+	void clear(int &clear, int &turnScore, int radius);
 
 	void drop();
 	

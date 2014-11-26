@@ -1,5 +1,6 @@
 #include "square.h"
 #include <iostream>
+#include <sstream>
 using namespace std;
 
 Square::Square() {
@@ -72,8 +73,17 @@ void Square::swap(Direction d) {
 
 void Square::swapWith(Direction d) {
 
-	swap(d);
-	view->swap(row, col, d);
+	Colour tColour = colour;
+	Type tType = type;
+
+	setColour(neighbour[d]->getColour());
+	setType(neighbour[d]->getType());
+
+	neighbour[d]->setColour(tColour);
+	neighbour[d]->setType(tType);
+
+	neighbour[d]->notify();
+	notify();
 }
 
 void Square::notify() {
@@ -128,16 +138,16 @@ void Square::clearNotifications() {
 	}
 }
 
-void Square::clear(int &cleared, int &turnScore, int r) {
+void Square::clear(int &cleared, int &turnScore, int r = 4) {
 
 	if (colour == Empty)  return;
 
 	Colour tColour = colour;
 	Type tType = type;
 
-	colour = Empty;
-	type = Basic;
-	ready = false;
+	setColour(Empty);
+	setType(Basic);
+	setReady(false);
 
 	cleared++;
 
@@ -149,47 +159,62 @@ void Square::clear(int &cleared, int &turnScore, int r) {
 		default: turnScore = 4 * cleared;
 	}
 
+	cerr << endl;
+	view->draw();
+
+	ostringstream ss;
+	ss << "cleared: " << cleared << endl;
+	ss << "score  : " << turnScore << endl;
+
 	switch (tType) {
-		case Lateral: 
-			{
-				for (int c = 0; c < gridSize; c++) {
-					view->print("clearing row");
-					grid[row][c].clear(cleared, turnScore, r);
-				}					  
-			}					  
-		case Upright:
-			{
-				for (int r = 0; r < gridSize; r++) {
-					view->print("clearing column");
-					grid[r][col].clear(cleared, turnScore, r);
-				}
-			}
-		case Unstable:
-			{
-				int sz = gridSize; // looks pretty
+		case Lateral: ss << "lateral square" << endl; break;
+		case Upright: ss << "upright square" << endl; break;
+		case Unstable: ss << "unstable square" << endl; break;
+		case Psychedelic: ss << "psychedelic square" << endl; break;
+		case Basic: ss << "basic square" << endl; break;
+	}
 
-				int rMin = (row - r >= 0)? row - r : 0;
-				int rMax = (row + r < sz)? row + r : sz - 1;
-				int cMin = (col - r >= 0)? col - r : 0;
-				int cMax = (col + r < sz)? col + r : sz - 1;
+	view->print(ss.str());
 
-				for (int r = rMin; r <= rMax; r++) {
-					for (int c = cMin; c <= cMax; c++) {
-						grid[r][c].clear(cleared, turnScore, r);
-					}
-				}	   
-			}
-		case Psychedelic:
-			{
-				for (int i = 0; i < gridSize; i++) {
-					for (int j = 0; j < gridSize; j++) {
-						if (grid[i][j].getColour() == tColour) {
-							grid[i][j].clear(cleared, turnScore, r);
-						}
-					}
-				}
-			}
+	switch (tType) {
 		case Basic: break;
+		case Lateral: 
+		{
+			for (int c = 0; c < gridSize; c++) {
+				grid[row][c].clear(cleared, turnScore);
+			}					  
+		} break;			  
+		case Upright:
+		{
+			for (int r = 0; r < gridSize; r++) {
+				grid[r][col].clear(cleared, turnScore);
+			}
+		} break;
+		case Unstable:
+		{
+			int sz = gridSize; // looks pretty
+
+			int rMin = (row - r >= 0)? row - r : 0;
+			int rMax = (row + r < sz)? row + r : sz - 1;
+			int cMin = (col - r >= 0)? col - r : 0;
+			int cMax = (col + r < sz)? col + r : sz - 1;
+
+			for (int r = rMin; r <= rMax; r++) {
+				for (int c = cMin; c <= cMax; c++) {
+					grid[r][c].clear(cleared, turnScore);
+				}
+			}	   
+		} break;
+		case Psychedelic:
+		{
+			for (int i = 0; i < gridSize; i++) {
+				for (int j = 0; j < gridSize; j++) {
+					if (grid[i][j].getColour() == tColour) {
+						grid[i][j].clear(cleared, turnScore);
+					}
+				}
+			}
+		} break;
 	}
 }
 
