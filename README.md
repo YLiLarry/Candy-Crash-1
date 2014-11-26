@@ -2,20 +2,7 @@
 <p>Pull the master branch and merge to your branch. </p>
 <p>I'm synced with the master branch.</p>
 
-<p>The controller was updated. Try the new controller by doing this from the root directory:</p>
-<pre>
-make clean
-make
-./main
-Size: 5
-file: tests/htest
-hint
-hint
-</pre>
-
-<p>The first hint prints <code>"hint 0 0 3"</code></p>
-<p>And then the second one prints <code>"hint 0 0 1"</code></p>
-<p>Any idea?</p>
+<p><code>make clean</code> and <code>make</code>, the double click tests/runSuite. Tell me what you see.</p>
 
 <pre>
 TO-DO-LIST:
