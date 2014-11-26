@@ -173,22 +173,21 @@ void Square::clear(int &cleared, int &turnScore, int r = 4) {
 		default: turnScore = 4 * cleared;
 	}
 
-	cerr << endl;
-	view->draw();
-
-	ostringstream ss;
-	ss << "cleared: " << cleared << endl;
-	ss << "score  : " << turnScore << endl;
-
-	switch (tType) {
-		case Lateral: ss << "lateral square" << endl; break;
-		case Upright: ss << "upright square" << endl; break;
-		case Unstable: ss << "unstable square" << endl; break;
-		case Psychedelic: ss << "psychedelic square" << endl; break;
-		case Basic: ss << "basic square" << endl; break;
-	}
-
-	view->print(ss.str());
+/*
+ *    ostringstream ss;
+ *    ss << "cleared: " << cleared << endl;
+ *    ss << "score  : " << turnScore << endl;
+ *
+ *    switch (tType) {
+ *        case Lateral: ss << "lateral square" << endl; break;
+ *        case Upright: ss << "upright square" << endl; break;
+ *        case Unstable: ss << "unstable square" << endl; break;
+ *        case Psychedelic: ss << "psychedelic square" << endl; break;
+ *        case Basic: ss << "basic square" << endl; break;
+ *    }
+ *
+ *    view->print(ss.str());
+ */
 
 	switch (tType) {
 		case Basic: break;

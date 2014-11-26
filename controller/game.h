@@ -2,6 +2,7 @@
 #define __GAME_H__
 
 #include "../model/board.h"
+#include "../view/view.h"
 #include "../public/global.h"
 
 class Game {
@@ -11,6 +12,7 @@ class Game {
     #endif
         
 	Board *board;
+	View *view;
 
 	public:
 	// processes player commands
@@ -22,6 +24,7 @@ class Game {
     void levelUp();
     void levelDown();
     ~Game();
+	void updateView();
 };
 
 #endif

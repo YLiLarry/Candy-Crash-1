@@ -1,5 +1,6 @@
 #include "game.h"
 #include "../public/global.h"
+#include <sstream>
 
 using namespace std;
 
@@ -29,8 +30,20 @@ bool isValidSwap(int row, int col, Direction dir) {
 Game::Game(int size) {
 
 	// if (board) {delete board;}
-	board = new Board(size);
-	board->start();
+	view = new View(size);
+	board = new Board(size, view);
+
+	board->start(0);
+
+	for (int row = 0; row < size; row++) {
+		for (int col = 0; col < size; col++) {
+
+			view->setColour(row, col, board->grid[row][col].colour);
+			view->setType(row, col, board->grid[row][col].type);
+		}
+	}
+
+	view->draw();
 
 	string cmd;
 
@@ -63,13 +76,49 @@ Game::~Game() {
 
 void Game::hint() {board->hint();}
 void Game::scramble() {board->scramble();}
+
 void Game::swap() {
+
 	int row, col, dir;
 	cin >> row >> col >> dir;
+
+	Direction direction = (Direction)dir;
 	
 	// check for valid parameters
-	if (isValidSwap(row, col, (Direction)dir)) {
-		board->swap(row, col, (Direction)dir);
+	if (isValidSwap(row, col, direction)) {
+
+		board->swap(row, col, direction);
+
+		view->draw();
+
+		switch (direction) {
+			case Up:    board->clearAt(row - 1, col); break;
+			case Down:  board->clearAt(row + 1, col); break;
+			case Left:  board->clearAt(row, col - 1); break;
+			case Right: board->clearAt(row, col + 1); break;
+		}
+
+		board->clearAt(row, col);
+
+		board->clearNotifications(row, col);
+
+		view->draw();
+		if (board->cleared == 0) {
+			
+			view->print("no match");
+			board->swap(row, col, direction);
+		} else {
+			
+			ostringstream ss;
+			ss << "cleared:  " << board->cleared << endl;
+			ss << "score  : +" << board->turnScore << endl;
+
+			view->print(ss.str());
+		}
+
+		board->dropSquares();
+
+		view->draw();
 	}
 }
 

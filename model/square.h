@@ -12,6 +12,8 @@ class Square {
 	int row;
 	int col;
 
+	public:
+
 	Colour colour;
 	Type type;
 

@@ -6,14 +6,13 @@
 
 using namespace std;
 
-Board::Board(int n) {
+Board::Board(int n, View *v) {
 
-	view = new View(n);
 	grid = new Square *[n];
 	for (int r = 0; r < n; r++) {
 		grid[r] = new Square[n];
 		for (int c = 0; c < n; c++) {
-			grid[r][c].init(r, c, n, grid, view);
+			grid[r][c].init(r, c, n, grid, v);
 		}
 	}
 
@@ -33,11 +32,11 @@ Board::~Board() {
 	}
 
 	delete[] grid;
-
-	delete view;
 }
 
-void Board::start() {
+void Board::start(int l) {
+
+	level = l;
 	loadLevel(level);
 }
 
@@ -89,12 +88,7 @@ void Board::loadLevel(int level) {
 				}
 			}
 		}
-		
-		view->setScore(score);
-		view->setLevel(level);
 	}
-	
-	view->draw();
 }
 
 void Board::setNewSquare(Square &sq) {
@@ -121,37 +115,45 @@ void Board::swap(int row, int col, Direction d) {
 
 	grid[row][col].swapWith(d);
 	
-	view->draw();
+	//view->draw();
 
-	clearSquares(*grid[row][col].neighbour[d]);
+	//clearSquares(*grid[row][col].neighbour[d]);
+	//clearSquares(grid[row][col]);
+
+	//if (!cleared) grid[row][col].swapWith(d);
+
+	//grid[row][col].clearNotified();
+
+	//view->draw();
+}
+
+void Board::clearAt(int row, int col) {
+
 	clearSquares(grid[row][col]);
+}
 
-	if (!cleared) grid[row][col].swapWith(d);
+void Board::clearNotifications(int row, int col) {
 
 	grid[row][col].clearNotified();
+}
 
-	view->draw();
+void Board::dropSquares() {
 
 	for (int c = 0; c < size; c++) {
+
 		grid[0][c].drop();
 
 		while (grid[0][c].getColour() == Empty) {
 
 			setNewSquare(grid[0][c]);
-			view->draw();
 			grid[0][c].drop();
 		}
 	}
-
-	view->draw();
 }
 
-int Board::clearSquares(Square &root) {
+void Board::clearSquares(Square &root) {
 
 	collectMatched(root);
-
-	cerr << "h : " << hMatch.size() << endl;
-	cerr << "v : " << vMatch.size() << endl;
 
 	Colour backup = root.getColour();
 	int radius = 0;
@@ -164,14 +166,10 @@ int Board::clearSquares(Square &root) {
 		radius = 2;
 	}
 
-	if (hMatch.size() < 3 && vMatch.size() < 3) {
+	if (hMatch.size() < 3 && vMatch.size() < 3) return;
 
-		view->print("no match");
-		return false;
-
-	} else if (hMatch.size() == 3 && vMatch.size() == 3) {
-
-		view->print("L match");
+	// L match
+	if (hMatch.size() == 3 && vMatch.size() == 3) {
 
 		for (int i = 0; i < 3; i++) {
 			hMatch[i]->clear(cleared, turnScore, radius);
@@ -183,9 +181,11 @@ int Board::clearSquares(Square &root) {
 		root.setColour(backup);
 		root.setType(Unstable);
 
-	} else if (hMatch.size() > vMatch.size()) {
+		return;
+	}
 
-		view->print("Horizontal match");
+	// horizontal
+	if (hMatch.size() > vMatch.size()) {
 
 		int n = (int)hMatch.size();
 
@@ -202,9 +202,11 @@ int Board::clearSquares(Square &root) {
 					break;
 		}
 
-	} else if (hMatch.size() < vMatch.size()) {
-
-		view->print("Vertical match");
+		return;
+	} 
+	
+	// vertical
+	if (hMatch.size() < vMatch.size()) {
 
 		int n = (int)vMatch.size();
 
@@ -220,9 +222,9 @@ int Board::clearSquares(Square &root) {
 					root.setType(Psychedelic);
 					break;
 		}
-	}
 
-	return true;
+		return;
+	}
 }
 
 void Board::collectMatched(Square &root) {
@@ -301,9 +303,9 @@ string Board::validMove() {
 	return ss.str();
 }
 
-void Board::hint() {
+string Board::hint() {
 
-	view->print(validMove());
+	return validMove();
 }
 
 void Board::scramble() {
@@ -318,8 +320,6 @@ void Board::scramble() {
 	//view->setType(i, j, grid[i][j].getType());
 	//}
 	/*}*/
-
-	view->draw();
 }
 
 

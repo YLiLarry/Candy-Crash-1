@@ -15,7 +15,8 @@ class Board {
 	    public:
 	#endif
 
-	View *view;
+	public:
+	//View *view;
 
 	Square **grid;
 	int size;
@@ -63,17 +64,24 @@ class Board {
 	void clearColour(Colour c);
 
 	//void clear(Square &root);
-	int clearSquares(Square &root);
+	//int clearSquares(Square &root);
+	void clearSquares(Square &root);
 
 	void setNewSquare(Square &sq);
 
 	public:
 
-	Board(int size);
+	Board(int size, View *view);
 	~Board();
 
-	void start();
+	void start(int level);
 	void swap(int row, int col, Direction d);
+
+	void clearAt(int row, int col);
+	void clearNotifications(int row, int col);
+	void dropSquares();
+
+	std::string hint();
 
 	void scramble();
 
@@ -82,7 +90,6 @@ class Board {
 
 	void restart();
 
-	void hint();
 
 	// development
 	void printGridInfo();
