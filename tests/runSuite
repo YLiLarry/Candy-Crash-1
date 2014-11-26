@@ -1,0 +1,60 @@
+#!/bin/bash
+cd `dirname "$0"`;
+if [ ${#} -lt 2 ]; then
+    prog=`find -maxdepth 1 ! -type d -executable ! -name 'runSuite'`
+    echo "No program file argument. Using '${prog}' as the program. " >&2
+else
+    prog="${2}"
+fi
+errorNum=0
+checkedSuites=0
+rm 'stderr.txt'
+testCaseList=`find -name *.in`
+while read testCase; do
+    testCase=${testCase%.in}
+    if [ "`egrep \"#\" <<< \"${testCase}\"`" ]; then continue; fi
+    if [ ! -r "${testCase}.out" ]; then
+        echo "Missing or unreadable \"${testCase}.out\" file" >&2
+        exit 2
+    fi
+    echo
+    echo "****************************************"
+    echo "****************************************" >> 'stderr.txt';
+    if [ -r "${testCase}.args" ]; then
+        result="$(xargs -a \"${testCase}.args\" \"${prog}\" < \"${testCase}.in\" 2>>'stderr.txt')"
+    else
+        input=`cat "${testCase}.in"`
+        result="`\"${prog}\" <<< \"${input/../${testCase}.txt}\" 2>>'stderr.txt'`"
+    fi
+    if [ "${result}" != "`cat \"${testCase}.out\"`" ]; then
+        ((errorNum++))
+        failed+="${testCase}"
+        tput setaf 1
+        echo "Test failed: ${testCase}"
+        echo "Test failed: ${testCase}" >> 'stderr.txt';
+        tput setaf 0
+        echo "Argument:"
+        if [ -r "${testCase}.args" ]; then echo $(cat "${testCase}.args") else echo None; fi
+        echo "Input:"
+        echo ${input}
+        echo ""
+        tput setaf 2
+        echo "Expected:"
+        tput setaf 0
+        cat "${testCase}.out"
+        echo ""
+        tput setaf 1
+        echo "Actual:"
+        tput setaf 0
+        echo "${result}"
+    else 
+        passed+="${testCase} "
+    fi
+    ((checkedSuites++))
+done <<< "${testCaseList}"
+echo
+echo "****************************************"
+echo "Passed: ${passed}, failed: `tput setaf 1`${failed}"
+tput setaf 0
+echo "Checked suites: ${checkedSuites}, errors: `tput setaf 1`${errorNum}"
+tput setaf 0

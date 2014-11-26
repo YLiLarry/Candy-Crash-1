@@ -46,7 +46,7 @@ void Board::loadLevel(int level) {
 	if (level == 0) {
 
 		#ifdef DEBUG_BOARD
-				cerr << "file: ";
+				cerr << "File: ";
 		
 				string f;
 				cin >> f;
@@ -55,6 +55,8 @@ void Board::loadLevel(int level) {
 		#else
 				ifstream file("sequence.txt");
 		#endif
+
+		if (! file.good()) {throw string("unable to read the sequence file: '") + f + "'";}
 
 		string square;
 
@@ -70,7 +72,7 @@ void Board::loadLevel(int level) {
 					case 'v': type = Upright; break;
 					case 'b': type = Unstable; break;
 					case 'p': type = Psychedelic; break;
-					default: {throw string("unexpected square type: ") + square[1];}
+					default: {throw string("unexpected square type: '") + square[1] + "'";}
 				}
 
 				Colour colour = (Colour)(square[2] - '0');
@@ -360,28 +362,29 @@ void Board::hint() {
 
 				if (grid[r][c].neighbour[d]) {
 
-					cerr << "checking: (" << r << "," << c << ") with " << d << endl;
+					// cerr << "checking: (" << r << "," << c << ") with " << d << endl;
 
 					grid[r][c].swapWith((Direction)d);
-					view->draw();
-					printGridInfo();
+					// view->draw();
+					// printGridInfo();
 
 					if (grid[r][c].isReady() ||
 						grid[r][c].neighbour[d]->isReady()) {
 
-						printGridInfo();
-
-						cerr << "hint: " << r << " " << c << " " << d << endl;
+						// printGridInfo();
+						ostringstream ss;
+						ss << "hint: " << r << " " << c << " " << dir2str((Direction)d);
+						view->print(ss.str());
 
 						return;
 					}
 
-					cerr << "reverting back" << endl;
+					// cerr << "reverting back" << endl;
 
 					grid[r][c].swapWith((Direction)d);
 					grid[r][c].clearNotifications();
 					view->draw();
-					printGridInfo();
+					// printGridInfo();
 				}
 			}
 		}

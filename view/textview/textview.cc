@@ -37,6 +37,7 @@ TextView:: ~TextView() {
 }
 
 void TextView:: draw() const {
+    cout << endl;
     for (int i = 0; i < this->size; i++) {
         for (int j = 0; j < this->size; j++) {
             this->board[i][j].draw();

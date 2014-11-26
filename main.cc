@@ -3,12 +3,16 @@
 using namespace std;
 
 int main() {
-    #if DEBUG
-        int i;
-        cerr << "Size: ";
-        cin >> i;
-        Game game(i);
-    #else
-        Game game(10);
-    #endif
+    try {
+        #if DEBUG
+            int i;
+            cerr << "Size: ";
+            cin >> i;
+            Game game(i);
+        #else
+            Game game(10);
+        #endif
+    } catch (const string& e) {
+        cerr << e << endl;
+    }
 }

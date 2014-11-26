@@ -5,7 +5,7 @@
 
 #ifndef __GLOBAL_H__    
 #define __GLOBAL_H__
-#include <cstdlib>
+#include <string>
 
     enum Type { 
 		Basic = 0,
@@ -29,5 +29,7 @@
 		Left, 
 		Right,
 	};
+    
+    std::string dir2str(Direction);
 
 #endif
