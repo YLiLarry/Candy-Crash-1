@@ -8,7 +8,7 @@ bool isBetween(int min, int max, int val) {
 	return min <= val && val <= max;
 }
 
-// returns true if swap command has valid parameters
+// returns true if swap cmd has valid parameters
 bool isValidSwap(int row, int col, Direction dir) {
 
 	bool validRow = isBetween(0, 9, row);
@@ -26,34 +26,53 @@ bool isValidSwap(int row, int col, Direction dir) {
 	return validRow && validCol && validDir;
 }
 
-// the main command interpreter
-void Game::startGame() {
+void Game::start(int size) {
 
-	board = new Board(10);
+	// if (board) {delete board;}
+	board = new Board(size);
 	board->start();
 
-	string command;
+	string cmd;
 
-	while (cin >> command) {
-
-		if (command == "swap") {
-
-			int row, col, dir;
-			cin >> row >> col >> dir;
-
-			// check for valid parameters
-			if (isValidSwap(row, col, (Direction)dir)) {
-				board->swap(row, col, (Direction)dir);
-			}
-
-		} else if (command == "hint") {
-			
-			board->hint();
-
-		} else if (command == "scramble") {
-
-			board->scramble();
-
+	while (cin >> cmd) {
+        if (cmd == "//") {
+            cin.ignore(1024, '\n');
+            continue;
+        } else
+		if (cmd == "swap") {
+			this->swap();
+		} else if (cmd == "hint") {
+			this->hint();
+		} else if (cmd == "scramble") {
+			this->scramble();
+		} else if (cmd == "levelup") {
+			this->levelUp();
+		} else if (cmd == "leveldown") {
+			this->levelDown();
+		} else if (cmd == "restart") {
+			this->restart();
+		} else if (cmd == "quit") {
+			break;
 		}
 	}
 }
+
+Game::~Game() {
+	delete this->board;
+}
+
+void Game::hint() {board->hint();}
+void Game::scramble() {board->scramble();}
+void Game::swap() {
+	int row, col, dir;
+	cin >> row >> col >> dir;
+	
+	// check for valid parameters
+	if (isValidSwap(row, col, (Direction)dir)) {
+		board->swap(row, col, (Direction)dir);
+	}
+}
+
+void Game::levelUp() {board->loadLevel(++board->level);}
+void Game::levelDown() {if (board->level > 0) {board->loadLevel(--board->level);}}
+void Game::restart() {board->loadLevel(board->level);}

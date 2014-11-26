@@ -38,9 +38,7 @@ Board::~Board() {
 }
 
 void Board::start() {
-
 	loadLevel(level);
-	view->draw();
 }
 
 void Board::loadLevel(int level) {
@@ -76,7 +74,6 @@ void Board::loadLevel(int level) {
 				}
 
 				Colour colour = (Colour)(square[2] - '0');
-				if (! colour) {throw string("unexpected square colour: ") + square[2];}
 
 				grid[i][j].setColour(colour);
 				grid[i][j].setType(type);
@@ -88,6 +85,8 @@ void Board::loadLevel(int level) {
 		view->setScore(score);
 		view->setLevel(level);
 	}
+	
+	view->draw();
 }
 
 void Board::swap(int row, int col, Direction d) {

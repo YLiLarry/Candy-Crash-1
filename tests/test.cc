@@ -1,4 +1,4 @@
-#include "../board.h"
+#include "../controller/game.h"
 using namespace std;
 
 Colour str2colour(string& str) {
@@ -29,8 +29,9 @@ Type str2type(string& str) {
 
  
 int main() {
-    Board* board = NULL;
-    int r, c;
+    Game* game = new Game();
+    Board*& board = game->board;
+    
     string str;
     
     while (cin >> str) {
@@ -40,24 +41,18 @@ int main() {
             continue;
         } else
         if (str == "new") {
+            int r;
             cin >> r;
-            if (board) {delete board;} // shoud not leak memory
             board = new Board(r);
-            board->start();
         } else
         if (str == "hint") {
-            board->hint();
+            game->hint();
         } else 
         if (str == "swap") {
-            cin >> r >> c >> str;
-            board->swap(r, c, str2dir(str));
-            if (! board->hasMove()) {
-                cout << "Game Over" << endl;
-            }
-            cout << endl;
+            game->swap();
         } else
         if (str == "restart") {
-            board->loadLevel(0);
+            game->restart();
         } else
         if (str == "load") {
             board->loadLevel(0);
@@ -70,6 +65,6 @@ int main() {
         }
     }
     
-    delete board;
+    delete game;
     return 0;
 }

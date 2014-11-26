@@ -110,7 +110,7 @@ void TextView:: destory(int r, int c) {
 }
 
 void TextView:: init(int size) {
-    #if DEBUG
+    #if DEBUG_VIEW
         cerr << ">> TEXTVIEW CONSTRUCTOR START" << endl;
     #endif
     

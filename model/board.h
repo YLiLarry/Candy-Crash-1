@@ -65,7 +65,7 @@ class Board {
 
 	public:
 
-	Board(int n);
+	Board(int size);
 	~Board();
 
 	void start();
