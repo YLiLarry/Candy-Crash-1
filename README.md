@@ -1,6 +1,24 @@
 [11-26-2014 05:32:42]
 Pull the master branch and merge to your branch. 
-It's been updated with some changes on 
+I'm synced with the master branch.
+
+The controller was updated. Try the new controller by doing this from the root directory:
+make clean
+make
+./main
+Size: 5
+file: tests/htest
+hint
+hint
+
+The first hint prints "hint 0 0 3"
+And then the second one prints "hint 0 0 1"
+Any idea?
+
+TO-DO-LIST:
+1. complete test cases
+2. update the textview with scores
+
 \- Larry
 
 [11-19-2014 03:42:42]
