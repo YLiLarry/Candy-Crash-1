@@ -5,10 +5,13 @@
 #include "../public/global.h"
 #include <vector>
 
+const int NEIGHBOURS = 4;
+
 class Square {
 
 	int row;
 	int col;
+
 	Colour colour;
 	Type type;
 
@@ -25,7 +28,7 @@ class Square {
 
 	public:
 
-	Square *neighbour[4];
+	Square *neighbour[NEIGHBOURS];
 
 	Square();
 	void init(int row, int col, int size, Square **grid, View *view);
@@ -35,7 +38,8 @@ class Square {
 	void swap(Direction d);
 	void swapWith(Direction d);
 
-	void clearNotifications();
+	void clearReady();
+	void clearNotified();
 
 	void clear(int &clear, int &turnScore, int radius);
 
