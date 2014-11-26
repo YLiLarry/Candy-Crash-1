@@ -3,6 +3,7 @@
 #include "board.h"
 #include "../view/textview/textview.h"
 #include "../public/global.h"
+#include "../PRNG.h"
 
 using namespace std;
 
@@ -308,16 +309,35 @@ void Board::hint() {
 
 void Board::scramble() {
 
-	for (int i = 0; i < size; i++) {
-		random_shuffle(&grid[i][0], &grid[i][size - 1]);
-	}
+	PRNG rand;
+	
+	for (int r = 0; r < size; r++) {
+		for (int c = 0; c < size; c++) {
 
-	/*for (int i = 0; i < size; i++) {*/
-	//for (int j = 0; j < size; j++) {
-	//view->setColour(i, j, grid[i][j].getColour());
-	//view->setType(i, j, grid[i][j].getType());
-	//}
-	/*}*/
+			int randRow = rand(0, size-1);
+			int randCol = rand(0, size-1);
+
+			grid[r][c].swap(grid[randRow][randCol]);
+
+			if (grid[r][c].isReady() ||
+				grid[randRow][randCol].isReady()) {
+
+				grid[r][c].swap(grid[randRow][randCol]);
+			}
+
+			grid[r][c].clearReady();
+			grid[r][c].clearNotified();
+
+			grid[randRow][randCol].clearReady();
+			grid[randRow][randCol].clearNotified();
+
+			view->setColour(r, c, grid[r][c].getColour());
+			view->setType(r, c, grid[r][c].getType());
+
+			view->setColour(randRow, randCol, grid[randRow][randCol].getColour());
+			view->setType(randRow, randCol, grid[randRow][randCol].getType());
+		}
+	}
 
 	view->draw();
 }

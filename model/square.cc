@@ -71,6 +71,21 @@ void Square::swap(Direction d) {
 	notify();
 }
 
+void Square::swap(Square &other) {
+
+	Colour tColour = colour;
+	Type tType = type;
+
+	colour = other.colour;
+	type = other.type;
+
+	other.colour = tColour;
+	other.type = tType;
+
+	other.notify();
+	notify();
+}
+
 void Square::swapWith(Direction d) {
 
 	Colour tColour = colour;
