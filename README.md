@@ -1,8 +1,9 @@
 [11-26-2014 05:32:42]
-Pull the master branch and merge to your branch. 
-I'm synced with the master branch.
+<p>Pull the master branch and merge to your branch. </p>
+<p>I'm synced with the master branch.</p>
 
-The controller was updated. Try the new controller by doing this from the root directory:
+<p>The controller was updated. Try the new controller by doing this from the root directory:</p>
+<pre>
 make clean
 make
 ./main
@@ -10,17 +11,19 @@ Size: 5
 file: tests/htest
 hint
 hint
+</pre>
 
-The first hint prints "hint 0 0 3"
-And then the second one prints "hint 0 0 1"
-Any idea?
+<p>The first hint prints <code>"hint 0 0 3"</code></p>
+<p>And then the second one prints <code>"hint 0 0 1"</code></p>
+<p>Any idea?</p>
 
+<pre>
 TO-DO-LIST:
 1. complete test cases
 2. update the textview with scores
-
+</pre>
 \- Larry
-
+<hr>
 [11-19-2014 03:42:42]
 Updated board class interface. I think it should be done.
 Also checkout the UML branch for updated UML.
