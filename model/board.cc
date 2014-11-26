@@ -119,6 +119,9 @@ int Board::clearSquares(Square &root) {
 
 	collectMatched(root);
 
+	cerr << "h : " << hMatch.size() << endl;
+	cerr << "v : " << vMatch.size() << endl;
+
 	Colour backup = root.getColour();
 	int radius = 0;
 
@@ -149,7 +152,7 @@ int Board::clearSquares(Square &root) {
 		root.setColour(backup);
 		root.setType(Unstable);
 
-	} else if (hMatch.size() >= 3 && vMatch.size() < 3) {
+	} else if (hMatch.size() > vMatch.size()) {
 
 		view->print("Horizontal match");
 
@@ -168,7 +171,7 @@ int Board::clearSquares(Square &root) {
 					break;
 		}
 
-	} else if (hMatch.size() < 3 && vMatch.size() >=3) {
+	} else if (hMatch.size() < vMatch.size()) {
 
 		view->print("Vertical match");
 
