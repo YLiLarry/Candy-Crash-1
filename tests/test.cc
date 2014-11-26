@@ -27,6 +27,7 @@ Type str2type(string& str) {
     return Basic;
 }
 
+ 
 int main() {
     Board* board = NULL;
     int r, c;
@@ -50,10 +51,13 @@ int main() {
         if (str == "swap") {
             cin >> r >> c >> str;
             board->swap(r, c, str2dir(str));
+            if (! board->hasMove()) {
+                cout << "Game Over" << endl;
+            }
             cout << endl;
         } else
         if (str == "restart") {
-            // board->restart();
+            board->loadLevel(0);
         } else
         if (str == "load") {
             board->loadLevel(0);
