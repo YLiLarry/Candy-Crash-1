@@ -232,6 +232,31 @@ void Square::clear(int &cleared, int &turnScore, int r = 4) {
 	}
 }
 
+void Square::drop() {
+
+	if (neighbour[Down]) {
+
+		if (neighbour[Down]->getColour() == Empty) {
+
+			neighbour[Down]->setColour(colour);
+			neighbour[Down]->setType(type);
+
+			setColour(Empty);
+			setType(Basic);
+
+			if (neighbour[Up]) {
+
+				neighbour[Up]->drop();
+
+			} else {
+				//getNewSquare();
+			}
+		} else {
+			neighbour[Down]->drop();
+		}
+	}
+}
+
 int Square::getRow() { return row; }
 void Square::setRow(int r) { row = r; }
 

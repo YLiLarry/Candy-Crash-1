@@ -27,6 +27,8 @@ class Board {
 
 	void setNeighbours(Square *s);
 
+	std::string levelZeroColours;
+
 	// loads level, either randomly generated
 	// or from provided file
 	void loadLevel(int level);
@@ -62,6 +64,8 @@ class Board {
 
 	//void clear(Square &root);
 	int clearSquares(Square &root);
+
+	void setNewSquare(Square &sq);
 
 	public:
 

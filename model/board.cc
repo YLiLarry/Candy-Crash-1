@@ -83,6 +83,10 @@ void Board::loadLevel(int level) {
 				grid[i][j].setType(type);
 				grid[i][j].setNeighbours();
 
+				if (i == size - 1 && j == size - 1) {
+
+					file >> levelZeroColours;
+				}
 			}
 		}
 		
@@ -91,6 +95,23 @@ void Board::loadLevel(int level) {
 	}
 	
 	view->draw();
+}
+
+void Board::setNewSquare(Square &sq) {
+
+	if (level == 0) {
+
+		Colour newColour = (Colour)(levelZeroColours[0] - '0');
+		Type newType = Basic;
+
+		sq.setColour(newColour);
+		sq.setType(newType);
+
+		// recycles the colours
+		char c = levelZeroColours[0];
+		levelZeroColours.erase(0, 1);
+		levelZeroColours += c;
+	}
 }
 
 void Board::swap(int row, int col, Direction d) {
@@ -111,6 +132,21 @@ void Board::swap(int row, int col, Direction d) {
 	}
 
 	grid[row][col].clearNotified();
+
+	view->draw();
+
+	cerr << endl << "drop test" << endl;
+
+	for (int c = 0; c < size; c++) {
+		grid[0][c].drop();
+
+		while (grid[0][c].getColour() == Empty) {
+
+			setNewSquare(grid[0][c]);
+			view->draw();
+			grid[0][c].drop();
+		}
+	}
 
 	view->draw();
 }
