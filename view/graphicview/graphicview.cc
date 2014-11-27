@@ -8,7 +8,7 @@ void GraphicView:: refresh() {
             this->board[i][j].draw();
         }
     }
-    this_thread:: sleep_for(chrono::milliseconds(500));
+    this_thread:: sleep_for(chrono::milliseconds(50));
     this->refresh();
 }
 
