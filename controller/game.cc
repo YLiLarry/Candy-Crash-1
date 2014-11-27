@@ -64,15 +64,22 @@ Game::~Game() {
 void Game::hint() {board->hint();}
 void Game::scramble() {board->scramble();}
 void Game::swap() {
-	int row, col, dir;
-	cin >> row >> col >> dir;
-	
-	// check for valid parameters
-	if (isValidSwap(row, col, (Direction)dir)) {
-		board->swap(row, col, (Direction)dir);
+	int row, col, dirN;
+	cin >> row >> col >> dirN;
+	Direction d;
+	if (cin.good()) {
+		d = (Direction)dirN;
+	} else {
+		cin.clear();
+		string s;
+		cin >> s;
+		d = str2dir(s); 
+	}
+	if (isValidSwap(row, col, d)) {
+		board->swap(row, col, d);
 	}
 }
 
-void Game::levelUp() {board->loadLevel(++board->level);}
-void Game::levelDown() {if (board->level > 0) {board->loadLevel(--board->level);}}
-void Game::restart() {board->loadLevel(board->level);}
+void Game::levelUp() {board->levelUp();}
+void Game::levelDown() {board->levelDown();}
+void Game::restart() {board->restart();}

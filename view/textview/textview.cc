@@ -37,14 +37,29 @@ TextView:: ~TextView() {
 }
 
 void TextView:: draw() const {
-    cout << endl;
-    for (int i = 0; i < this->size; i++) {
-        for (int j = 0; j < this->size; j++) {
-            this->board[i][j].draw();
-            cout << " ";
-        }
+    #if DEBUG
         cout << endl;
-    } 
+        for (int i = 0; i < this->size; i++) {
+            for (int j = 0; j < this->size; j++) {
+                this->board[i][j].draw();
+                cout << " ";
+            }
+            cout << endl;
+        } 
+    #else
+        cout << endl;
+        cout << "Level:\t" << this->level << endl;
+        cout << "Score:\t" << this->score << endl;
+        cout << "----------" << endl << endl;
+        for (int i = 0; i < this->size; i++) {
+            for (int j = 0; j < this->size; j++) {
+                this->board[i][j].draw();
+                cout << " ";
+            }
+            cout << endl;
+        }         
+        cout << endl;
+    #endif
 }
 
 void TextView:: setColour(int row, int col, Colour c) {this->board[row][col].colour = c;}

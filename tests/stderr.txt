@@ -1,2 +1,21 @@
 ****************************************
-Size: File: Test failed: ./matches/boundaries/3m_1
+Size: File: 
+
+
+cleared: 3
+turn score: 3
+Test failed: ./matches/boundaries/3m_1
+****************************************
+Size: File: 
+
+
+cleared: 3
+turn score: 3
+Test failed: ./matches/boundaries/3m_2
+****************************************
+Size: File: 
+
+
+cleared: 3
+turn score: 3
+Test failed: ./matches/multimatches/3x4

@@ -55,7 +55,9 @@ void Board::loadLevel(int level) {
 				ifstream file("sequence.txt");
 		#endif
 
+#ifdef DEBUG_BOARD
 		if (! file.good()) {throw string("unable to read the sequence file: '") + f + "'";}
+#endif
 
 		string square;
 
@@ -241,7 +243,6 @@ string Board::validMove() {
 
 					if (grid[r][c].isReady() ||
 						grid[r][c].neighbour[d]->isReady()) {
-
 						ss << "hint: " << r << " " << c << " " << dir2str((Direction)d);
 						foundMatch = true;
 					}
@@ -260,15 +261,12 @@ string Board::validMove() {
 		}
 	}
 
+	ss << "none";
 	return ss.str();
 }
 
 void Board::hint() {
-
-	string txt = validMove();
-
-	if (txt == "") cerr << "no valid moves left" << endl;
-	else view->print(txt);
+	view->print(validMove());
 }
 
 void Board::scramble() {
@@ -299,3 +297,7 @@ void Board::printGridInfo() {
 		cerr << endl;
 	}
 }
+
+void Board::levelUp() {this->loadLevel(++this->level);}
+void Board::levelDown() {this->loadLevel(--this->level);}
+void Board::restart() {this->loadLevel(this->level);}
