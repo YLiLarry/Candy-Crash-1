@@ -1,9 +1,18 @@
-#include "graphicView.h"
+#include "graphicview.h"
+using namespace std;
+
+void GraphicView:: refresh() {
+    cerr << "refresh" << endl;
+    for (int i = 0; i < this->size; i++) {
+        for (int j = 0; j < this->size; j++) {
+            this->board[i][j].draw();
+        }
+    }
+    this_thread:: sleep_for(chrono::milliseconds(500));
+    this->refresh();
+}
 
 void GraphicView::GraphicCell:: draw() const {
-    #if DEBUG_GRAPHIC
-        fprintf(stderr,"draw cell: %d %d colour: %d\n",x, y, colour);
-    #endif
     this->window->fillRectangle(this->x, this->y, outer->cellSize, outer->cellSize, static_cast<int>(this->colour));
 }
 
@@ -41,12 +50,14 @@ void GraphicView:: init(int size) {
             this->board[i][j].y = this->marginLeft + j * this->cellSize;
             this->board[i][j].window = this->window;
             this->board[i][j].outer = this;
-            this->board[i][j].draw();
         }
     }
     #if DEBUG_GRAPHIC
         fprintf(stderr,"GraphicView:: init done");
     #endif
+    
+    this->main = new thread(&GraphicView::refresh, this);
+    this->main->detach();
 }
 
 void GraphicView:: end() {
@@ -54,15 +65,11 @@ void GraphicView:: end() {
         delete [] this->board[i];
     }
     delete [] this->board;
+    if (this->main->joinable()) {this->main->join();}
+    delete this->main;
 }
 
-void GraphicView:: draw() const {
-    for (int i = 0; i < this->size; i++) {
-        for (int j = 0; j < this->size; j++) {
-            this->board[i][j].draw();
-        }
-    }
-};  
+void GraphicView:: draw() const {};  
 
 
 void GraphicView:: setColour(int r, int c, Colour x) {
@@ -90,8 +97,8 @@ void GraphicView:: setHiScore(int) {
 };
 
 
-void GraphicView:: print(const std::string&) {
-    
+void GraphicView:: print(const std::string& s) {
+    cout << ">> " << s << endl;
 };
 
 void GraphicView:: swap(int,int,Direction) {

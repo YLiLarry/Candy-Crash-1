@@ -432,7 +432,7 @@ void Board::hint() {
 
 void Board::scramble() {
 
-	if (validMove() != "none") return;
+	// if (validMove() != "none") return;
 
 	PRNG rand;
 	

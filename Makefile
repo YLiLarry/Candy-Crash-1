@@ -1,5 +1,5 @@
 CXX = g++
-CXXFLAGS = -Wall -lX11 -L/usr/X11/lib -I/usr/X11/include -MMD -DDEBUG_GRAPHIC #-DDEBUG #-DDEBUG_BOARD #-DMATCH_TEST #-DDEBUG_VIEW
+CXXFLAGS = -lX11 -L/usr/X11/lib -I/usr/X11/include -Wall -std=c++0x -MMD -DDEBUG_GRAPHIC #-DDEBUG #-DDEBUG_BOARD #-DMATCH_TEST #-DDEBUG_VIEW
 EXEC = main
 MODEL = model/board.o model/square.o
 VIEW = view/view.o view/textview/textview.o view/graphicview/graphicview.o view/graphicview/window.o
@@ -10,8 +10,7 @@ DEPENDS = ${OBJECTS:.o=.d}
 
 
 ${EXEC}: ${OBJECTS}
-	 ${CXX} ${CXXFLAGS} ${OBJECTS} -o ${EXEC}
-	 cp ${EXEC} tests/${EXEC}
+	 ${CXX} ${OBJECTS} ${CXXFLAGS} -o ${EXEC}
 
 # -include ${DEPENDS}
 
@@ -19,3 +18,7 @@ ${EXEC}: ${OBJECTS}
 
 clean:
 	rm ${OBJECTS} ${EXEC} ${DEPENDS}
+
+rebuild:
+	make clean
+	make

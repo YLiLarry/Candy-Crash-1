@@ -8,6 +8,8 @@
 
 #include "../viewabstract.h"
 #include "window.h"
+#include <thread>
+#include <chrono>
 
     class GraphicView : public ViewAbstract {
         
@@ -29,6 +31,9 @@
             int cellSize;
             int marginLeft;
             int marginTop;
+            std::thread* main;
+            
+            void refresh();
             
         public:
             GraphicView(int);
