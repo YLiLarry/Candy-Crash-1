@@ -20,11 +20,12 @@ class Board {
 	Square **grid;
 	int size;
 
-	int level;
-	int score;
 	int cleared;
-	int turnScore;
 	int chain;
+	unsigned int score;
+	unsigned int initScore;
+	unsigned int matchScore;
+	unsigned int turnScore;
 	
 	bool chainMode;
 	bool settled;
@@ -35,7 +36,6 @@ class Board {
 
 	// loads level, either randomly generated
 	// or from provided file
-	void loadLevel(int level);
 
 
 	std::vector<Square *> hMatch;
@@ -55,7 +55,7 @@ class Board {
 	void clearColour(Colour c);
 
 	//void clear(Square &root);
-	int clearAt(Square &root);
+	void clearAt(Square &root);
 	void clear(Square &sq, int radius);
 
 	void dropSquares();
@@ -65,6 +65,8 @@ class Board {
 	void chainReaction();
 
 	public:
+
+	int level;
 
 	Board(int size);
 	~Board();
@@ -76,6 +78,7 @@ class Board {
 
 	void levelUp();
 	void levelDown();
+	void loadLevel(int level);
 
 	void restart();
 

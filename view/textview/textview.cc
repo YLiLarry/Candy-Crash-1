@@ -5,6 +5,7 @@
 using namespace std;
 
 void TextCell:: draw() const {
+	
     string str = "_";
     switch (this->cellType) {
         case Basic : str += "_"; break;
@@ -37,6 +38,7 @@ TextView:: ~TextView() {
 }
 
 void TextView:: draw() const {
+	cout << string(100, '\n');
     cout << endl;
     for (int i = 0; i < this->size; i++) {
         for (int j = 0; j < this->size; j++) {

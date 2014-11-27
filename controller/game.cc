@@ -35,6 +35,7 @@ Game::Game(int size) {
 	string cmd;
 
 	while (cin >> cmd) {
+
         if (cmd == "//") {
             cin.ignore(1024, '\n');
             continue;
@@ -54,6 +55,15 @@ Game::Game(int size) {
 		} else if (cmd == "quit") {
 			break;
 		}
+
+		cerr << board->level << endl;
+
+		switch (board->level) {
+
+			case 1: board->loadLevel(1); break;
+		}
+
+		cerr << "command: ";
 	}
 }
 

@@ -21,10 +21,18 @@ Board::Board(int n) {
 
 	size = n;
 
-	level = 0;
+	cleared = 0;
+	chain = 0;
+
 	score = 0;
+	initScore = 0;
+	matchScore = 0;
 	turnScore = 0;
 
+	level = 0;
+
+	chainMode = false;
+	settled = false;
 }
 
 Board::~Board() {
@@ -94,9 +102,13 @@ void Board::loadLevel(int level) {
 		
 		view->setScore(score);
 		view->setLevel(level);
+		view->draw();
+	} else if (level == 1) {
+
+		view->draw();
+		cerr << "this is level 1" << endl;
 	}
 	
-	view->draw();
 }
 
 void Board::setNewSquare(Square &sq) {
@@ -135,12 +147,13 @@ void Board::swap(int row, int col, Direction d) {
 
 	grid[row][col].clearNotified();
 
-	while (!settled) {
+	do {
+
 		view->draw(); // temp
 		dropSquares();
 		view->draw(); // temp
 		chainReaction();
-	}
+	} while (chainMode);
 
 	dropSquares();
 
@@ -148,13 +161,13 @@ void Board::swap(int row, int col, Direction d) {
 
 	score += turnScore;
 
+	if (score >= initScore + 200 && level == 0) level = 1;
+
 	ostringstream ss;
 	ss << "cleared:  " << cleared << endl;
-	ss << "chained:  " << chain << endl;
-	ss << "score  : +" << turnScore << endl;
+	ss << "chains :  " << chain << endl;
+	ss << "scored : +" << turnScore << endl;
 	ss << "total  :  " << score << endl;
-
-
 	view->print(ss.str());
 }
 
@@ -166,6 +179,7 @@ void Board::dropSquares() {
 		while (grid[0][c].getColour() == Empty) {
 
 			setNewSquare(grid[0][c]);
+			view->draw();
 			grid[0][c].drop();
 		}
 	}
@@ -173,19 +187,17 @@ void Board::dropSquares() {
 
 void Board::chainReaction() {
 
+	chainMode = false;
+
 	for (int r = 0; r < size; r++) {
 		for (int c = 0; c < size; c++) {
-
-			settled = true;
 
 			grid[r][c].notify();
 
 			if (grid[r][c].isReady()) {
 
-				settled = false;
+				if (!chainMode) chain++;
 				chainMode = true;
-
-				view->draw();
 				clear(grid[r][c], 4);
 			}
 
@@ -194,7 +206,7 @@ void Board::chainReaction() {
 	}
 }
 
-int Board::clearAt(Square &root) {
+void Board::clearAt(Square &root) {
 
 	collectMatched(root);
 
@@ -211,11 +223,13 @@ int Board::clearAt(Square &root) {
 
 	if (hMatch.size() < 3 && vMatch.size() < 3) {
 
+		view->draw();
 		view->print("no match");
-		return false;
+		return;
 
 	} else if (hMatch.size() == 3 && vMatch.size() == 3) {
 
+		view->draw();
 		view->print("L match");
 
 		for (int i = 0; i < 3; i++) {
@@ -230,6 +244,7 @@ int Board::clearAt(Square &root) {
 
 	} else if (hMatch.size() > vMatch.size()) {
 
+		view->draw();
 		view->print("Horizontal match");
 
 		int n = (int)hMatch.size();
@@ -249,6 +264,7 @@ int Board::clearAt(Square &root) {
 
 	} else if (hMatch.size() < vMatch.size()) {
 
+		view->draw();
 		view->print("Vertical match");
 
 		int n = (int)vMatch.size();
@@ -267,12 +283,14 @@ int Board::clearAt(Square &root) {
 		}
 	}
 
-	return true;
+	view->draw();
 }
 
 void Board::clear(Square &sq, int r) {
 
 	if (sq.getColour() == Empty)  return;
+
+	view->draw();
 
 	Colour tColour = sq.getColour();
 	Type tType = sq.getType();
@@ -285,20 +303,16 @@ void Board::clear(Square &sq, int r) {
 
 	if (cleared > 3) r = 4; // override;
 
-	if (chainMode) {
-
-			chain++;
-			turnScore *= pow(2, chain);
-	} else {
-
-		switch (cleared) {
-			case 0: case 1: case 2: break;
-			case 3: turnScore = 3; break;
-			case 4: turnScore = 8; break;
-			case 5: turnScore = 15; break;
-			default: turnScore = 4 * cleared;
-		}
+	switch (cleared) {
+		case 0: case 1: case 2: break;
+		case 3: turnScore = 3; break;
+		case 4: turnScore = 8; break;
+		case 5: turnScore = 15; break;
+		default: turnScore = 4 * cleared;
 	}
+
+	if (chainMode) turnScore = pow(2, chain) * turnScore;
+	
 
 	int row = sq.getRow();
 	int col = sq.getCol();
