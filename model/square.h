@@ -23,7 +23,6 @@ class Square {
 	View *view;
 	Square **grid;
 
-	void notify();
 	void notifyNeighbours();
 
 	public:
@@ -39,10 +38,12 @@ class Square {
 	void swap(Square &sq);
 	void swapWith(Direction d);
 
+	void notify();
+	
 	void clearReady();
 	void clearNotified();
 
-	void clear(int &clear, int &turnScore, int radius);
+	//void clear(int &clear, int &chain, int &turnScore, int radius);
 
 	void drop();
 	
