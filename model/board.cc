@@ -53,11 +53,12 @@ void Board::loadLevel(int level) {
 				cin >> f;
 		
 				ifstream file(f.c_str());
+				if (! file.good()) {throw string("unable to read the sequence file: '") + f + "'";}
 		#else
 				ifstream file("sequence.txt");
+				if (! file.good()) {throw string("unable to read the sequence.txt file");}
 		#endif
 
-		if (! file.good()) {throw string("unable to read the sequence file: '") + f + "'";}
 
 		string square;
 

@@ -111,7 +111,7 @@ void TextView:: swap(int r, int c, Direction d) {
 
 void TextView:: drop(int column, Colour colour, Type type = Basic) {
     int row = 0;
-    while (row < this->size && this->board[row][column].empty()) {row++;}
+    while (row < this->size && this->board[row][column].colour == Empty) {row++;}
     this->board[row][column].colour = colour;
     this->board[row][column].cellType = type;
 }
@@ -122,7 +122,7 @@ void TextView:: fall(int r, int c, int d) {
 
 
 void TextView:: destory(int r, int c) {
-    this->board[r][c].setEmpty();
+    this->board[r][c].colour = Empty;
 }
 
 void TextView:: init(int size) {

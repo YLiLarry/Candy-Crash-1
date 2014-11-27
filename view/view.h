@@ -7,12 +7,12 @@
 #define __VIEW__H__
 #include "viewabstract.h"
 #include "textview/textview.h"
-// #include "graphicview/graphicview.h"
+#include "graphicview/graphicview.h"
 
     class View : public ViewAbstract {
         private:
             TextView* tv;
-            // GraphicView* gv;
+            GraphicView* gv;
             
         public:
             View(int);

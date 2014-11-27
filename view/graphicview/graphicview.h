@@ -6,20 +6,52 @@
 #ifndef __GRAPHICVIEW__H__
 #define __GRAPHICVIEW__H__
 
-#include "view.h"
+#include "../viewabstract.h"
+#include "window.h"
 
-    class GraphicCell : public CellView {
+    class GraphicView : public ViewAbstract {
+        
+        class GraphicCell : public CellViewAbstract {
+            public:
+                int x;
+                int y;
+                Xwindow* window;
+                Colour colour;
+                GraphicView* outer;
+                void draw() const;
+        };
+        
         protected:
-            int x;
-            int y;
-        public:
-            GraphicCell(int,int);
-            ~GraphicCell();
-    }
-
-    class GraphicView : public View {
-        protected:
+            GraphicCell** board;
+            Xwindow* window;
+            int windowWidth;
+            int windowHeight;
+            int cellSize;
+            int marginLeft;
+            int marginTop;
             
+        public:
+            GraphicView(int);
+            ~GraphicView();
+            
+            void init(int);
+            void draw() const;
+            
+            void setColour(int,int,Colour);
+            void setType(int,int,Type);
+            void setScore(int);
+            void setLevel(int);
+            void setMovesRemain(int);
+            void setHiScore(int);
+            
+            void print(const std::string&);
+            void swap(int,int,Direction);
+            void drop(int,Colour,Type);
+            void fall(int,int,int);
+            void destory(int,int);
+            
+            void end();
+            void restart(int);
     };
     
 #endif
