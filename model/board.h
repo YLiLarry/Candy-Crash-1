@@ -24,6 +24,10 @@ class Board {
 	int score;
 	int cleared;
 	int turnScore;
+	int chain;
+	
+	bool chainMode;
+	bool settled;
 
 	void setNeighbours(Square *s);
 
@@ -36,18 +40,6 @@ class Board {
 
 	std::vector<Square *> hMatch;
 	std::vector<Square *> vMatch;
-
-
-
-	// scans the grid for matches
-	// shouldint row, int col be used to detect chain reactions
-	// after swap, not for "swap matches"
-	//
-	// append matched vector with all matches
-	// and call clearSquares(), which in turn
-	// calls checkMatch() again. Will stop
-	// when there are no matches (matched is empty)
-	void chainReaction();
 
 	std::string validMove();
 
@@ -63,9 +55,14 @@ class Board {
 	void clearColour(Colour c);
 
 	//void clear(Square &root);
-	int clearSquares(Square &root);
+	int clearAt(Square &root);
+	void clear(Square &sq, int radius);
 
+	void dropSquares();
 	void setNewSquare(Square &sq);
+
+
+	void chainReaction();
 
 	public:
 

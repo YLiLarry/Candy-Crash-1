@@ -1,5 +1,6 @@
 #include <fstream>
 #include <sstream>
+#include <cmath>
 #include "board.h"
 #include "../public/global.h"
 #include "../PRNG.h"
@@ -116,19 +117,45 @@ void Board::swap(int row, int col, Direction d) {
 
 	cleared = 0;
 	turnScore = 0;
+	chain = 0;
+	chainMode = false;
+	settled = false;
 
 	grid[row][col].swapWith(d);
 	
 	view->draw();
 
-	clearSquares(*grid[row][col].neighbour[d]);
-	clearSquares(grid[row][col]);
+	clearAt(*grid[row][col].neighbour[d]);
+	clearAt(grid[row][col]);
 
 	if (!cleared) grid[row][col].swapWith(d);
 
 	grid[row][col].clearNotified();
 
+	while (!settled) {
+		view->draw(); // temp
+		dropSquares();
+		view->draw(); // temp
+		chainReaction();
+	}
+
+	dropSquares();
+
 	view->draw();
+
+	score += turnScore;
+
+	ostringstream ss;
+	ss << "cleared:  " << cleared << endl;
+	ss << "chained:  " << chain << endl;
+	ss << "score  : +" << turnScore << endl;
+	ss << "total  :  " << score << endl;
+
+
+	view->print(ss.str());
+}
+
+void Board::dropSquares() {
 
 	for (int c = 0; c < size; c++) {
 		grid[0][c].drop();
@@ -136,20 +163,37 @@ void Board::swap(int row, int col, Direction d) {
 		while (grid[0][c].getColour() == Empty) {
 
 			setNewSquare(grid[0][c]);
-			view->draw();
 			grid[0][c].drop();
 		}
 	}
-
-	view->draw();
 }
 
-int Board::clearSquares(Square &root) {
+void Board::chainReaction() {
+
+	for (int r = 0; r < size; r++) {
+		for (int c = 0; c < size; c++) {
+
+			settled = true;
+
+			grid[r][c].notify();
+
+			if (grid[r][c].isReady()) {
+
+				settled = false;
+				chainMode = true;
+
+				view->draw();
+				clear(grid[r][c], 4);
+			}
+
+			grid[r][c].clearNotified();
+		}
+	}
+}
+
+int Board::clearAt(Square &root) {
 
 	collectMatched(root);
-
-	cerr << "h : " << hMatch.size() << endl;
-	cerr << "v : " << vMatch.size() << endl;
 
 	Colour backup = root.getColour();
 	int radius = 0;
@@ -172,10 +216,10 @@ int Board::clearSquares(Square &root) {
 		view->print("L match");
 
 		for (int i = 0; i < 3; i++) {
-			hMatch[i]->clear(cleared, turnScore, radius);
+			clear(*hMatch[i], radius);
 		}
 		for (int i = 0; i < 3; i++) {
-			vMatch[i]->clear(cleared, turnScore, radius);
+			clear(*vMatch[i], radius);
 		}
 
 		root.setColour(backup);
@@ -188,7 +232,7 @@ int Board::clearSquares(Square &root) {
 		int n = (int)hMatch.size();
 
 		for (int i = 0; i < n; i++) {
-			hMatch[i]->clear(cleared, turnScore, radius);
+			clear(*hMatch[i], radius);
 		}
 
 		switch (n) {
@@ -207,7 +251,7 @@ int Board::clearSquares(Square &root) {
 		int n = (int)vMatch.size();
 
 		for (int i = 0; i < n; i++) {
-			vMatch[i]->clear(cleared, turnScore, radius);
+			clear(*vMatch[i], radius);
 		}
 
 		switch (n) {
@@ -221,6 +265,86 @@ int Board::clearSquares(Square &root) {
 	}
 
 	return true;
+}
+
+void Board::clear(Square &sq, int r) {
+
+	if (sq.getColour() == Empty)  return;
+
+	Colour tColour = sq.getColour();
+	Type tType = sq.getType();
+
+	sq.setColour(Empty);
+	sq.setType(Basic);
+	sq.setReady(false);
+
+	cleared++;
+
+	if (cleared > 3) r = 4; // override;
+
+	if (chainMode) {
+
+			chain++;
+			turnScore *= pow(2, chain);
+	} else {
+
+		switch (cleared) {
+			case 0: case 1: case 2: break;
+			case 3: turnScore = 3; break;
+			case 4: turnScore = 8; break;
+			case 5: turnScore = 15; break;
+			default: turnScore = 4 * cleared;
+		}
+	}
+
+	int row = sq.getRow();
+	int col = sq.getCol();
+
+	switch (tType) {
+
+		case Basic: break;
+		case Lateral: 
+		{
+			for (int c = 0; c < size; c++) {
+				clear(grid[row][c], r);
+				//grid[row][c].clear(cleared, chain, turnScore, r);
+			}					  
+		} break;			  
+		case Upright:
+		{
+			for (int r = 0; r < size; r++) {
+				clear(grid[r][col], r);
+				//grid[r][col].clear(cleared, chain, turnScore, r);
+			}
+		} break;
+		case Unstable:
+		{
+			int sz = size; // looks pretty
+
+			int rMin = (row - r >= 0)? row - r : 0;
+			int rMax = (row + r < sz)? row + r : sz - 1;
+			int cMin = (col - r >= 0)? col - r : 0;
+			int cMax = (col + r < sz)? col + r : sz - 1;
+
+			for (int r = rMin; r <= rMax; r++) {
+				for (int c = cMin; c <= cMax; c++) {
+					clear(grid[r][c], r);
+					//grid[r][c].clear(cleared, chain, turnScore, r);
+				}
+			}	   
+		} break;
+		case Psychedelic:
+		{
+			for (int r = 0; r < size; r++) {
+				for (int c = 0; c < size; c++) {
+					if (grid[r][c].getColour() == tColour) {
+						clear(grid[r][c], r);
+						//grid[i][j].clear(cleared, chain, turnScore, r);
+					}
+				}
+			}
+		} break;
+	}
 }
 
 void Board::collectMatched(Square &root) {
@@ -303,6 +427,8 @@ void Board::hint() {
 }
 
 void Board::scramble() {
+
+	if (validMove() != "none") return;
 
 	PRNG rand;
 	
