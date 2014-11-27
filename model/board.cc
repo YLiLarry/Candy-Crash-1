@@ -11,6 +11,9 @@ using namespace std;
 Board::Board(int n) {
 
 	view = new View(n);
+
+	generate = new Generator;
+
 	grid = new Square *[n];
 	for (int r = 0; r < n; r++) {
 		grid[r] = new Square[n];
@@ -44,6 +47,7 @@ Board::~Board() {
 
 	delete[] grid;
 
+	delete generate;
 	delete view;
 }
 
@@ -51,6 +55,23 @@ void Board::start() {
 	loadLevel(level);
 }
 
+void parseSquare(string strSquare, Square &square) {
+
+	Colour colour = (Colour)(strSquare[2] - '0');
+
+	Type type;
+	switch (strSquare[1]) {
+		case '_': type = Basic; break;
+		case 'h': type = Lateral; break;
+		case 'v': type = Upright; break;
+		case 'b': type = Unstable; break;
+		case 'p': type = Psychedelic; break;
+		default: {throw string("unexpected square type: '") + strSquare[1] + "'";}
+	}
+
+	square.setColour(colour);
+	square.setType(type);
+}
 void Board::loadLevel(int level) {
 
 	if (level == 0) {
@@ -76,21 +97,25 @@ void Board::loadLevel(int level) {
 			for (int j = 0; j < size; j++) {
 
 				file >> square;
-				Type type;
 
-				switch (square[1]) {
-					case '_': type = Basic; break;
-					case 'h': type = Lateral; break;
-					case 'v': type = Upright; break;
-					case 'b': type = Unstable; break;
-					case 'p': type = Psychedelic; break;
-					default: {throw string("unexpected square type: '") + square[1] + "'";}
-				}
-
-				Colour colour = (Colour)(square[2] - '0');
-
-				grid[i][j].setColour(colour);
-				grid[i][j].setType(type);
+				parseSquare(square, grid[i][j]);
+/*
+ *                Type type;
+ *
+ *                switch (square[1]) {
+ *                    case '_': type = Basic; break;
+ *                    case 'h': type = Lateral; break;
+ *                    case 'v': type = Upright; break;
+ *                    case 'b': type = Unstable; break;
+ *                    case 'p': type = Psychedelic; break;
+ *                    default: {throw string("unexpected square type: '") + square[1] + "'";}
+ *                }
+ *
+ *                Colour colour = (Colour)(square[2] - '0');
+ *
+ *                grid[i][j].setColour(colour);
+ *                grid[i][j].setType(type);
+ */
 				grid[i][j].setNeighbours();
 
 				if (i == size - 1 && j == size - 1) {
@@ -103,12 +128,21 @@ void Board::loadLevel(int level) {
 		view->setScore(score);
 		view->setLevel(level);
 		view->draw();
+
 	} else if (level == 1) {
 
-		view->draw();
-		cerr << "this is level 1" << endl;
+		string randSq;
+
+		for (int r = 0; r < size; r++) {
+			for (int c = 0; c < size; c++) {
+
+				randSq = generate->randomSquare(1);
+
+				cerr << randSq << " ";
+			}
+			cerr << endl;
+		}
 	}
-	
 }
 
 void Board::setNewSquare(Square &sq) {

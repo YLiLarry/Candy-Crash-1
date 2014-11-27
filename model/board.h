@@ -5,18 +5,22 @@
 #include <vector>
 #include <string>
 #include <algorithm>
+#include "generator.h"
 #include "square.h"
 #include "../view/view.h"
 #include "../public/global.h"
 
 class Board {
 
-	#if DEBUG_BOARD
-	    public:
-	#endif
+	/*
+	 *#if DEBUG_BOARD
+	 *    public:
+	 *#endif
+	 */
 
 	View *view;
 
+	Generator *generate;
 	Square **grid;
 	int size;
 
