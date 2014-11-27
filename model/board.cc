@@ -132,10 +132,12 @@ void Board::swap(int row, int col, Direction d) {
 
 	grid[row][col].clearNotified();
 
+	view->draw(); // print before dropping
+
 	while (!settled) {
-		view->draw(); // temp
+		// view->draw(); // temp
 		dropSquares();
-		view->draw(); // temp
+		// view->draw(); // temp
 		chainReaction();
 	}
 
@@ -151,8 +153,9 @@ void Board::swap(int row, int col, Direction d) {
 	ss << "score  : +" << turnScore << endl;
 	ss << "total  :  " << score << endl;
 
-
-	view->print(ss.str());
+	#if ! DEBUG
+		view->print(ss.str());
+	#endif
 }
 
 void Board::dropSquares() {
@@ -208,12 +211,12 @@ int Board::clearAt(Square &root) {
 
 	if (hMatch.size() < 3 && vMatch.size() < 3) {
 
-		view->print("no match");
+		// view->print("no match");
 		return false;
 
 	} else if (hMatch.size() == 3 && vMatch.size() == 3) {
 
-		view->print("L match");
+		// view->print("L match");
 
 		for (int i = 0; i < 3; i++) {
 			clear(*hMatch[i], radius);
@@ -227,7 +230,7 @@ int Board::clearAt(Square &root) {
 
 	} else if (hMatch.size() > vMatch.size()) {
 
-		view->print("Horizontal match");
+		// view->print("Horizontal match");
 
 		int n = (int)hMatch.size();
 
@@ -246,7 +249,7 @@ int Board::clearAt(Square &root) {
 
 	} else if (hMatch.size() < vMatch.size()) {
 
-		view->print("Vertical match");
+		// view->print("Vertical match");
 
 		int n = (int)vMatch.size();
 
