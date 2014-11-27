@@ -3,7 +3,7 @@
 #include <cmath>
 #include "board.h"
 #include "../public/global.h"
-#include "../PRNG.h"
+#include "PRNG.h"
 
 using namespace std;
 
