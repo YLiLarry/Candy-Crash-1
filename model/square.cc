@@ -71,6 +71,21 @@ void Square::swap(Direction d) {
 	notify();
 }
 
+void Square::swap(Square &other) {
+
+	Colour tColour = colour;
+	Type tType = type;
+
+	colour = other.colour;
+	type = other.type;
+
+	other.colour = tColour;
+	other.type = tType;
+
+	other.notify();
+	notify();
+}
+
 void Square::swapWith(Direction d) {
 
 	Colour tColour = colour;
@@ -229,6 +244,26 @@ void Square::clear(int &cleared, int &turnScore, int r = 4) {
 				}
 			}
 		} break;
+	}
+}
+
+void Square::drop() {
+
+	if (neighbour[Down]) {
+
+		if (neighbour[Down]->getColour() == Empty) {
+
+			neighbour[Down]->setColour(colour);
+			neighbour[Down]->setType(type);
+
+			setColour(Empty);
+			setType(Basic);
+
+			if (neighbour[Up]) neighbour[Up]->drop();
+
+		} else {
+			neighbour[Down]->drop();
+		}
 	}
 }
 

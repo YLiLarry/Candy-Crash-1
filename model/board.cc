@@ -2,6 +2,7 @@
 #include <sstream>
 #include "board.h"
 #include "../public/global.h"
+#include "../PRNG.h"
 
 using namespace std;
 
@@ -82,6 +83,10 @@ void Board::loadLevel(int level) {
 				grid[i][j].setType(type);
 				grid[i][j].setNeighbours();
 
+				if (i == size - 1 && j == size - 1) {
+
+					file >> levelZeroColours;
+				}
 			}
 		}
 		
@@ -92,24 +97,51 @@ void Board::loadLevel(int level) {
 	view->draw();
 }
 
+void Board::setNewSquare(Square &sq) {
+
+	if (level == 0) {
+
+		Colour newColour = (Colour)(levelZeroColours[0] - '0');
+		Type newType = Basic;
+
+		sq.setColour(newColour);
+		sq.setType(newType);
+
+		// recycles the colours
+		char c = levelZeroColours[0];
+		levelZeroColours.erase(0, 1);
+		levelZeroColours += c;
+	}
+}
+
 void Board::swap(int row, int col, Direction d) {
 
 	cleared = 0;
 	turnScore = 0;
 
 	grid[row][col].swapWith(d);
+	
+	view->draw();
 
 	clearSquares(*grid[row][col].neighbour[d]);
 	clearSquares(grid[row][col]);
 
-	if (cleared) {
-		cerr << "cleared: " << cleared << endl;
-		cerr << "turn score: " << turnScore << endl;
-	} else {
-		grid[row][col].swap(d);
-	}
+	if (!cleared) grid[row][col].swapWith(d);
 
 	grid[row][col].clearNotified();
+
+	view->draw();
+
+	for (int c = 0; c < size; c++) {
+		grid[0][c].drop();
+
+		while (grid[0][c].getColour() == Empty) {
+
+			setNewSquare(grid[0][c]);
+			view->draw();
+			grid[0][c].drop();
+		}
+	}
 
 	view->draw();
 }
@@ -117,6 +149,9 @@ void Board::swap(int row, int col, Direction d) {
 int Board::clearSquares(Square &root) {
 
 	collectMatched(root);
+
+	cerr << "h : " << hMatch.size() << endl;
+	cerr << "v : " << vMatch.size() << endl;
 
 	Colour backup = root.getColour();
 	int radius = 0;
@@ -148,7 +183,7 @@ int Board::clearSquares(Square &root) {
 		root.setColour(backup);
 		root.setType(Unstable);
 
-	} else if (hMatch.size() >= 3 && vMatch.size() < 3) {
+	} else if (hMatch.size() > vMatch.size()) {
 
 		view->print("Horizontal match");
 
@@ -167,7 +202,7 @@ int Board::clearSquares(Square &root) {
 					break;
 		}
 
-	} else if (hMatch.size() < 3 && vMatch.size() >=3) {
+	} else if (hMatch.size() < vMatch.size()) {
 
 		view->print("Vertical match");
 
@@ -271,16 +306,35 @@ void Board::hint() {
 
 void Board::scramble() {
 
-	for (int i = 0; i < size; i++) {
-		random_shuffle(&grid[i][0], &grid[i][size - 1]);
-	}
+	PRNG rand;
+	
+	for (int r = 0; r < size; r++) {
+		for (int c = 0; c < size; c++) {
 
-	/*for (int i = 0; i < size; i++) {*/
-	//for (int j = 0; j < size; j++) {
-	//view->setColour(i, j, grid[i][j].getColour());
-	//view->setType(i, j, grid[i][j].getType());
-	//}
-	/*}*/
+			int randRow = rand(0, size-1);
+			int randCol = rand(0, size-1);
+
+			grid[r][c].swap(grid[randRow][randCol]);
+
+			if (grid[r][c].isReady() ||
+				grid[randRow][randCol].isReady()) {
+
+				grid[r][c].swap(grid[randRow][randCol]);
+			}
+
+			grid[r][c].clearReady();
+			grid[r][c].clearNotified();
+
+			grid[randRow][randCol].clearReady();
+			grid[randRow][randCol].clearNotified();
+
+			view->setColour(r, c, grid[r][c].getColour());
+			view->setType(r, c, grid[r][c].getType());
+
+			view->setColour(randRow, randCol, grid[randRow][randCol].getColour());
+			view->setType(randRow, randCol, grid[randRow][randCol].getType());
+		}
+	}
 
 	view->draw();
 }

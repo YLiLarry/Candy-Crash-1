@@ -36,6 +36,7 @@ class Square {
 	void setNeighbours();
 
 	void swap(Direction d);
+	void swap(Square &sq);
 	void swapWith(Direction d);
 
 	void clearReady();
