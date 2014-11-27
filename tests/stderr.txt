@@ -1,21 +1,97 @@
 ****************************************
-Size: File: 
+Size: File: h : 3
+v : 1
 
 
-cleared: 3
-turn score: 3
+
+h : 0
+v : 0
 Test failed: ./matches/boundaries/3m_1
 ****************************************
-Size: File: 
+Size: File: h : 1
+v : 3
 
 
-cleared: 3
-turn score: 3
+
+h : 0
+v : 0
 Test failed: ./matches/boundaries/3m_2
 ****************************************
-Size: File: 
+Size: File: h : 1
+v : 3
 
 
-cleared: 3
-turn score: 3
-Test failed: ./matches/multimatches/3x4
+
+h : 0
+v : 0
+Test failed: ./matches/boundaries/3m_3
+****************************************
+Size: File: h : 3
+v : 1
+
+
+
+h : 0
+v : 0
+Test failed: ./matches/boundaries/3m_4
+****************************************
+Size: File: h : 1
+v : 4
+
+
+
+
+h : 0
+v : 0
+Test failed: ./matches/boundaries/4m_1
+****************************************
+Size: File: h : 1
+v : 4
+
+
+
+
+h : 0
+v : 0
+Test failed: ./matches/boundaries/4m_2
+****************************************
+Size: File: h : 3
+v : 3
+
+
+
+
+
+h : 0
+v : 0
+Test failed: ./matches/boundaries/5m_1
+****************************************
+Size: File: h : 5
+v : 1
+
+
+
+
+
+h : 0
+v : 0
+Test failed: ./matches/boundaries/5m_2
+****************************************
+Size: File: h : 0
+v : 1
+h : 3
+v : 1
+
+
+
+Test failed: ./matches/mismatch/t1
+****************************************
+Size: File: h : 1
+v : 4
+
+
+
+
+h : 0
+v : 0
+Test failed: ./matches/mismatch/t2

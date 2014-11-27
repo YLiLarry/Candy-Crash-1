@@ -45,7 +45,7 @@ void Board::loadLevel(int level) {
 
 	if (level == 0) {
 
-		#ifdef DEBUG_BOARD
+		#ifdef DEBUG
 				cerr << "File: ";
 		
 				string f;
@@ -56,9 +56,7 @@ void Board::loadLevel(int level) {
 				ifstream file("sequence.txt");
 		#endif
 
-#ifdef DEBUG_BOARD
 		if (! file.good()) {throw string("unable to read the sequence file: '") + f + "'";}
-#endif
 
 		string square;
 
