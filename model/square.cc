@@ -199,6 +199,9 @@ void Square::setRow(int r) { row = r; }
 int Square::getCol() { return col; }
 void Square::setCol(int c) { col = c; }
 
+bool Square::isLocked() { return locked; }
+void Square::setLocked(bool t) { locked = t; }
+
 Colour Square::getColour() { return colour; }
 void Square::setColour(Colour c) { colour = c; }
 

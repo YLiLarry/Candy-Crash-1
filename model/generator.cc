@@ -10,10 +10,9 @@ int Generator::produced = 0;
 
 string Generator::randomSquare(int level) {
 
-	PRNG rn;
 	string randomSquare = "";
 	produced++;
-	default_random_engine gen(produced * rn());
+	default_random_engine gen(produced + produced);
 	//default_random_engine gen(1337 + produced);
 
 	if (level == 1) {
@@ -57,9 +56,10 @@ string Generator::randomSquare(int level) {
 
 	if (level == 2) {
 
+		cerr << produced << endl;
 		discrete_distribution<int> colourDist { 1, 1, 1, 1 };
 
-		char extra = '_';
+		char extra = (produced >= 80)? 'l' : '_';
 
 		randomSquare += extra;
 
