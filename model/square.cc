@@ -182,7 +182,7 @@ void Square::drop() {
 			setColour(Empty);
 			setType(Basic);
 
-			view->fall(row, col, 1);
+			view->fall(row, col);
 
 			if (neighbour[Up]) neighbour[Up]->drop();
 
