@@ -27,6 +27,7 @@ Board::Board(int n) {
 
 	cleared = 0;
 	chain = 0;
+	unlocked = 0;
 
 	score = 0;
 	initScore = 0;
@@ -76,6 +77,7 @@ void parseSquare(string strSquare, Square &square, View *view) {
 	square.setColour(colour);
 	square.setType(type);
 
+	view->setLocked(square.getRow(), square.getCol(), locked);
 	view->setColour(square.getRow(), square.getCol(), colour);
 	view->setType(square.getRow(), square.getCol(), type);
 }
@@ -143,9 +145,11 @@ void Board::loadLevel(int level) {
 			for (int c = 0; c < size; c++) {
 
 				parseSquare(generate->randomSquare(2), grid[r][c], view);
-				//grid[r][c].setNeighbours();
+				grid[r][c].setNeighbours();
 			}
 		}
+
+		scramble();
 
 		view->setScore(score);
 		view->setLevel(2);
@@ -218,6 +222,12 @@ void Board::swap(int row, int col, Direction d) {
 
 		level = 2;
 		initScore = score;
+	}
+
+	if (score >= initScore + 500 && level == 2 && unlocked == 20) {
+
+		cerr << "WINNER!" << endl;
+		return;
 	}
 
 	view->setScore(score);
@@ -384,6 +394,14 @@ void Board::clearAt(Square &root) {
 void Board::clear(Square &sq, int r) {
 
 	if (sq.getColour() == Empty)  return;
+
+	if (sq.isLocked()) {
+
+		sq.setLocked(false);
+		view->setLocked(sq.getRow(), sq.getCol(), false);
+		unlocked++;
+		return;
+	}
 
 	Colour tColour = sq.getColour();
 	Type tType = sq.getType();
@@ -560,9 +578,11 @@ void Board::scramble() {
 
 			} else {
 
+				view->setLocked(r, c, grid[r][c].isLocked());
 				view->setColour(r, c, grid[r][c].getColour());
 				view->setType(r, c, grid[r][c].getType());
 
+				view->setLocked(randRow, randCol, grid[randRow][randCol].isLocked());
 				view->setColour(randRow, randCol, grid[randRow][randCol].getColour());
 				view->setType(randRow, randCol, grid[randRow][randCol].getType());
 			}

@@ -26,6 +26,7 @@ class Board {
 
 	int cleared;
 	int chain;
+	int unlocked;
 
 	unsigned int score;
 	unsigned int initScore;

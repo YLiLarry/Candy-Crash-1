@@ -48,7 +48,6 @@ Game::Game(int size) {
         } else if (cmd == "swap") {
 			this->swap();
 		} else if (cmd == "hint") {
-			cerr << "you called hint! board->level = " << board->level << endl;
 			this->hint();
 		} else if (cmd == "scramble") {
 			this->scramble();
@@ -69,6 +68,8 @@ Game::Game(int size) {
 
 			board->loadLevel(currentLevel);
 		}
+
+		cerr << board->level << endl;
 
 		#ifndef DEBUG
 			cout << "command: ";
