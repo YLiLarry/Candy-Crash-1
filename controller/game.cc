@@ -37,7 +37,9 @@ Game::Game(int size) {
 	#ifndef DEBUG
 		cout << "command: ";
 	#endif
-		
+	
+	int currentLevel = board->level, previousLevel = board->level;
+
 	while (cin >> cmd) {
 
         if (cmd == "//") {
@@ -60,15 +62,17 @@ Game::Game(int size) {
 			break;
 		}
 
-		switch (board->level) {
+		if (currentLevel != board->level) {
 
-			case 1: board->loadLevel(1); break;
+			previousLevel = currentLevel;
+			currentLevel = board->level;
+
+			board->loadLevel(currentLevel);
 		}
 
 		#ifndef DEBUG
 			cout << "command: ";
 		#endif
-		
 	}
 }
 

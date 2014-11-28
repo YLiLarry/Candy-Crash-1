@@ -26,13 +26,14 @@ class Board {
 
 	int cleared;
 	int chain;
+
 	unsigned int score;
 	unsigned int initScore;
 	unsigned int matchScore;
 	unsigned int turnScore;
 	
 	bool chainMode;
-	bool settled;
+	bool emptyBoard;
 
 	void setNeighbours(Square *s);
 
@@ -65,6 +66,9 @@ class Board {
 	void dropSquares();
 	void setNewSquare(Square &sq);
 
+
+	void notifyAll();
+	void unNotifyAll();
 
 	void chainReaction();
 

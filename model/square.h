@@ -69,6 +69,7 @@ class Square {
 	void setReady(bool);
 
 	bool isNotified();
+	void setNotified(bool);
 
 	void printInfo();
 };
