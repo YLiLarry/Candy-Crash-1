@@ -17,14 +17,14 @@ void Animation:: end() {
         cerr << "td joinable?" << this->td->joinable() << endl;
         this->td->join();
         cerr << "td join!" << endl;
-        // delete this->td;
+        delete this->td;
     }
 }
 
 void Animation:: run() {
     cerr << "run" << endl;
     this->end();
-    this->td = new thread(&Animation::loop, getInstance());
+    this->td = new thread(&Animation::loop, this);
 }
 
 Animation:: ~Animation() {
@@ -39,11 +39,6 @@ bool Move:: during() {
 
 void Move:: animate() {
     cerr << this->current++ << endl;
-}
-
-Move* Move:: getInstance() {return this;}
-Move:: ~Move() {
-    cerr << "Move destroied" << endl;
 }
 
 int main() {

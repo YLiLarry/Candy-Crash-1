@@ -56,7 +56,7 @@ void Board::start() {
 	loadLevel(level);
 }
 
-void parseSquare(string strSquare, Square &square) {
+void parseSquare(string strSquare, Square &square, View *view) {
 
 	Colour colour = (Colour)(strSquare[2] - '0');
 
@@ -72,6 +72,9 @@ void parseSquare(string strSquare, Square &square) {
 
 	square.setColour(colour);
 	square.setType(type);
+
+	view->setColour(square.getRow(), square.getCol(), colour);
+	view->setType(square.getRow(), square.getCol(), type);
 }
 
 void Board::loadLevel(int level) {
@@ -99,7 +102,7 @@ void Board::loadLevel(int level) {
 
 				file >> square;
 
-				parseSquare(square, grid[i][j]);
+				parseSquare(square, grid[i][j], view);
 				grid[i][j].setNeighbours();
 
 				if (i == size - 1 && j == size - 1) {
@@ -118,7 +121,7 @@ void Board::loadLevel(int level) {
 		for (int r = 0; r < size; r++) {
 			for (int c = 0; c < size; c++) {
 
-				parseSquare(generate->randomSquare(1), grid[r][c]);
+				parseSquare(generate->randomSquare(1), grid[r][c], view);
 				grid[r][c].setNeighbours();
 			}
 		}
@@ -149,7 +152,7 @@ void Board::setNewSquare(Square &sq) {
 	
 	} else {
 
-		parseSquare(generate->randomSquare(level), sq);
+		parseSquare(generate->randomSquare(level), sq, view);
 	}
 }
 
@@ -173,8 +176,9 @@ void Board::swap(int row, int col, Direction d) {
 	grid[row][col].clearNotified();
 
 	do {
-		view->draw(); // temp
+		view->draw();
 		dropSquares();
+		view->draw();
 		chainReaction();
 
 	} while (chainMode);
@@ -215,7 +219,6 @@ void Board::dropSquares() {
 		while (grid[0][c].getColour() == Empty) {
 
 			setNewSquare(grid[0][c]);
-			view->draw();
 			grid[0][c].drop();
 		}
 	}
@@ -316,7 +319,7 @@ void Board::clear(Square &sq, int r) {
 
 	if (sq.getColour() == Empty)  return;
 
-	view->draw();
+	// view->draw();
 
 	Colour tColour = sq.getColour();
 	Type tType = sq.getType();

@@ -34,7 +34,10 @@ Game::Game(int size) {
 
 	string cmd;
 
-	cout << "command: ";
+	#ifndef DEBUG
+		cout << "command: " << endl;
+	#endif
+		
 	while (cin >> cmd) {
 
         if (cmd == "//") {
@@ -62,7 +65,10 @@ Game::Game(int size) {
 			case 1: board->loadLevel(1); break;
 		}
 
-		cout << "command: ";
+		#ifndef DEBUG
+			cout << "command: " << endl;
+		#endif
+		
 	}
 }
 

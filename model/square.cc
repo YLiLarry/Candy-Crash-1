@@ -98,6 +98,8 @@ void Square::swapWith(Direction d) {
 	neighbour[d]->setColour(tColour);
 	neighbour[d]->setType(tType);
 
+	view->swap(row, col, d);
+
 	neighbour[d]->notify();
 	notify();
 }
@@ -180,6 +182,8 @@ void Square::drop() {
 			setColour(Empty);
 			setType(Basic);
 
+			view->fall(row, col, 1);
+
 			if (neighbour[Up]) neighbour[Up]->drop();
 
 		} else {
@@ -195,16 +199,10 @@ int Square::getCol() { return col; }
 void Square::setCol(int c) { col = c; }
 
 Colour Square::getColour() { return colour; }
-void Square::setColour(Colour c) {
-	colour = c;
-	view->setColour(row, col, colour);
-}
+void Square::setColour(Colour c) { colour = c; }
 
 Type Square::getType() { return type;  }
-void Square::setType(Type t) {
-	type = t;
-	view->setType(row, col, type);
-}
+void Square::setType(Type t) { type = t; }
 
 bool Square::isReady() { return ready; }
 void Square::setReady(bool t) { ready = t; }

@@ -98,7 +98,6 @@ void GraphicView:: setHiScore(int) {
 
 
 void GraphicView:: print(const std::string& s) {
-    cout << ">> " << s << endl;
 };
 
 void GraphicView:: swap(int,int,Direction) {

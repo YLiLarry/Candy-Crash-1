@@ -5,11 +5,11 @@
 class Animation {
     private :
         std::thread* td = 0;
+        bool toggle = false;
     protected :
         void loop();
         bool virtual during() = 0;
         void virtual animate() = 0;
-        virtual Animation* getInstance() = 0;
     public :
         void end();
         void run();
@@ -20,9 +20,5 @@ class Move : public Animation {
     int current = 0;
     bool during();
     void animate();
-    Move* getInstance();
-    
-    public :
-    ~Move();
 };
 #endif
