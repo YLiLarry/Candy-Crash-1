@@ -1,4 +1,5 @@
 #include "view.h"
+#include <unistd.h>
 using namespace std;
 
 View:: View(int size) {

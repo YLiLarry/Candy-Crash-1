@@ -5,6 +5,7 @@
 using namespace std;
 
 void TextCell:: draw() const {
+	
     string str = "_";
     switch (this->cellType) {
         case Basic : str += "_"; break;

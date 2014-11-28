@@ -2,6 +2,8 @@
 #include <sstream>
 #include <cmath>
 #include "board.h"
+#include "generator.h"
+#include "../view/textview/textview.h"
 #include "../public/global.h"
 #include "PRNG.h"
 
@@ -10,6 +12,9 @@ using namespace std;
 Board::Board(int n) {
 
 	view = new View(n);
+
+	generate = new Generator();
+
 	grid = new Square *[n];
 	for (int r = 0; r < n; r++) {
 		grid[r] = new Square[n];
@@ -20,10 +25,18 @@ Board::Board(int n) {
 
 	size = n;
 
-	level = 0;
+	cleared = 0;
+	chain = 0;
+
 	score = 0;
+	initScore = 0;
+	matchScore = 0;
 	turnScore = 0;
 
+	level = 0;
+
+	chainMode = false;
+	settled = false;
 }
 
 Board::~Board() {
@@ -35,11 +48,30 @@ Board::~Board() {
 
 	delete[] grid;
 
+	delete generate;
 	delete view;
 }
 
 void Board::start() {
 	loadLevel(level);
+}
+
+void parseSquare(string strSquare, Square &square) {
+
+	Colour colour = (Colour)(strSquare[2] - '0');
+
+	Type type;
+	switch (strSquare[1]) {
+		case '_': type = Basic; break;
+		case 'h': type = Lateral; break;
+		case 'v': type = Upright; break;
+		case 'b': type = Unstable; break;
+		case 'p': type = Psychedelic; break;
+		default: {throw string("unexpected square type: '") + strSquare[1] + "'";}
+	}
+
+	square.setColour(colour);
+	square.setType(type);
 }
 
 void Board::loadLevel(int level) {
@@ -66,21 +98,8 @@ void Board::loadLevel(int level) {
 			for (int j = 0; j < size; j++) {
 
 				file >> square;
-				Type type;
 
-				switch (square[1]) {
-					case '_': type = Basic; break;
-					case 'h': type = Lateral; break;
-					case 'v': type = Upright; break;
-					case 'b': type = Unstable; break;
-					case 'p': type = Psychedelic; break;
-					default: {throw string("unexpected square type: '") + square[1] + "'";}
-				}
-
-				Colour colour = (Colour)(square[2] - '0');
-
-				grid[i][j].setColour(colour);
-				grid[i][j].setType(type);
+				parseSquare(square, grid[i][j]);
 				grid[i][j].setNeighbours();
 
 				if (i == size - 1 && j == size - 1) {
@@ -92,9 +111,26 @@ void Board::loadLevel(int level) {
 		
 		view->setScore(score);
 		view->setLevel(level);
-	}
+		view->draw();
+
+	} else if (level == 1) {
+
+		for (int r = 0; r < size; r++) {
+			for (int c = 0; c < size; c++) {
+
+				parseSquare(generate->randomSquare(1), grid[r][c]);
+				grid[r][c].setNeighbours();
+			}
+		}
+
+		scramble();
+		view->draw();
 	
-	view->draw();
+	} else if (level == 2) {
+
+		cerr << "LEVEL 2" << endl;
+
+	}
 }
 
 void Board::setNewSquare(Square &sq) {
@@ -104,13 +140,16 @@ void Board::setNewSquare(Square &sq) {
 		Colour newColour = (Colour)(levelZeroColours[0] - '0');
 		Type newType = Basic;
 
-		sq.setColour(newColour);
-		sq.setType(newType);
+		sq.setColour(newColour); sq.setType(newType);
 
 		// recycles the colours
 		char c = levelZeroColours[0];
 		levelZeroColours.erase(0, 1);
 		levelZeroColours += c;
+	
+	} else {
+
+		parseSquare(generate->randomSquare(level), sq);
 	}
 }
 
@@ -133,14 +172,13 @@ void Board::swap(int row, int col, Direction d) {
 
 	grid[row][col].clearNotified();
 
-	view->draw(); // print before dropping
+	do {
 
-	while (!settled) {
-		// view->draw(); // temp
+		view->draw(); // temp
 		dropSquares();
 		// view->draw(); // temp
 		chainReaction();
-	}
+	} while (chainMode);
 
 	dropSquares();
 
@@ -148,12 +186,22 @@ void Board::swap(int row, int col, Direction d) {
 
 	score += turnScore;
 
+	if (score >= initScore + 200 && level == 0) {
+		
+		level = 1;
+		initScore = score;
+	}
+	if (score >= initScore + 300 && level == 1) {
+
+		level = 2;
+		initScore = score;
+	}
+
 	ostringstream ss;
 	ss << "cleared:  " << cleared << endl;
-	ss << "chained:  " << chain << endl;
-	ss << "score  : +" << turnScore << endl;
+	ss << "chains :  " << chain << endl;
+	ss << "scored : +" << turnScore << endl;
 	ss << "total  :  " << score << endl;
-
 	#if ! DEBUG
 		view->print(ss.str());
 	#endif
@@ -167,6 +215,7 @@ void Board::dropSquares() {
 		while (grid[0][c].getColour() == Empty) {
 
 			setNewSquare(grid[0][c]);
+			view->draw();
 			grid[0][c].drop();
 		}
 	}
@@ -174,19 +223,17 @@ void Board::dropSquares() {
 
 void Board::chainReaction() {
 
+	chainMode = false;
+
 	for (int r = 0; r < size; r++) {
 		for (int c = 0; c < size; c++) {
-
-			settled = true;
 
 			grid[r][c].notify();
 
 			if (grid[r][c].isReady()) {
 
-				settled = false;
+				if (!chainMode) chain++;
 				chainMode = true;
-
-				view->draw();
 				clear(grid[r][c], 4);
 			}
 
@@ -195,7 +242,7 @@ void Board::chainReaction() {
 	}
 }
 
-int Board::clearAt(Square &root) {
+void Board::clearAt(Square &root) {
 
 	collectMatched(root);
 
@@ -213,11 +260,9 @@ int Board::clearAt(Square &root) {
 	if (hMatch.size() < 3 && vMatch.size() < 3) {
 
 		// view->print("no match");
-		return false;
+		return;
 
 	} else if (hMatch.size() == 3 && vMatch.size() == 3) {
-
-		// view->print("L match");
 
 		for (int i = 0; i < 3; i++) {
 			clear(*hMatch[i], radius);
@@ -230,8 +275,6 @@ int Board::clearAt(Square &root) {
 		root.setType(Unstable);
 
 	} else if (hMatch.size() > vMatch.size()) {
-
-		// view->print("Horizontal match");
 
 		int n = (int)hMatch.size();
 
@@ -250,8 +293,6 @@ int Board::clearAt(Square &root) {
 
 	} else if (hMatch.size() < vMatch.size()) {
 
-		// view->print("Vertical match");
-
 		int n = (int)vMatch.size();
 
 		for (int i = 0; i < n; i++) {
@@ -268,12 +309,14 @@ int Board::clearAt(Square &root) {
 		}
 	}
 
-	return true;
+	view->draw();
 }
 
 void Board::clear(Square &sq, int r) {
 
 	if (sq.getColour() == Empty)  return;
+
+	view->draw();
 
 	Colour tColour = sq.getColour();
 	Type tType = sq.getType();
@@ -286,20 +329,16 @@ void Board::clear(Square &sq, int r) {
 
 	if (cleared > 3) r = 4; // override;
 
-	if (chainMode) {
-
-			chain++;
-			turnScore *= pow(2, chain);
-	} else {
-
-		switch (cleared) {
-			case 0: case 1: case 2: break;
-			case 3: turnScore = 3; break;
-			case 4: turnScore = 8; break;
-			case 5: turnScore = 15; break;
-			default: turnScore = 4 * cleared;
-		}
+	switch (cleared) {
+		case 0: case 1: case 2: break;
+		case 3: turnScore = 3; break;
+		case 4: turnScore = 8; break;
+		case 5: turnScore = 15; break;
+		default: turnScore = 4 * cleared;
 	}
+
+	if (chainMode) turnScore = pow(2, chain) * turnScore;
+	
 
 	int row = sq.getRow();
 	int col = sq.getCol();
@@ -432,8 +471,6 @@ void Board::hint() {
 
 void Board::scramble() {
 
-	// if (validMove() != "none") return;
-
 	PRNG rand;
 	
 	for (int r = 0; r < size; r++) {
@@ -448,6 +485,14 @@ void Board::scramble() {
 				grid[randRow][randCol].isReady()) {
 
 				grid[r][c].swap(grid[randRow][randCol]);
+
+			} else {
+
+				view->setColour(r, c, grid[r][c].getColour());
+				view->setType(r, c, grid[r][c].getType());
+
+				view->setColour(randRow, randCol, grid[randRow][randCol].getColour());
+				view->setType(randRow, randCol, grid[randRow][randCol].getType());
 			}
 
 			grid[r][c].clearReady();
@@ -455,12 +500,6 @@ void Board::scramble() {
 
 			grid[randRow][randCol].clearReady();
 			grid[randRow][randCol].clearNotified();
-
-			view->setColour(r, c, grid[r][c].getColour());
-			view->setType(r, c, grid[r][c].getType());
-
-			view->setColour(randRow, randCol, grid[randRow][randCol].getColour());
-			view->setType(randRow, randCol, grid[randRow][randCol].getType());
 		}
 	}
 
