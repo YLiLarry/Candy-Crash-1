@@ -59,9 +59,14 @@ int main() {
             cin >> c >> str1 >> str2;
             view->drop(c, str2colour(str1), str2type(str2));
         } else 
+        if (str == "setLabel") {
+            string str1;
+            cin >> str1;
+            view->setLabel(str1);
+        } else 
         if (str == "dy") {
             cin >> r >> c;
-            view->destory(r, c);
+            view->destroy(r, c);
         } else 
         if (str == "qt") {
             break;

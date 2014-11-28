@@ -8,34 +8,54 @@
 
 #include "../viewabstract.h"
 #include "window.h"
+#include "animation.h"
 #include <thread>
 #include <chrono>
+    
+    class GraphicCell;
+    class GraphicView;
+
+    class MoveAnimation : public Animation {
+        private :
+            GraphicCell* target;
+            int desX;
+            int desY;
+        public :
+            bool during();
+            void animate();
+            void to(int,int);
+            MoveAnimation(GraphicCell*);
+    };
+
+    class GraphicCell : public CellViewAbstract {
+        public:
+            int x;
+            int y;
+            Xwindow* window;
+            Colour colour;
+            GraphicView* outer;
+            MoveAnimation* move;
+            
+            GraphicCell();
+            void draw() const;
+    };
 
     class GraphicView : public ViewAbstract {
         
-        class GraphicCell : public CellViewAbstract {
-            public:
-                int x;
-                int y;
-                Xwindow* window;
-                Colour colour;
-                GraphicView* outer;
-                void draw() const;
-        };
-        
-        protected:
-            GraphicCell** board;
+        public :
+            GraphicCell*** board;
             Xwindow* window;
             int windowWidth;
             int windowHeight;
             int cellSize;
             int marginLeft;
             int marginTop;
+            int fps;
             std::thread* main;
             
             void refresh();
             
-        public:
+        public :
             GraphicView(int);
             ~GraphicView();
             
@@ -50,6 +70,7 @@
             void setHiScore(int);
             
             void print(const std::string&);
+            void setLabel(const std::string&);
             void swap(int,int,Direction);
             void drop(int,Colour,Type);
             void fall(int,int);

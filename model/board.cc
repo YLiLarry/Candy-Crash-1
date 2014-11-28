@@ -58,7 +58,7 @@ void Board::start() {
 
 void parseSquare(string strSquare, Square &square, View *view) {
 
-	Colour colour = (Colour)(strSquare[2] - '0');
+	bool locked = strSquare[0] == 'l';
 
 	Type type;
 	switch (strSquare[1]) {
@@ -70,6 +70,9 @@ void parseSquare(string strSquare, Square &square, View *view) {
 		default: {throw string("unexpected square type: '") + strSquare[1] + "'";}
 	}
 
+	Colour colour = (Colour)(strSquare[2] - '0');
+
+	square.setLocked(locked);
 	square.setColour(colour);
 	square.setType(type);
 
@@ -134,6 +137,8 @@ void Board::loadLevel(int level) {
 	
 	} else if (level == 2) {
 
+		generate->produced = 0;
+
 		for (int r = 0; r < size; r++) {
 			for (int c = 0; c < size; c++) {
 
@@ -168,7 +173,6 @@ void Board::setNewSquare(Square &sq) {
 	
 	} else {
 
-		generate->produced = 0;
 		parseSquare(generate->randomSquare(level), sq, view);
 	}
 }
@@ -416,18 +420,21 @@ void Board::clear(Square &sq, int r) {
 		case Basic: break;
 		case Lateral: 
 		{
+			view->setLabel("Lateral");
 			for (int c = 0; c < size; c++) {
 				clear(grid[row][c], r);
 			}					  
 		} break;			  
 		case Upright:
 		{
+			view->setLabel("Upright");
 			for (int r = 0; r < size; r++) {
 				clear(grid[r][col], r);
 			}
 		} break;
 		case Unstable:
 		{
+			view->setLabel("Unstable");
 			int sz = size; // looks pretty
 
 			int rMin = (row - r >= 0)? row - r : 0;
@@ -443,6 +450,7 @@ void Board::clear(Square &sq, int r) {
 		} break;
 		case Psychedelic:
 		{
+			view->setLabel("Psychedelic");
 			for (int r = 0; r < size; r++) {
 				for (int c = 0; c < size; c++) {
 					if (grid[r][c].getColour() == tColour) {

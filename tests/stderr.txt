@@ -1,148 +1,87 @@
 Size: File: fall
-1
 fall
-1
 fall
-3
-fall
-2
-fall
-1
+****************************************
+Test failed: ./matches/boundaries/3m_1
 Size: File: fall
-2
 fall
-1
 fall
-2
 fall
-1
-fall
-2
-fall
-1
+****************************************
+Test failed: ./matches/boundaries/3m_2
 Size: File: fall
-2
-3
-fall
-1
-2
-fall
-1
-2
 fall
 fall
 fall
-1
-Size: File: you called hint! board->level = 0
-fall
-1
-fall
-1
-fall
-1
-pure virtual method called
-terminate called without an active exception
-Size: File: you called hint! board->level = 0
-fall
-3
-fall
-2
-fall
-1
-fall
-3
-fall
-2
-fall
-1
-fall
-3
-fall
-2
-fall
-1
-Size: File: you called hint! board->level = 0
-fall
-1
-2
-fall
-1
-2
-fall
-fall
-1
-Size: File: you called hint! board->level = 0
-fall
-1
-2
-fall
-1
-2
-fall
-fall
-1
+****************************************
+Test failed: ./matches/boundaries/3m_3
 Size: File: fall
-4
 fall
-3
 fall
-2
 fall
-1
 fall
-4
 fall
-3
 fall
-2
 fall
-1
 fall
-4
-fall
-3
-fall
-2
-fall
-1
-fall
-4
-fall
-3
-fall
-2
-fall
-1
-pure virtual method called
-terminate called without an active exception
+****************************************
+Test failed: ./matches/boundaries/3m_4
 Size: File: fall
-1
-2
 fall
 fall
-1
 fall
-3
 fall
-2
-fall
-1
-fall
-3
-fall
-2
-fall
-1
-pure virtual method called
-terminate called without an active exception
+****************************************
+Test failed: ./matches/boundaries/4m_1
 Size: File: fall
-1
 fall
-1
 fall
-3
 fall
-2
 fall
-1
-pure virtual method called
+fall
+****************************************
+Test failed: ./matches/boundaries/4m_2
+Size: File: fall
+fall
+fall
+fall
+fall
+fall
+fall
+fall
+fall
+****************************************
+Test failed: ./matches/boundaries/5m_1
+Size: File: fall
+fall
+fall
+fall
+fall
+fall
+fall
+fall
+fall
+fall
+fall
+fall
+fall
+fall
+fall
+fall
+****************************************
+Test failed: ./matches/boundaries/5m_2
+Size: File: fall
+fall
+fall
+fall
+fall
+fall
+****************************************
+Test failed: ./matches/mismatch/t1
+Size: File: fall
+fall
+fall
+fall
+fall
+****************************************
+Test failed: ./matches/mismatch/t2

@@ -54,6 +54,9 @@ class Square {
 	int getCol();
 	void setCol(int c);
 
+	bool isLocked();
+	void setLocked(bool);
+
 	Colour getColour();
 	void setColour(Colour c);
 

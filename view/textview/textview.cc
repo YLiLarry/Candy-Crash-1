@@ -51,6 +51,7 @@ void TextView:: draw() const {
         cout << endl;
         cout << "Level:\t" << this->level << endl;
         cout << "Score:\t" << this->score << endl;
+        if (this->customLabel.length()) {cout << this->customLabel << endl;}
         cout << "----------" << endl << endl;
         for (int i = 0; i < this->size; i++) {
             for (int j = 0; j < this->size; j++) {
@@ -127,7 +128,7 @@ void TextView:: fall(int r, int c) {
 
 void TextView:: destroy(int r, int c) {
     this->board[r][c].colour = Empty;
-	this->board[r][c].cellType = Basic;
+    this->board[r][c].cellType = Basic;
 }
 
 void TextView:: init(int size) {
@@ -171,4 +172,8 @@ void TextView:: restart(int size = 0) {
 
 void TextView:: print(const string& str) {
     cout << ">> " << str << endl;
+}
+
+void TextView:: setLabel(const string& str) {
+    this->customLabel = str;
 }

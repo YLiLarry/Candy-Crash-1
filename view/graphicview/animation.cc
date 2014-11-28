@@ -22,8 +22,8 @@ void Animation:: end() {
     }
 }
 
-void Animation:: run() {
-    cerr << "run" << endl;
+void Animation:: start() {
+    cerr << "start" << endl;
     this->end();
     toggle = true;
     this->td = new thread(&Animation::loop, this);
@@ -43,9 +43,9 @@ void Move:: animate() {
     cerr << this->current++ << endl;
 }
 
-int main() {
-    Move m;
-    m.run();
-    this_thread::sleep_for(chrono::seconds(1));
-    cerr << "main quit" << endl;
-}
+// int main() {
+//     Move m;
+//     m.start();
+//     this_thread::sleep_for(chrono::seconds(1));
+//     cerr << "main quit" << endl;
+// }
