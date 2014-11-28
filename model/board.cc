@@ -173,8 +173,7 @@ void Board::swap(int row, int col, Direction d) {
 	grid[row][col].clearNotified();
 
 	do {
-
-		view->draw(); // temp
+		// view->draw(); // temp
 		dropSquares();
 		// view->draw(); // temp
 		chainReaction();
@@ -215,7 +214,7 @@ void Board::dropSquares() {
 		while (grid[0][c].getColour() == Empty) {
 
 			setNewSquare(grid[0][c]);
-			view->draw();
+			// view->draw();
 			grid[0][c].drop();
 		}
 	}
@@ -316,7 +315,7 @@ void Board::clear(Square &sq, int r) {
 
 	if (sq.getColour() == Empty)  return;
 
-	view->draw();
+	// view->draw();
 
 	Colour tColour = sq.getColour();
 	Type tType = sq.getType();

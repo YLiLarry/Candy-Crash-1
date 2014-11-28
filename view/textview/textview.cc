@@ -166,5 +166,5 @@ void TextView:: restart(int size = 0) {
 }
 
 void TextView:: print(const string& str) {
-    cout << str << endl;
+    cout << ">> " << str << endl;
 }
