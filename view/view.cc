@@ -62,9 +62,9 @@ void View:: drop(int col, Colour c, Type t) {
     gv->drop(col,c,t);
 };
 
-void View:: fall(int row, int col, int distance) {
-    tv->fall(row,col,distance);
-    gv->fall(row,col,distance);
+void View:: fall(int row, int col) {
+    tv->fall(row,col);
+    gv->fall(row,col);
 };
 
 void View:: destory(int r,int c) {

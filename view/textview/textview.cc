@@ -117,8 +117,11 @@ void TextView:: drop(int column, Colour colour, Type type = Basic) {
     this->board[row][column].cellType = type;
 }
 
-void TextView:: fall(int r, int c, int d) {
-    _swap(this->board[r][c], this->board[r+d][c]);
+void TextView:: fall(int r, int c) {
+    int i = r;
+    cerr << "fall" << endl;
+    while (i < this->size - 1 && this->board[i+1][c].colour == Empty) {i++; cerr << i << endl;}
+    _swap(this->board[r][c], this->board[i][c]);
 };
 
 

@@ -52,7 +52,7 @@
             void print(const std::string&);
             void swap(int,int,Direction);
             void drop(int,Colour,Type);
-            void fall(int,int,int);
+            void fall(int,int);
             void destory(int,int);
             
             void end();

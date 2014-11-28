@@ -4,9 +4,9 @@
 using namespace std;
 
 void Animation:: loop() {
-    if (this->during()) {
+    if (this->toggle && this->during()) {
         animate();
-        this_thread::sleep_for(chrono::milliseconds(500));
+        this_thread::sleep_for(chrono::milliseconds(this->fps));
         this->loop();
     }
 }
@@ -15,6 +15,7 @@ void Animation:: end() {
     cerr << "td: " << this->td << endl;
     if (this->td) {
         cerr << "td joinable?" << this->td->joinable() << endl;
+        this->toggle = false;
         this->td->join();
         cerr << "td join!" << endl;
         delete this->td;
@@ -24,12 +25,13 @@ void Animation:: end() {
 void Animation:: run() {
     cerr << "run" << endl;
     this->end();
+    toggle = true;
     this->td = new thread(&Animation::loop, this);
 }
 
 Animation:: ~Animation() {
     cerr << "Animation destroied." << endl;
-    delete this->td;
+    this->end();
 }
 
 bool Move:: during() {
@@ -46,5 +48,4 @@ int main() {
     m.run();
     this_thread::sleep_for(chrono::seconds(1));
     cerr << "main quit" << endl;
-    m.end();
 }

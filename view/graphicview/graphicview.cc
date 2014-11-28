@@ -108,7 +108,7 @@ void GraphicView:: drop(int,Colour,Type) {
     
 };
 
-void GraphicView:: fall(int,int,int) {
+void GraphicView:: fall(int,int) {
     
 };
 
