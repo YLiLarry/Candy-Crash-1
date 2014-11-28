@@ -20,7 +20,7 @@ void View:: init(int size) {
 void View:: draw() const {
 	tv->draw();
 	// gv->draw();
-	usleep(50000);
+	usleep(10000);
 };
 
 void View:: setColour(int row, int col, Colour c) {

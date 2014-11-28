@@ -2,6 +2,7 @@
 #include <sstream>
 #include <cmath>
 #include "board.h"
+#include "generator.h"
 #include "../view/textview/textview.h"
 #include "../public/global.h"
 #include "../PRNG.h"
@@ -12,7 +13,7 @@ Board::Board(int n) {
 
 	view = new View(n);
 
-	generate = new Generator;
+	generate = new Generator();
 
 	grid = new Square *[n];
 	for (int r = 0; r < n; r++) {
@@ -72,6 +73,7 @@ void parseSquare(string strSquare, Square &square) {
 	square.setColour(colour);
 	square.setType(type);
 }
+
 void Board::loadLevel(int level) {
 
 	if (level == 0) {
@@ -99,23 +101,6 @@ void Board::loadLevel(int level) {
 				file >> square;
 
 				parseSquare(square, grid[i][j]);
-/*
- *                Type type;
- *
- *                switch (square[1]) {
- *                    case '_': type = Basic; break;
- *                    case 'h': type = Lateral; break;
- *                    case 'v': type = Upright; break;
- *                    case 'b': type = Unstable; break;
- *                    case 'p': type = Psychedelic; break;
- *                    default: {throw string("unexpected square type: '") + square[1] + "'";}
- *                }
- *
- *                Colour colour = (Colour)(square[2] - '0');
- *
- *                grid[i][j].setColour(colour);
- *                grid[i][j].setType(type);
- */
 				grid[i][j].setNeighbours();
 
 				if (i == size - 1 && j == size - 1) {
@@ -131,17 +116,21 @@ void Board::loadLevel(int level) {
 
 	} else if (level == 1) {
 
-		string randSq;
-
 		for (int r = 0; r < size; r++) {
 			for (int c = 0; c < size; c++) {
 
-				randSq = generate->randomSquare(1);
-
-				cerr << randSq << " ";
+				parseSquare(generate->randomSquare(1), grid[r][c]);
+				grid[r][c].setNeighbours();
 			}
-			cerr << endl;
 		}
+
+		scramble();
+		view->draw();
+	
+	} else if (level == 2) {
+
+		cerr << "LEVEL 2" << endl;
+
 	}
 }
 
@@ -152,13 +141,16 @@ void Board::setNewSquare(Square &sq) {
 		Colour newColour = (Colour)(levelZeroColours[0] - '0');
 		Type newType = Basic;
 
-		sq.setColour(newColour);
-		sq.setType(newType);
+		sq.setColour(newColour); sq.setType(newType);
 
 		// recycles the colours
 		char c = levelZeroColours[0];
 		levelZeroColours.erase(0, 1);
 		levelZeroColours += c;
+	
+	} else {
+
+		parseSquare(generate->randomSquare(level), sq);
 	}
 }
 
@@ -195,7 +187,16 @@ void Board::swap(int row, int col, Direction d) {
 
 	score += turnScore;
 
-	if (score >= initScore + 200 && level == 0) level = 1;
+	if (score >= initScore + 200 && level == 0) {
+		
+		level = 1;
+		initScore = score;
+	}
+	if (score >= initScore + 300 && level == 1) {
+
+		level = 2;
+		initScore = score;
+	}
 
 	ostringstream ss;
 	ss << "cleared:  " << cleared << endl;
@@ -481,8 +482,6 @@ void Board::hint() {
 
 void Board::scramble() {
 
-	if (validMove() != "none") return;
-
 	PRNG rand;
 	
 	for (int r = 0; r < size; r++) {
@@ -497,6 +496,14 @@ void Board::scramble() {
 				grid[randRow][randCol].isReady()) {
 
 				grid[r][c].swap(grid[randRow][randCol]);
+
+			} else {
+
+				view->setColour(r, c, grid[r][c].getColour());
+				view->setType(r, c, grid[r][c].getType());
+
+				view->setColour(randRow, randCol, grid[randRow][randCol].getColour());
+				view->setType(randRow, randCol, grid[randRow][randCol].getType());
 			}
 
 			grid[r][c].clearReady();
@@ -504,12 +511,6 @@ void Board::scramble() {
 
 			grid[randRow][randCol].clearReady();
 			grid[randRow][randCol].clearNotified();
-
-			view->setColour(r, c, grid[r][c].getColour());
-			view->setType(r, c, grid[r][c].getType());
-
-			view->setColour(randRow, randCol, grid[randRow][randCol].getColour());
-			view->setType(randRow, randCol, grid[randRow][randCol].getType());
 		}
 	}
 
