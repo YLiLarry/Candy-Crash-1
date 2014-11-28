@@ -2,7 +2,7 @@
 using namespace std;
 
 void GraphicView:: refresh() {
-    cerr << "refresh" << endl;
+    // cerr << "refresh" << endl;
     for (int i = 0; i < this->size; i++) {
         for (int j = 0; j < this->size; j++) {
             this->board[i][j].draw();
@@ -13,7 +13,7 @@ void GraphicView:: refresh() {
 }
 
 void GraphicView::GraphicCell:: draw() const {
-    this->window->fillRectangle(this->x, this->y, outer->cellSize, outer->cellSize, static_cast<int>(this->colour));
+    this->window->fillRectangle(this->y, this->x, outer->cellSize, outer->cellSize, static_cast<int>(this->colour));
 }
 
 GraphicView:: GraphicView(int size) {

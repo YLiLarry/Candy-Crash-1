@@ -1,7 +1,7 @@
 CXX = g++
-CXXFLAGS = -Wall -MMD -DDEBUG_VIEW
+CXXFLAGS = -lX11 -std=c++11 -L/usr/X11/lib -I/usr/X11/include -Wall -MMD
 EXEC = test/test
-OBJECTS = test/test.o cellviewabstract.o textview/textview.o view.o
+OBJECTS = test/test.o textview/textview.o graphicview/graphicview.o graphicview/window.o view.o ../public/global.o 
 DEPENDS = ${OBJECTS:.o=.d}
 
 
