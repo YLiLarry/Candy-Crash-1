@@ -36,7 +36,7 @@
             void swap(int,int,Direction);
             void drop(int,Colour,Type);
             void fall(int,int);
-            void destory(int,int);
+            void destroy(int,int);
             
             void end();
             void restart(int);

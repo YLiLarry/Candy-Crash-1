@@ -125,7 +125,7 @@ void TextView:: fall(int r, int c) {
 };
 
 
-void TextView:: destory(int r, int c) {
+void TextView:: destroy(int r, int c) {
     this->board[r][c].colour = Empty;
 }
 

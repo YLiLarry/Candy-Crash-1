@@ -61,7 +61,7 @@ int main() {
         } else 
         if (str == "dy") {
             cin >> r >> c;
-            view->destory(r, c);
+            view->destroy(r, c);
         } else 
         if (str == "qt") {
             break;
