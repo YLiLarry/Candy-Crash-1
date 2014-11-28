@@ -42,6 +42,11 @@ void View:: setLevel(int x) {
     gv->setLevel(x);
 };
 
+void View:: setLocked(int r, int c, bool x) {
+    tv->setLocked(r,c,x);
+    gv->setLocked(r,c,x);
+};
+
 void View:: setMovesRemain(int x) {
     tv->setMovesRemain(x);
     gv->setMovesRemain(x);

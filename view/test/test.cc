@@ -11,9 +11,9 @@ int main() {
     
     while (cin >> str) {
         if (str == "new") {
-            cin >> r;
             if (view) {delete view;}
-            view = new View(r);
+            view = new View(5);
+            view->draw();
         } else
         if (str == "//") {
             cin.ignore(1024, '\n');
@@ -22,9 +22,10 @@ int main() {
         if (str == "dw") {
             view->draw();
         } else 
-        if (str == "sp") {
+        if (str == "swap") {
             cin >> r >> c >> str;
             view->swap(r, c, str2dir(str));
+            view->draw();
         } else
         if (str == "fall") {
             cin >> r >> c;
@@ -33,6 +34,7 @@ int main() {
         if (str == "sc") {
             cin >> r >> c >> str;
             view->setColour(r, c, str2colour(str));
+            view->draw();
         } else
         if (str == "st") {
             cin >> r >> c >> str;
@@ -68,7 +70,7 @@ int main() {
             cin >> r >> c;
             view->destroy(r, c);
         } else 
-        if (str == "qt") {
+        if (str == "quit") {
             break;
         }
     }
