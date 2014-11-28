@@ -97,11 +97,11 @@ void GraphicView:: end() {
 }
 
 void GraphicView:: draw() const {
-    for (int i = 0; i < this->size; i++) {
-        for (int j = 0; j < this->size; j++) {
-            this->board[i][j]->draw();
-        }
-    }    
+    // for (int i = 0; i < this->size; i++) {
+    //     for (int j = 0; j < this->size; j++) {
+    //         this->board[i][j]->draw();
+    //     }
+    // }    
 };  
 
 
@@ -168,6 +168,7 @@ void GraphicView:: swap(int r, int c, Direction d) {
     }
     cerr << newX << newY;
     #if DEBUG_GRAPHIC
+        fprintf(stderr, "this %d %d addr: %p", r,c, *gc1);
         fprintf(stderr,"Graphic swap %d %d from %d %d to %d %d, neigbhour from %d %d to %d %d",r,c,(*gc1)->x, (*gc1)->y, (*gc2)->x, (*gc2)->y, newX,newY, r*s, c*s);
     #endif
     (*gc1)->move->to(newX, newY);
@@ -197,7 +198,11 @@ void GraphicView:: restart(int) {
 void GraphicView:: refresh() {
     // cerr << "refresh" << endl;
     this->window->fillRectangle(0,0,this->windowWidth,this->windowHeight, White);
-    // this->draw();
+    for (int i = 0; i < this->size; i++) {
+        for (int j = 0; j < this->size; j++) {
+            this->board[i][j]->draw();
+        }
+    }    
     this_thread:: sleep_for(chrono::milliseconds(this->fps));
     this->refresh();
 }
