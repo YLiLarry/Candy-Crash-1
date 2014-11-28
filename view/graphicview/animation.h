@@ -20,7 +20,6 @@ class Move : public Animation {
     int current = 0;
     bool during();
     void animate();
-    Move* getInstance();
     
     public :
     ~Move();
