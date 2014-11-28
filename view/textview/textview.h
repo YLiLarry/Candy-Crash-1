@@ -29,6 +29,7 @@
             void setType(int,int,Type);
             void setScore(int);
             void setLevel(int);
+            void setLocked(int,int,bool);
             void setMovesRemain(int);
             void setHiScore(int);
             

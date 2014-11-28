@@ -6,7 +6,7 @@ using namespace std;
 
 void TextCell:: draw() const {
 	
-    string str = "_";
+    string str(this->lock ? "l" : "_");
     switch (this->cellType) {
         case Basic : str += "_"; break;
         case Lateral : str += "h"; break;
@@ -71,6 +71,7 @@ void TextView:: setType(int row, int col, Type t) {this->board[row][col].cellTyp
 // }
 void TextView:: setScore(int x) {this->score = x;}
 void TextView:: setLevel(int x) {this->level = x;}
+void TextView:: setLocked(int r, int c, bool x) {this->board[r][c].lock = x;}
 void TextView:: setMovesRemain(int x) {this->movesRemain = x;}
 void TextView:: setHiScore(int x) {this->hiScore = x;}
 

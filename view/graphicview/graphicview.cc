@@ -11,9 +11,13 @@ bool MoveAnimation:: during() {
 };
 
 void MoveAnimation:: animate() {
-    cerr << this->target->x << " " << this->target->y << endl;
-    (this->target->x < this->desX) ? (this->target->x++) : (this->target->x--);
-    (this->target->y < this->desY) ? (this->target->y++) : (this->target->y--);
+    // cerr << "animate: ";
+    cerr << this->target->x << " " << this->desX << endl;
+    cerr << this->target->y << " " << this->desY << endl;
+    if (this->target->x < this->desX) {this->target->x++;} 
+    else if (this->target->x > this->desX) {this->target->x--;}
+    if (this->target->y < this->desY) {this->target->y++;} 
+    else if (this->target->y > this->desY) {this->target->y--;}
 }
 
 void MoveAnimation:: to(int desX, int desY) {
@@ -78,13 +82,12 @@ void GraphicView:: init(int size) {
     #endif
     
     this->main = new thread(&GraphicView::refresh, this);
-    this->main->detach();
 }
 
 void GraphicView:: end() {
     for (int i = 0; i < this->size; i++) {
         for (int j = 0; j < this->size; j++) {
-            delete [] this->board[i][j];
+            delete this->board[i][j];
         }
         delete [] this->board[i];
     }
@@ -93,7 +96,13 @@ void GraphicView:: end() {
     delete this->main;
 }
 
-void GraphicView:: draw() const {};  
+void GraphicView:: draw() const {
+    for (int i = 0; i < this->size; i++) {
+        for (int j = 0; j < this->size; j++) {
+            this->board[i][j]->draw();
+        }
+    }    
+};  
 
 
 void GraphicView:: setColour(int r, int c, Colour x) {
@@ -127,6 +136,8 @@ void GraphicView:: print(const std::string& s) {
 void GraphicView:: setLabel(const std::string& s) {
 };
 
+void GraphicView:: setLocked(int,int,bool) {};
+
 void GraphicView:: swap(int r, int c, Direction d) {
     GraphicCell** gc1 = &this->board[r][c];
     GraphicCell** gc2 ;
@@ -156,8 +167,11 @@ void GraphicView:: swap(int r, int c, Direction d) {
         }
     }
     cerr << newX << newY;
+    #if DEBUG_GRAPHIC
+        fprintf(stderr,"Graphic swap %d %d from %d %d to %d %d, neigbhour from %d %d to %d %d",r,c,(*gc1)->x, (*gc1)->y, (*gc2)->x, (*gc2)->y, newX,newY, r*s, c*s);
+    #endif
     (*gc1)->move->to(newX, newY);
-    (*gc2)->move->to(r*s, c*s);
+    // (*gc2)->move->to(r*s, c*s);
     GraphicCell* tmp;
     tmp = *gc1;
     *gc1 = *gc2;
@@ -183,11 +197,7 @@ void GraphicView:: restart(int) {
 void GraphicView:: refresh() {
     // cerr << "refresh" << endl;
     this->window->fillRectangle(0,0,this->windowWidth,this->windowHeight, White);
-    for (int i = 0; i < this->size; i++) {
-        for (int j = 0; j < this->size; j++) {
-            this->board[i][j]->draw();
-        }
-    }
+    // this->draw();
     this_thread:: sleep_for(chrono::milliseconds(this->fps));
     this->refresh();
 }

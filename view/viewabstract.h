@@ -10,6 +10,7 @@
     
     class CellViewAbstract {
         public:
+            bool lock = false;
             Colour colour = Empty;
             Type cellType = Basic;
             virtual void draw() const = 0;
@@ -31,6 +32,7 @@
             int canvasWidth;
             int cellWidth;
             int size;
+            bool lock;
             std::string customLabel;
             CellViewAbstract** board;
             virtual void init(int) = 0;
@@ -48,6 +50,7 @@
 
             virtual void setScore(int) = 0;
             virtual void setLevel(int) = 0;
+            virtual void setLocked(int,int,bool) = 0;
             virtual void setMovesRemain(int) = 0;
             virtual void setHiScore(int) = 0;
             

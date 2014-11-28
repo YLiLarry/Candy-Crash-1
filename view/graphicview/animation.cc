@@ -12,12 +12,12 @@ void Animation:: loop() {
 }
 
 void Animation:: end() {
-    cerr << "td: " << this->td << endl;
+    // cerr << "td: " << this->td << endl;
     if (this->td) {
-        cerr << "td joinable?" << this->td->joinable() << endl;
+        // cerr << "td joinable?" << this->td->joinable() << endl;
         this->toggle = false;
         this->td->join();
-        cerr << "td join!" << endl;
+        // cerr << "td join!" << endl;
         delete this->td;
     }
 }
