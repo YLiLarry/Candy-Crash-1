@@ -45,6 +45,9 @@ class Board {
 	bool hasMove();
 
 
+	void load(int level);
+	void checkLevel();
+
 	//void getMatches(Square &root);
 	void collectMatched(Square &root);
 
@@ -59,6 +62,7 @@ class Board {
 
 	void dropSquares();
 	void setNewSquare(Square &sq);
+	void setNewSquare(Square &sq, std::string strSquare);
 
 
 	void notifyAll();
