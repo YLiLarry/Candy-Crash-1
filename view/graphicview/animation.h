@@ -6,14 +6,14 @@ class Animation {
     private :
         std::thread* td = 0;
         bool toggle = true;
-        int pfs = 1000/50;
+        const int fps = 1000/50;
     protected :
         void loop();
         bool virtual during() = 0;
         void virtual animate() = 0;
     public :
         void end();
-        void run();
+        void start();
         virtual ~Animation();
 };
 class Move : public Animation {

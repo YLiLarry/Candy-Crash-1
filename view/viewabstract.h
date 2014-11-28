@@ -31,6 +31,7 @@
             int canvasWidth;
             int cellWidth;
             int size;
+            std::string customLabel;
             CellViewAbstract** board;
             virtual void init(int) = 0;
             virtual void end() = 0;
@@ -51,6 +52,7 @@
             virtual void setHiScore(int) = 0;
             
             virtual void print(const std::string&) = 0;
+            virtual void setLabel(const std::string&) = 0;
             virtual void swap(int,int,Direction) = 0;
             virtual void drop(int,Colour,Type) = 0;
             virtual void fall(int,int) = 0;
