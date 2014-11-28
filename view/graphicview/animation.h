@@ -5,7 +5,8 @@
 class Animation {
     private :
         std::thread* td = 0;
-        bool toggle = false;
+        bool toggle = true;
+        int pfs = 1000/50;
     protected :
         void loop();
         bool virtual during() = 0;

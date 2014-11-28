@@ -26,6 +26,10 @@ int main() {
             cin >> r >> c >> str;
             view->swap(r, c, str2dir(str));
         } else
+        if (str == "fall") {
+            cin >> r >> c;
+            view->fall(r, c);
+        } else
         if (str == "sc") {
             cin >> r >> c >> str;
             view->setColour(r, c, str2colour(str));

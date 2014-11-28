@@ -10,8 +10,8 @@
     
     class CellViewAbstract {
         public:
-            Colour colour;
-            Type cellType;
+            Colour colour = Empty;
+            Type cellType = Basic;
             virtual void draw() const = 0;
             virtual ~CellViewAbstract() {};
     };
@@ -53,7 +53,7 @@
             virtual void print(const std::string&) = 0;
             virtual void swap(int,int,Direction) = 0;
             virtual void drop(int,Colour,Type) = 0;
-            virtual void fall(int,int,int) = 0;
+            virtual void fall(int,int) = 0;
             virtual void destory(int,int) = 0;
             virtual void restart(int) = 0;
 
