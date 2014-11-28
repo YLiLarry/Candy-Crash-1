@@ -127,6 +127,8 @@ void Board::loadLevel(int level) {
 		}
 
 		scramble();
+		view->setScore(score);
+		view->setLevel(1);
 		view->draw();
 	
 	} else if (level == 2) {
@@ -143,7 +145,11 @@ void Board::setNewSquare(Square &sq) {
 		Colour newColour = (Colour)(levelZeroColours[0] - '0');
 		Type newType = Basic;
 
-		sq.setColour(newColour); sq.setType(newType);
+		sq.setColour(newColour);
+		sq.setType(newType);
+
+		view->setColour(sq.getRow(), sq.getCol(), newColour);
+		view->setType(sq.getRow(), sq.getCol(), newType);
 
 		// recycles the colours
 		char c = levelZeroColours[0];
@@ -178,7 +184,7 @@ void Board::swap(int row, int col, Direction d) {
 	do {
 		view->draw();
 		dropSquares();
-		view->draw();
+		//view->draw();
 		chainReaction();
 
 	} while (chainMode);
@@ -277,6 +283,9 @@ void Board::clearAt(Square &root) {
 		root.setColour(backup);
 		root.setType(Unstable);
 
+		view->setColour(root.getRow(), root.getCol(), backup);
+		view->setType(root.getRow(), root.getCol(), Unstable);
+
 	} else if (hMatch.size() > vMatch.size()) {
 
 		int n = (int)hMatch.size();
@@ -288,9 +297,13 @@ void Board::clearAt(Square &root) {
 		switch (n) {
 			case 4: root.setColour(backup);
 					root.setType(Lateral); 
+					view->setColour(root.getRow(), root.getCol(), backup);
+					view->setType(root.getRow(), root.getCol(), Lateral);
 					break;
 			case 5: root.setColour(backup);
 					root.setType(Psychedelic);
+					view->setColour(root.getRow(), root.getCol(), backup);
+					view->setType(root.getRow(), root.getCol(), Psychedelic);
 					break;
 		}
 
@@ -305,21 +318,23 @@ void Board::clearAt(Square &root) {
 		switch (n) {
 			case 4: root.setColour(backup);
 					root.setType(Upright); 
+					view->setColour(root.getRow(), root.getCol(), backup);
+					view->setType(root.getRow(), root.getCol(), Upright);
 					break;
 			case 5: root.setColour(backup);
 					root.setType(Psychedelic);
+					view->setColour(root.getRow(), root.getCol(), backup);
+					view->setType(root.getRow(), root.getCol(), Psychedelic);
 					break;
 		}
 	}
 
-	view->draw();
+	//view->draw();
 }
 
 void Board::clear(Square &sq, int r) {
 
 	if (sq.getColour() == Empty)  return;
-
-	// view->draw();
 
 	Colour tColour = sq.getColour();
 	Type tType = sq.getType();
@@ -345,6 +360,8 @@ void Board::clear(Square &sq, int r) {
 
 	int row = sq.getRow();
 	int col = sq.getCol();
+
+	view->destroy(row, col);
 
 	switch (tType) {
 

@@ -67,9 +67,9 @@ void View:: fall(int row, int col) {
     gv->fall(row,col);
 };
 
-void View:: destory(int r,int c) {
-    tv->destory(r,c);
-    gv->destory(r,c);
+void View:: destroy(int r,int c) {
+    tv->destroy(r,c);
+    gv->destroy(r,c);
 };
 
 void View:: end() {

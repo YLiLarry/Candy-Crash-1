@@ -12,6 +12,7 @@ class Square {
 	int row;
 	int col;
 
+	bool locked;
 	Colour colour;
 	Type type;
 

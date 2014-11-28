@@ -112,7 +112,7 @@ void GraphicView:: fall(int,int) {
     
 };
 
-void GraphicView:: destory(int,int) {
+void GraphicView:: destroy(int,int) {
     
 };
 

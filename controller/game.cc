@@ -35,7 +35,7 @@ Game::Game(int size) {
 	string cmd;
 
 	#ifndef DEBUG
-		cout << "command: " << endl;
+		cout << "command: ";
 	#endif
 		
 	while (cin >> cmd) {
@@ -43,10 +43,10 @@ Game::Game(int size) {
         if (cmd == "//") {
             cin.ignore(1024, '\n');
             continue;
-        } else
-		if (cmd == "swap") {
+        } else if (cmd == "swap") {
 			this->swap();
 		} else if (cmd == "hint") {
+			cerr << "you called hint! board->level = " << board->level << endl;
 			this->hint();
 		} else if (cmd == "scramble") {
 			this->scramble();
@@ -66,7 +66,7 @@ Game::Game(int size) {
 		}
 
 		#ifndef DEBUG
-			cout << "command: " << endl;
+			cout << "command: ";
 		#endif
 		
 	}
