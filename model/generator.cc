@@ -1,6 +1,7 @@
-#include "generator.h"
-#include <iostream>
 #include "../public/global.h"
+#include "generator.h"
+#include "PRNG.h"
+#include <iostream>
 #include <random>
 #include <ctime>
 using namespace std;
@@ -9,9 +10,10 @@ int Generator::produced = 0;
 
 string Generator::randomSquare(int level) {
 
+	PRNG rn;
 	string randomSquare = "";
 	produced++;
-	default_random_engine gen(produced);
+	default_random_engine gen(produced * rn());
 	//default_random_engine gen(1337 + produced);
 
 	if (level == 1) {
@@ -30,7 +32,6 @@ string Generator::randomSquare(int level) {
 
 
 		char extra = '_';
-
 		int type = (produced % 5 == 0)? typeDist(gen) : 0;
 	 	int colour = colourDist(gen);
 
@@ -56,7 +57,25 @@ string Generator::randomSquare(int level) {
 
 	if (level == 2) {
 
-		randomSquare += "l__";
+		discrete_distribution<int> colourDist { 1, 1, 1, 1 };
+
+		char extra = '_';
+
+		randomSquare += extra;
+
+		char type = '_';
+
+		randomSquare += type;
+
+		int colour = colourDist(gen);
+
+		switch (colour) {
+
+			case 0: randomSquare += '0'; break;
+			case 1: randomSquare += '1'; break;
+			case 2: randomSquare += '2'; break;
+			case 3: randomSquare += '3'; break;
+		}
 	}
 
 	return randomSquare;

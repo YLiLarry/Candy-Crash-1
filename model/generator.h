@@ -5,11 +5,11 @@
 
 class Generator {
 
-	static int produced;
 	int level;
 
 	public:
 
+	static int produced;
 	std::string randomSquare(int level);
 };
 

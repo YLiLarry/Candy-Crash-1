@@ -8,6 +8,7 @@ Square::Square() {
 
 	row = 0;
 	col = 0;
+	locked = false;
 	colour = Empty;
 	type = Basic;
 
@@ -208,6 +209,7 @@ bool Square::isReady() { return ready; }
 void Square::setReady(bool t) { ready = t; }
 
 bool Square::isNotified() { return notified; }
+void Square::setNotified(bool t) { notified = t; }
 
 void Square::printInfo() {
 	cerr << "---- Square (" << this->row << "," << this->col << ") ----" << endl;

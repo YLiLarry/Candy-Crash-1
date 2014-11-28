@@ -12,6 +12,7 @@ class Square {
 	int row;
 	int col;
 
+	bool locked;
 	Colour colour;
 	Type type;
 
@@ -68,6 +69,7 @@ class Square {
 	void setReady(bool);
 
 	bool isNotified();
+	void setNotified(bool);
 
 	void printInfo();
 };

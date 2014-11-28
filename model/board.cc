@@ -36,7 +36,7 @@ Board::Board(int n) {
 	level = 0;
 
 	chainMode = false;
-	settled = false;
+	emptyBoard = false;
 }
 
 Board::~Board() {
@@ -127,12 +127,24 @@ void Board::loadLevel(int level) {
 		}
 
 		scramble();
+
+		view->setScore(score);
+		view->setLevel(1);
 		view->draw();
 	
 	} else if (level == 2) {
 
-		cerr << "LEVEL 2" << endl;
+		for (int r = 0; r < size; r++) {
+			for (int c = 0; c < size; c++) {
 
+				parseSquare(generate->randomSquare(2), grid[r][c], view);
+				//grid[r][c].setNeighbours();
+			}
+		}
+
+		view->setScore(score);
+		view->setLevel(2);
+		view->draw();
 	}
 }
 
@@ -143,7 +155,11 @@ void Board::setNewSquare(Square &sq) {
 		Colour newColour = (Colour)(levelZeroColours[0] - '0');
 		Type newType = Basic;
 
-		sq.setColour(newColour); sq.setType(newType);
+		sq.setColour(newColour);
+		sq.setType(newType);
+
+		view->setColour(sq.getRow(), sq.getCol(), newColour);
+		view->setType(sq.getRow(), sq.getCol(), newType);
 
 		// recycles the colours
 		char c = levelZeroColours[0];
@@ -152,6 +168,7 @@ void Board::setNewSquare(Square &sq) {
 	
 	} else {
 
+		generate->produced = 0;
 		parseSquare(generate->randomSquare(level), sq, view);
 	}
 }
@@ -162,11 +179,13 @@ void Board::swap(int row, int col, Direction d) {
 	turnScore = 0;
 	chain = 0;
 	chainMode = false;
-	settled = false;
+	emptyBoard = false;
 
 	grid[row][col].swapWith(d);
 	
 	view->draw();
+
+	printGridInfo();
 
 	clearAt(*grid[row][col].neighbour[d]);
 	clearAt(grid[row][col]);
@@ -181,7 +200,7 @@ void Board::swap(int row, int col, Direction d) {
 		view->draw();
 		chainReaction();
 
-	} while (chainMode);
+	} while (chainMode && !emptyBoard);
 
 	score += turnScore;
 
@@ -197,7 +216,6 @@ void Board::swap(int row, int col, Direction d) {
 		initScore = score;
 	}
 
-	view->setLevel(level);
 	view->setScore(score);
 	view->draw();
 
@@ -209,6 +227,26 @@ void Board::swap(int row, int col, Direction d) {
 	#if ! DEBUG
 		view->print(ss.str());
 	#endif
+}
+
+void Board::notifyAll() {
+
+	for (int r = 0; r < size; r++) {
+		for (int c = 0; c < size; c++) {
+
+			grid[r][c].notify();
+		}
+	}
+}
+
+void Board::unNotifyAll() {
+
+	for (int r = 0; r < size; r++) {
+		for (int c = 0; c < size; c++) {
+
+			grid[r][c].setNotified(false);
+		}
+	}
 }
 
 void Board::dropSquares() {
@@ -228,10 +266,11 @@ void Board::chainReaction() {
 
 	chainMode = false;
 
+	notifyAll();
+	printGridInfo();
+
 	for (int r = 0; r < size; r++) {
 		for (int c = 0; c < size; c++) {
-
-			grid[r][c].notify();
 
 			if (grid[r][c].isReady()) {
 
@@ -239,10 +278,22 @@ void Board::chainReaction() {
 				chainMode = true;
 				clear(grid[r][c], 4);
 			}
-
-			grid[r][c].clearNotified();
 		}
 	}
+
+	emptyBoard = true;
+
+	for (int r = 0; r < size; r++) {
+		for (int c = 0; c < size; c++) {
+
+			if (grid[r][c].getColour() != Empty) {
+				emptyBoard = false;
+				break;
+			}
+		}
+	}
+
+	unNotifyAll();
 }
 
 void Board::clearAt(Square &root) {
@@ -254,10 +305,10 @@ void Board::clearAt(Square &root) {
 
 	if (hMatch.size() > 3 || vMatch.size() > 3) {
 
-		radius = 4;
+		radius = 2;
 	} else if (hMatch.size() == 3 || vMatch.size() == 3) {
 
-		radius = 2;
+		radius = 1;
 	}
 
 	if (hMatch.size() < 3 && vMatch.size() < 3) {
@@ -277,6 +328,9 @@ void Board::clearAt(Square &root) {
 		root.setColour(backup);
 		root.setType(Unstable);
 
+		view->setColour(root.getRow(), root.getCol(), backup);
+		view->setType(root.getRow(), root.getCol(), Unstable);
+
 	} else if (hMatch.size() > vMatch.size()) {
 
 		int n = (int)hMatch.size();
@@ -288,9 +342,13 @@ void Board::clearAt(Square &root) {
 		switch (n) {
 			case 4: root.setColour(backup);
 					root.setType(Lateral); 
+					view->setColour(root.getRow(), root.getCol(), backup);
+					view->setType(root.getRow(), root.getCol(), Lateral);
 					break;
 			case 5: root.setColour(backup);
 					root.setType(Psychedelic);
+					view->setColour(root.getRow(), root.getCol(), backup);
+					view->setType(root.getRow(), root.getCol(), Psychedelic);
 					break;
 		}
 
@@ -305,21 +363,23 @@ void Board::clearAt(Square &root) {
 		switch (n) {
 			case 4: root.setColour(backup);
 					root.setType(Upright); 
+					view->setColour(root.getRow(), root.getCol(), backup);
+					view->setType(root.getRow(), root.getCol(), Upright);
 					break;
 			case 5: root.setColour(backup);
 					root.setType(Psychedelic);
+					view->setColour(root.getRow(), root.getCol(), backup);
+					view->setType(root.getRow(), root.getCol(), Psychedelic);
 					break;
 		}
 	}
 
-	view->draw();
+	//view->draw();
 }
 
 void Board::clear(Square &sq, int r) {
 
 	if (sq.getColour() == Empty)  return;
-
-	// view->draw();
 
 	Colour tColour = sq.getColour();
 	Type tType = sq.getType();
@@ -330,7 +390,7 @@ void Board::clear(Square &sq, int r) {
 
 	cleared++;
 
-	if (cleared > 3) r = 4; // override;
+	if (cleared > 3) r = 2; // override;
 
 	switch (cleared) {
 		case 0: case 1: case 2: break;
@@ -345,6 +405,11 @@ void Board::clear(Square &sq, int r) {
 
 	int row = sq.getRow();
 	int col = sq.getCol();
+
+	view->destroy(row, col);
+
+	view->setScore(score + turnScore);
+	view->draw();
 
 	switch (tType) {
 
@@ -502,9 +567,23 @@ void Board::scramble() {
 		}
 	}
 
-	view->draw();
-}
+	// recheck (necessary)
+	for (int r = 0; r < size; r++) {
+		for (int c = 0; c < size; c++) {
 
+			grid[r][c].notify();
+			
+			if (grid[r][c].isReady()) scramble();
+		}
+	}
+
+	for (int r = 0; r < size; r++) {
+		for (int c = 0; c < size; c++) {
+
+			grid[r][c].setNotified(false);
+		}
+	}
+}
 
 void Board::printGridInfo() {
 
