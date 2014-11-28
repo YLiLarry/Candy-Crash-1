@@ -1,8 +1,0 @@
-finalize moving code from board to square
-
-swap without updating view (invisible swap)
-provide hasMove();
-drop();
-advanced bit
-
-

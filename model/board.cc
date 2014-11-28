@@ -5,7 +5,7 @@
 #include "generator.h"
 #include "../view/textview/textview.h"
 #include "../public/global.h"
-#include "../PRNG.h"
+#include "PRNG.h"
 
 using namespace std;
 
@@ -78,20 +78,19 @@ void Board::loadLevel(int level) {
 
 	if (level == 0) {
 
-		#ifdef DEBUG_BOARD
+		#ifdef DEBUG
 				cerr << "File: ";
 		
 				string f;
 				cin >> f;
 		
 				ifstream file(f.c_str());
+				if (! file.good()) {throw string("unable to read the sequence file: '") + f + "'";}
 		#else
 				ifstream file("sequence.txt");
+				if (! file.good()) {throw string("unable to read the sequence.txt file");}
 		#endif
 
-#ifdef DEBUG_BOARD
-		if (! file.good()) {throw string("unable to read the sequence file: '") + f + "'";}
-#endif
 
 		string square;
 
@@ -177,7 +176,7 @@ void Board::swap(int row, int col, Direction d) {
 
 		view->draw(); // temp
 		dropSquares();
-		view->draw(); // temp
+		// view->draw(); // temp
 		chainReaction();
 	} while (chainMode);
 
@@ -203,7 +202,9 @@ void Board::swap(int row, int col, Direction d) {
 	ss << "chains :  " << chain << endl;
 	ss << "scored : +" << turnScore << endl;
 	ss << "total  :  " << score << endl;
-	view->print(ss.str());
+	#if ! DEBUG
+		view->print(ss.str());
+	#endif
 }
 
 void Board::dropSquares() {
@@ -258,14 +259,10 @@ void Board::clearAt(Square &root) {
 
 	if (hMatch.size() < 3 && vMatch.size() < 3) {
 
-		view->draw();
-		view->print("no match");
+		// view->print("no match");
 		return;
 
 	} else if (hMatch.size() == 3 && vMatch.size() == 3) {
-
-		view->draw();
-		view->print("L match");
 
 		for (int i = 0; i < 3; i++) {
 			clear(*hMatch[i], radius);
@@ -278,9 +275,6 @@ void Board::clearAt(Square &root) {
 		root.setType(Unstable);
 
 	} else if (hMatch.size() > vMatch.size()) {
-
-		view->draw();
-		view->print("Horizontal match");
 
 		int n = (int)hMatch.size();
 
@@ -298,9 +292,6 @@ void Board::clearAt(Square &root) {
 		}
 
 	} else if (hMatch.size() < vMatch.size()) {
-
-		view->draw();
-		view->print("Vertical match");
 
 		int n = (int)vMatch.size();
 
@@ -452,8 +443,7 @@ string Board::validMove() {
 
 					if (grid[r][c].isReady() ||
 						grid[r][c].neighbour[d]->isReady()) {
-
-						ss << "swap " << r << " " << c << " " << d;
+						ss << "hint: " << r << " " << c << " " << dir2str((Direction)d);
 						foundMatch = true;
 					}
 
@@ -476,7 +466,6 @@ string Board::validMove() {
 }
 
 void Board::hint() {
-
 	view->print(validMove());
 }
 
@@ -529,3 +518,7 @@ void Board::printGridInfo() {
 		cerr << endl;
 	}
 }
+
+void Board::levelUp() {this->loadLevel(++this->level);}
+void Board::levelDown() {this->loadLevel(--this->level);}
+void Board::restart() {this->loadLevel(this->level);}

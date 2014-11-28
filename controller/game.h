@@ -10,7 +10,7 @@ class Game {
         public:
     #endif
         
-	Board *board;
+    Board *board;
 
 	public:
 	// processes player commands

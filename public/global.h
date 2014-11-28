@@ -31,5 +31,9 @@
 	};
     
     std::string dir2str(Direction);
+    Direction str2dir(std::string& str);
+    Colour str2colour(std::string& str);
+    Type str2type(std::string& str);
+    
 
 #endif

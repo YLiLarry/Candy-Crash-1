@@ -1,17 +1,24 @@
 CXX = g++
-CXXFLAGS = -Wall -MMD  -DDEBUG -std=c++0x #-DDEBUG_BOARD #-DMATCH_TEST #-DDEBUG_VIEW
+CXXFLAGS = -lX11 -L/usr/X11/lib -I/usr/X11/include -Wall -std=c++0x -pthread -MMD -DDEBUG_GRAPHIC #-DDEBUG #-DDEBUG_BOARD #-DMATCH_TEST #-DDEBUG_VIEW
 EXEC = main
-OBJECTS = public/global.o view/cellviewabstract.o view/textview/textview.o view/view.o controller/game.o model/board.o model/square.o model/generator.o main.o
+MODEL = model/board.o model/square.o model/generator.o
+VIEW = view/view.o view/textview/textview.o view/graphicview/graphicview.o view/graphicview/window.o
+CONTROL = controller/game.o
+OTHERS = public/global.o main.o
+OBJECTS = ${MODEL} ${VIEW} ${CONTROL} ${OTHERS}
 DEPENDS = ${OBJECTS:.o=.d}
 
 
 ${EXEC}: ${OBJECTS}
-	 ${CXX} ${CXXFLAGS} ${OBJECTS} -o ${EXEC}
-	 cp ${EXEC} tests/${EXEC}
+	 ${CXX} ${OBJECTS} ${CXXFLAGS} -o ${EXEC}
 
--include ${DEPENDS}
+# -include ${DEPENDS}
 
 .PHONY: clean
 
 clean:
 	rm ${OBJECTS} ${EXEC} ${DEPENDS}
+
+rebuild:
+	make clean
+	make

@@ -1,6 +1,6 @@
 #ifndef __PRNG_H__
 #define __PRNG_H__
-#include <tr1/cstdint>
+#include <cstdint>
 
 class PRNG {
   uint32_t seed_ ; // same results on 32/64-bit architectures

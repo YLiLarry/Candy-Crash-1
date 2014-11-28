@@ -6,8 +6,15 @@
 #ifndef __VIEWINTERFACE__H__
 #define __VIEWINTERFACE__H__
 #include "../public/global.h"
-#include "cellviewabstract.h"
 #include <string>
+    
+    class CellViewAbstract {
+        public:
+            Colour colour;
+            Type cellType;
+            virtual void draw() const = 0;
+            virtual ~CellViewAbstract() {};
+    };
 
     class ViewAbstract {
         
@@ -25,12 +32,13 @@
             int cellWidth;
             int size;
             CellViewAbstract** board;
+            virtual void init(int) = 0;
+            virtual void end() = 0;
             
         public:
             // View(int);
             virtual ~ViewAbstract() {};
             
-            virtual void init(int) = 0;
             virtual void draw() const = 0; 
             
             /* setters */

@@ -17,18 +17,19 @@ while read testCase; do
         echo "Missing or unreadable \"${testCase}.out\" file" >&2
         exit 2
     fi
-    echo
-    echo "****************************************"
-    echo "****************************************" >> 'stderr.txt';
     if [ -r "${testCase}.args" ]; then
         result="$(xargs -a \"${testCase}.args\" \"${prog}\" < \"${testCase}.in\" 2>>'stderr.txt')"
     else
         input=`cat "${testCase}.in"`
         result="`\"${prog}\" <<< \"${input/../${testCase}.txt}\" 2>>'stderr.txt'`"
     fi
-    if [ "${result}" != "`cat \"${testCase}.out\"`" ]; then
+    expected="`cat \"${testCase}.out\"`"
+    if [ "${result}" != "${expected}" ]; then
+        echo
+        echo "****************************************"
+        echo "****************************************" >> 'stderr.txt';
         ((errorNum++))
-        failed+="${testCase}"
+        failed+="\"${testCase}\"\n"
         tput setaf 1
         echo "Test failed: ${testCase}"
         echo "Test failed: ${testCase}" >> 'stderr.txt';
@@ -41,20 +42,24 @@ while read testCase; do
         tput setaf 2
         echo "Expected:"
         tput setaf 0
-        cat "${testCase}.out"
+        echo "${expected}"
         echo ""
         tput setaf 1
         echo "Actual:"
         tput setaf 0
         echo "${result}"
+        result_no_space="`tr -d ' ' <<< \"${result}\"`"
+        expected_no_space="`tr -d ' ' <<< \"${expected}\"`"
+        if [ "${result_no_space}" == "${expected_no_space}" ]; then echo -e "\n(Check whitespaces)"; fi
     else 
-        passed+="${testCase} "
+        passed+="\"${testCase}\"\n"
     fi
     ((checkedSuites++))
 done <<< "${testCaseList}"
 echo
 echo "****************************************"
-echo "Passed: ${passed}, failed: `tput setaf 1`${failed}"
+echo -e "Passed:\n${passed}"
+echo -e "Failed:\n`tput setaf 1`${failed}"
 tput setaf 0
 echo "Checked suites: ${checkedSuites}, errors: `tput setaf 1`${errorNum}"
 tput setaf 0
