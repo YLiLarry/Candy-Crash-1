@@ -173,16 +173,11 @@ void Board::swap(int row, int col, Direction d) {
 	grid[row][col].clearNotified();
 
 	do {
-
 		view->draw(); // temp
 		dropSquares();
-		// view->draw(); // temp
 		chainReaction();
+
 	} while (chainMode);
-
-	dropSquares();
-
-	view->draw();
 
 	score += turnScore;
 
@@ -191,11 +186,16 @@ void Board::swap(int row, int col, Direction d) {
 		level = 1;
 		initScore = score;
 	}
+
 	if (score >= initScore + 300 && level == 1) {
 
 		level = 2;
 		initScore = score;
 	}
+
+	view->setLevel(level);
+	view->setScore(score);
+	view->draw();
 
 	ostringstream ss;
 	ss << "cleared:  " << cleared << endl;
@@ -350,14 +350,12 @@ void Board::clear(Square &sq, int r) {
 		{
 			for (int c = 0; c < size; c++) {
 				clear(grid[row][c], r);
-				//grid[row][c].clear(cleared, chain, turnScore, r);
 			}					  
 		} break;			  
 		case Upright:
 		{
 			for (int r = 0; r < size; r++) {
 				clear(grid[r][col], r);
-				//grid[r][col].clear(cleared, chain, turnScore, r);
 			}
 		} break;
 		case Unstable:
@@ -372,7 +370,6 @@ void Board::clear(Square &sq, int r) {
 			for (int r = rMin; r <= rMax; r++) {
 				for (int c = cMin; c <= cMax; c++) {
 					clear(grid[r][c], r);
-					//grid[r][c].clear(cleared, chain, turnScore, r);
 				}
 			}	   
 		} break;
@@ -382,7 +379,6 @@ void Board::clear(Square &sq, int r) {
 				for (int c = 0; c < size; c++) {
 					if (grid[r][c].getColour() == tColour) {
 						clear(grid[r][c], r);
-						//grid[i][j].clear(cleared, chain, turnScore, r);
 					}
 				}
 			}
