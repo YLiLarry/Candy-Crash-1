@@ -11,9 +11,13 @@ bool MoveAnimation:: during() {
 };
 
 void MoveAnimation:: animate() {
-    cerr << this->target->x << " " << this->target->y << endl;
-    (this->target->x < this->desX) ? (this->target->x++) : (this->target->x--);
-    (this->target->y < this->desY) ? (this->target->y++) : (this->target->y--);
+    // cerr << "animate: ";
+    // cerr << this->target->x << " " << this->desX << endl;
+    // cerr << this->target->y << " " << this->desY << endl;
+    if (this->target->x < this->desX) {this->target->x++;} 
+    else if (this->target->x < this->desX) {this->target->x--;}
+    if (this->target->y < this->desY) {this->target->y++;} 
+    else if (this->target->y < this->desY) {this->target->y--;}
 }
 
 void MoveAnimation:: to(int desX, int desY) {
@@ -156,6 +160,9 @@ void GraphicView:: swap(int r, int c, Direction d) {
         }
     }
     cerr << newX << newY;
+    #if DEBUG_GRAPHIC
+        fprintf(stderr,"Graphic swap %d %d to %d %d, neigbhour to %d %d",r,c,newX,newY, r*s, c*s);
+    #endif
     (*gc1)->move->to(newX, newY);
     (*gc2)->move->to(r*s, c*s);
     GraphicCell* tmp;
