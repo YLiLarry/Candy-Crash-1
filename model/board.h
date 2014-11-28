@@ -12,14 +12,7 @@
 
 class Board {
 
-	/*
-	 *#if DEBUG_BOARD
-	 *    public:
-	 *#endif
-	 */
-
 	View *view;
-
 	Generator *generate;
 	Square **grid;
 	int size;

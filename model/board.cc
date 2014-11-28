@@ -9,22 +9,28 @@
 
 using namespace std;
 
+/*
+ * Constructing a board for game of size n
+ */
 Board::Board(int n) {
 
 	view = new View(n);
-
 	generate = new Generator();
-
 	grid = new Square *[n];
+
 	for (int r = 0; r < n; r++) {
+
+		// n coloumns
 		grid[r] = new Square[n];
+
 		for (int c = 0; c < n; c++) {
+
+			// Initializing squares
 			grid[r][c].init(r, c, n, grid, view);
 		}
 	}
 
 	size = n;
-
 	cleared = 0;
 	chain = 0;
 	unlocked = 0;
@@ -40,6 +46,9 @@ Board::Board(int n) {
 	emptyBoard = false;
 }
 
+/*
+ * Board destructor
+ */
 Board::~Board() {
 
 	for (int i = 0; i < size; i++) {
@@ -53,14 +62,27 @@ Board::~Board() {
 	delete view;
 }
 
+/*
+ * Starts the game at level 0
+ */
 void Board::start() {
 	loadLevel(level);
 }
 
+/*
+ * parseSquare reads a string representation of a Square
+ * and sets the Square as it is represented by the string
+ * updates the view as well
+ */
 void parseSquare(string strSquare, Square &square, View *view) {
 
+	// The locked status of the square
 	bool locked = strSquare[0] == 'l';
 
+	// THe colour of the square
+	Colour colour = (Colour)(strSquare[2] - '0');
+
+	// The type of the square
 	Type type;
 	switch (strSquare[1]) {
 		case '_': type = Basic; break;
@@ -71,12 +93,12 @@ void parseSquare(string strSquare, Square &square, View *view) {
 		default: {throw string("unexpected square type: '") + strSquare[1] + "'";}
 	}
 
-	Colour colour = (Colour)(strSquare[2] - '0');
-
+	// Setting the actual scquare
 	square.setLocked(locked);
 	square.setColour(colour);
 	square.setType(type);
 
+	// Updating the view
 	view->setLocked(square.getRow(), square.getCol(), locked);
 	view->setColour(square.getRow(), square.getCol(), colour);
 	view->setType(square.getRow(), square.getCol(), type);
