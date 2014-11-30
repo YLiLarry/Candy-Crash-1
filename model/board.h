@@ -29,46 +29,29 @@ class Board {
 	bool chainMode;
 	bool emptyBoard;
 
-	void setNeighbours(Square *s);
-
 	std::string levelZeroColours;
-
-	// loads level, either randomly generated
-	// or from provided file
-
 
 	std::vector<Square *> hMatch;
 	std::vector<Square *> vMatch;
 
-	std::string validMove();
 
-	bool hasMove();
-
-
-	void load(int level);
 	void checkLevel();
 
-	//void getMatches(Square &root);
 	void collectMatched(Square &root);
 
-	void clearRow(int row);
-	void clearCol(int col);
-	void clearRad(int row, int col, int rad);
-	void clearColour(Colour c);
-
-	//void clear(Square &root);
 	void clearAt(Square &root);
 	void clear(Square &sq, int radius);
 
-	void dropSquares();
 	void setNewSquare(Square &sq);
 	void setNewSquare(Square &sq, std::string strSquare);
 
+	void dropSquares();
+	void chainReaction();
+	
+	std::string validMove();
 
 	void notifyAll();
 	void unNotifyAll();
-
-	void chainReaction();
 
 	public:
 
@@ -77,19 +60,13 @@ class Board {
 	Board(int size);
 	~Board();
 
-	void start();
 	void swap(int row, int col, Direction d);
-
-	void scramble();
-
+	void scramble(bool force = false);
 	void levelUp();
 	void levelDown();
 	void loadLevel(int level);
-
 	void restart();
-
 	void hint();
-
 	// development
 	void printGridInfo();
 };
