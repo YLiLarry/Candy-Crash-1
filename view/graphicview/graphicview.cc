@@ -82,7 +82,7 @@ void GraphicCell:: draw() {
         case Unstable : str += "b"; break;
         case Psychedelic : str += "p"; break;
     }
-    this->window->drawBigString(this->y + 5, this->x + outer->cellSize / 2 + 10, str, Xwindow::White);    
+    this->window->drawString(this->y + 5, this->x + outer->cellSize / 2 + 10, str, Xwindow::White);    
     this->needDraw = false;
 }
 
@@ -266,7 +266,7 @@ void GraphicView:: fall(int r, int c) {
     #endif
     GraphicCell*& ori = this->board[r][c];
     GraphicCell*& des = this->board[i][c];
-    if (r > 0) {
+    if (i > 0) {
         des->x = des->lx = r * this->cellSize;
         des->y = des->ly = c * this->cellSize;
     }

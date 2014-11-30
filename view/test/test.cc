@@ -1,6 +1,8 @@
 #include "../view.h"
 #include "../../public/global.h"
 #include <iostream>
+#include <thread>
+#include <chrono>
 using namespace std;
 
 
@@ -9,11 +11,12 @@ int main() {
     int r, c;
     string str;
     
-    view->drop(3,Red,Basic);
-    view->drop(3,Red,Basic);
-    view->drop(3,Red,Basic);
-    view->drop(3,Red,Basic);
-    view->drop(3,Red,Basic);
+    view->setColour(4,3,Red);
+    // view->drop(3,Red,Basic);
+    // view->drop(3,Red,Basic);
+    // view->drop(3,Red,Basic);
+    // view->drop(3,Red,Basic);
+    // view->drop(3,Red,Basic);
     // view->destroy(4,3);
     // view->destroy(3,3);
     // view->destroy(2,3);
