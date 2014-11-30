@@ -34,11 +34,11 @@
             int y;
             int lx;
             int ly;
-            bool needDraw = true;
-            Colour colour = Empty;
-            Xwindow* window = NULL;
-            GraphicView* outer = NULL;
-            MoveAnimation* move = NULL;
+            bool needDraw;
+            Colour colour;
+            Xwindow* window;
+            GraphicView* outer;
+            MoveAnimation* move;
             
             GraphicCell();
             void draw();
@@ -47,12 +47,12 @@
     class GraphicView : public ViewAbstract {
         
         private :
-            bool toggle = true;
-            std::vector<int> droppingNum = {0,0,0,0};
+            bool toggle;
+            std::vector<int> droppingNum;
         
         public :
-            GraphicCell*** board = NULL;
-            Xwindow* window = NULL;
+            GraphicCell*** board;
+            Xwindow* window;
             int windowWidth;
             int windowHeight;
             int cellSize;

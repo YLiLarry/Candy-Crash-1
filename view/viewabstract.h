@@ -10,10 +10,11 @@
     
     class CellViewAbstract {
         public:
-            bool lock = false;
-            Colour colour = Empty;
-            Type cellType = Basic;
+            bool lock;
+            Colour colour;
+            Type cellType;
             virtual void draw() = 0;
+            CellViewAbstract();
             virtual ~CellViewAbstract() {};
     };
 

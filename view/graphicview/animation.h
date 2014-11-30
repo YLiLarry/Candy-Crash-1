@@ -10,10 +10,10 @@ class Animation {
     
     private :
         void loop();
-        bool toggle = false; // true is not threadsafe.
-        std:: thread* td = NULL;
+        bool toggle; // true is not threadsafe.
+        std:: thread* td;
         std::list<std::vector<int>> queue; // dont trust
-        const std::chrono::milliseconds fps = std::chrono::milliseconds(1000/50);
+        std::chrono::milliseconds fps;
         
     public :
         void end();
@@ -22,6 +22,7 @@ class Animation {
         void push(std::vector<int>);
         virtual bool during(std::vector<int>) = 0;
         virtual void animate(std::vector<int>) = 0;
+        Animation();
         virtual ~Animation();
 };
 #endif

@@ -4,6 +4,9 @@ using namespace std;
 
 /* MoveAnimation */
 MoveAnimation:: MoveAnimation(GraphicCell* gc) {
+    #if DEBUG_GRAPHIC
+        fprintf(stderr,"NEW MoveAnimation\n");
+    #endif
     this->target = gc;
 };
 
@@ -51,6 +54,14 @@ void MoveAnimation:: to(int desX, int desY) {
 
 GraphicCell:: GraphicCell() {
     this->move = new MoveAnimation(this);
+    this->x = 0;
+    this->y = 0;
+    this->lx = 0;
+    this->ly = 0;
+    this->needDraw = true;
+    this->colour = Empty;
+    this->window = NULL;
+    this->outer = NULL;
 }
 
 void GraphicCell:: draw() {
@@ -82,6 +93,11 @@ GraphicView:: GraphicView(int size) {
     #if DEBUG_GRAPHIC
         fprintf(stderr,"NEW GRAPHICVIEW\n");
     #endif
+    this->toggle = true;
+    this->board = NULL;
+    this->window = NULL;
+    this->droppingNum = vector<int>(4,0);
+    
     this->windowWidth = 500;  // default
     this->windowHeight = 500; // default
     this->marginLeft = 0;     // default
@@ -254,10 +270,11 @@ void GraphicView:: fall(int r, int c) {
         des->x = des->lx = r * this->cellSize;
         des->y = des->ly = c * this->cellSize;
     }
+    cerr << "checkpoint to" << ori->move << endl;
     ori->move->to(i*this->cellSize, c*this->cellSize);
-    // #if DEBUG_GRAPHIC
-    //     fprintf(stderr,"before swap ori = \"%p\", des = \"%p\"\n", this->board[r][c], this->board[i][c]);
-    // #endif
+    #if DEBUG_GRAPHIC
+        fprintf(stderr,"before swap ori = \"%p\", des = \"%p\"\n", this->board[r][c], this->board[i][c]);
+    #endif
     std::swap(ori, des);
     // #if DEBUG_GRAPHIC
     //     fprintf(stderr,"after swap!! ori = \"%p\", des = \"%p\"\n", this->board[r][c], this->board[i][c]);
