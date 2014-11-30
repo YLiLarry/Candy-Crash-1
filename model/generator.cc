@@ -54,7 +54,6 @@ string Generator::randomSquare(int level) {
 
 	if (level == 2) {
 
-		cerr << produced << endl;
 		discrete_distribution<int> colourDist { 1, 1, 1, 1 };
 
 		char extra = (produced > 80 && produced <= 100)? 'l' : '_';

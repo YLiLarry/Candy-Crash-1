@@ -44,6 +44,9 @@ Board::Board(int n) {
 
 	chainMode = false;
 	emptyBoard = false;
+
+	// Ready to play
+	loadLevel(level);
 }
 
 //
@@ -60,13 +63,6 @@ Board::~Board() {
 
 	delete generate;
 	delete view;
-}
-
-// 
-// Starts the game at level 0.
-//
-void Board::start() {
-	loadLevel(level);
 }
 
 //
@@ -115,12 +111,13 @@ void Board::loadLevel(int level) {
 
 				string square = generate->randomSquare(level);
 				setNewSquare(grid[r][c], square);
+				grid[r][c].setNeighbours();
 			}
 		}
 
 		// This is necessary as the squares are not fully
 		// random. e.g. "every 5th square is a special square"
-		scramble();
+		scramble(true);
 		
 		view->setLevel(level);
 		view->setScore(score);
@@ -131,71 +128,25 @@ void Board::loadLevel(int level) {
 }
 
 //
-// Parses strSquare and sets the referenced square
-// as specified by the string representation.
+// Checks the conditions necessary to level up
 //
-void Board::setNewSquare(Square &sq, string strSquare) {
+void Board::checkLevel() {
 
-	// The locked status of the square
-	bool locked = (strSquare[0] == 'l');
+	if (score >= initScore + 200 && level == 0) {
+		
+		level = 1;
 
-	// THe colour of the square
-	Colour colour = (Colour)(strSquare[2] - '0');
+	} else if (score >= initScore + 300 && level == 1) {
 
-	// The type of the square
-	Type type;
-	switch (strSquare[1]) {
+		level = 2;
 
-		case '_': type = Basic; break;
-		case 'h': type = Lateral; break;
-		case 'v': type = Upright; break;
-		case 'b': type = Unstable; break;
-		case 'p': type = Psychedelic; break;
-		default: 
-		{throw string("unexpected square type: '") + strSquare[1] + "'";}
+	} else if (score >= initScore + 500 && level == 2 && unlocked == 20) {
+
+		cout << "WINNER!" << endl;
+		return;
 	}
 
-	// Setting the actual scquare
-	sq.setLocked(locked);
-	sq.setColour(colour);
-	sq.setType(type);
-
-	int r = sq.getRow();
-	int c = sq.getCol();
-
-	// Updating the view
-	view->setLocked(r, c, locked);
-	view->setColour(r, c, colour);
-	view->setType(r, c, type);
-}
-
-//
-// When a square is empty at the top row, and requires
-// new colour and type information, this method is called
-// to set the square with new colour and type.
-//
-void Board::setNewSquare(Square &sq) {
-
-	if (level == 0) {
-
-		Colour newColour = (Colour)(levelZeroColours[0] - '0');
-		Type newType = Basic;
-
-		sq.setColour(newColour);
-		sq.setType(newType);
-
-		view->setColour(sq.getRow(), sq.getCol(), newColour);
-		view->setType(sq.getRow(), sq.getCol(), newType);
-
-		// recycles the colours
-		char c = levelZeroColours[0];
-		levelZeroColours.erase(0, 1);
-		levelZeroColours += c;
-	
-	} else {
-
-		setNewSquare(sq, generate->randomSquare(level));
-	}
+	initScore = score;
 }
 
 //
@@ -252,6 +203,7 @@ void Board::swap(int row, int col, Direction d) {
 
 	ostringstream ss;
 	ss << "cleared:  " << cleared << endl;
+	if (level >= 2) ss << "unlocked: " << unlocked << endl;
 	ss << "chains :  " << chain << endl;
 	ss << "scored : +" << turnScore << endl;
 	view->print(ss.str());
@@ -260,112 +212,35 @@ void Board::swap(int row, int col, Direction d) {
 }
 
 //
-// Checks the conditions necessary to level up
+// Collect all the matched squares and store pointers to them
+// in hMatch or vMatch vectors depending on the orientation.
+// The orientation is relative the referenced root square.
 //
-void Board::checkLevel() {
+void Board::collectMatched(Square &root) {
 
-	if (score >= initScore + 200 && level == 0) {
-		
-		level = 1;
+	// Clear vectors before collecting.
+	hMatch.clear();
+	vMatch.clear();
 
-	} else if (score >= initScore + 300 && level == 1) {
+	// for easier referencing.
+	int row = root.getRow();
+	int col = root.getCol();
 
-		level = 2;
-
-	} else if (score >= initScore + 500 && level == 2 && unlocked == 20) {
-
-		cerr << "WINNER!" << endl;
-		return;
-	}
-
-	initScore = score;
-}
-
-//
-// Notifies all squares to check for matches.
-// 
-void Board::notifyAll() {
-
+	// Collect all matched square in horizontal direction.
 	for (int r = 0; r < size; r++) {
-		for (int c = 0; c < size; c++) {
+		if (grid[r][col].isReady()) {
 
-			grid[r][c].notify();
+			vMatch.push_back(&grid[r][col]);
 		}
 	}
-}
 
-//
-// Clears notification status for all squares.
-//
-void Board::unNotifyAll() {
-
-	for (int r = 0; r < size; r++) {
-		for (int c = 0; c < size; c++) {
-
-			grid[r][c].setNotified(false);
-		}
-	}
-}
-
-//
-// Drops squares that are floating.
-//
-void Board::dropSquares() {
-
+	// Collect all matched squares in the vertical direction.
 	for (int c = 0; c < size; c++) {
-		grid[0][c].drop();
+		if (grid[row][c].isReady()) {
 
-		// Supply the top row with new squares.
-		while (grid[0][c].getColour() == Empty) {
-
-			setNewSquare(grid[0][c]);
-			grid[0][c].drop();
+			hMatch.push_back(&grid[row][c]);
 		}
 	}
-}
-
-//
-// Checks for matches across the whole grid.
-// All matched squares are cleared, and if no
-// matched squares are detected, or the board
-// consists of only empty squares chainMode ends.
-//
-void Board::chainReaction() {
-
-	// Assume there will be no matched squares.
-	chainMode = false;
-
-	notifyAll();
-
-	for (int r = 0; r < size; r++) {
-		for (int c = 0; c < size; c++) {
-
-			if (grid[r][c].isReady()) {
-
-				// Increment number of chains
-				if (!chainMode) chain++;
-
-				chainMode = true;
-				clear(grid[r][c], 4);
-			}
-		}
-	}
-
-	// Assume board is empty.
-	emptyBoard = true;
-
-	for (int r = 0; r < size; r++) {
-		for (int c = 0; c < size; c++) {
-
-			if (grid[r][c].getColour() != Empty) {
-
-				emptyBoard = false;
-				break;
-			}
-		}
-	}
-
-	unNotifyAll();
 }
 
 //
@@ -483,10 +358,11 @@ void Board::clear(Square &sq, int r) {
 	if (sq.isLocked()) {
 
 		sq.setLocked(false);
+		sq.setReady(false);
 		view->setLocked(sq.getRow(), sq.getCol(), false);
 
 		unlocked++;
-
+		
 		return;
 	}
 
@@ -495,7 +371,7 @@ void Board::clear(Square &sq, int r) {
 	Colour tColour = sq.getColour();
 	Type tType = sq.getType();
 
-	// Clears the square
+	// Clear an unlocked square
 	sq.setColour(Empty);
 	sq.setType(Basic);
 	sq.setReady(false);
@@ -508,7 +384,8 @@ void Board::clear(Square &sq, int r) {
 	// Updates the turn score.
 	switch (cleared) {
 
-		case 0: case 1: case 2: break;
+		case 0: case 1: break;
+		case 2:
 		case 3: turnScore = 3; break;
 		case 4: turnScore = 8; break;
 		case 5: turnScore = 15; break;
@@ -578,35 +455,132 @@ void Board::clear(Square &sq, int r) {
 }
 
 //
-// Collect all the matched squares and store pointers to them
-// in hMatch or vMatch vectors depending on the orientation.
-// The orientation is relative the referenced root square.
+// When a square is empty at the top row, and requires
+// new colour and type information, this method is called
+// to set the square with new colour and type.
 //
-void Board::collectMatched(Square &root) {
+void Board::setNewSquare(Square &sq) {
 
-	// Clear vectors before collecting.
-	hMatch.clear();
-	vMatch.clear();
+	if (level == 0) {
 
-	// for easier referencing.
-	int row = root.getRow();
-	int col = root.getCol();
+		Colour newColour = (Colour)(levelZeroColours[0] - '0');
+		Type newType = Basic;
 
-	// Collect all matched square in horizontal direction.
-	for (int r = 0; r < size; r++) {
-		if (grid[r][col].isReady()) {
+		sq.setColour(newColour);
+		sq.setType(newType);
 
-			vMatch.push_back(&grid[r][col]);
-		}
+		view->setColour(sq.getRow(), sq.getCol(), newColour);
+		view->setType(sq.getRow(), sq.getCol(), newType);
+
+		// recycles the colours
+		char c = levelZeroColours[0];
+		levelZeroColours.erase(0, 1);
+		levelZeroColours += c;
+	
+	} else {
+
+		setNewSquare(sq, generate->randomSquare(level));
+	}
+}
+
+//
+// Parses strSquare and sets the referenced square
+// as specified by the string representation.
+//
+void Board::setNewSquare(Square &sq, string strSquare) {
+
+	// The locked status of the square
+	bool locked = (strSquare[0] == 'l');
+
+	// THe colour of the square
+	Colour colour = (Colour)(strSquare[2] - '0');
+
+	// The type of the square
+	Type type;
+	switch (strSquare[1]) {
+
+		case '_': type = Basic; break;
+		case 'h': type = Lateral; break;
+		case 'v': type = Upright; break;
+		case 'b': type = Unstable; break;
+		case 'p': type = Psychedelic; break;
+		default: 
+		{throw string("unexpected square type: '") + strSquare[1] + "'";}
 	}
 
-	// Collect all matched squares in the vertical direction.
+	// Setting the actual scquare
+	sq.setLocked(locked);
+	sq.setColour(colour);
+	sq.setType(type);
+
+	int r = sq.getRow();
+	int c = sq.getCol();
+
+	// Updating the view
+	view->setLocked(r, c, locked);
+	view->setColour(r, c, colour);
+	view->setType(r, c, type);
+}
+
+//
+// Drops squares that are floating.
+//
+void Board::dropSquares() {
+
 	for (int c = 0; c < size; c++) {
-		if (grid[row][c].isReady()) {
+		grid[0][c].drop();
 
-			hMatch.push_back(&grid[row][c]);
+		// Supply the top row with new squares.
+		while (grid[0][c].getColour() == Empty) {
+
+			setNewSquare(grid[0][c]);
+			grid[0][c].drop();
 		}
 	}
+}
+
+//
+// Checks for matches across the whole grid.
+// All matched squares are cleared, and if no
+// matched squares are detected, or the board
+// consists of only empty squares chainMode ends.
+//
+void Board::chainReaction() {
+
+	// Assume there will be no matched squares.
+	chainMode = false;
+
+	notifyAll();
+
+	for (int r = 0; r < size; r++) {
+		for (int c = 0; c < size; c++) {
+
+			if (grid[r][c].isReady()) {
+
+				// Increment number of chains
+				if (!chainMode) chain++;
+
+				chainMode = true;
+				clear(grid[r][c], 4);
+			}
+		}
+	}
+
+	// Assume board is empty.
+	emptyBoard = true;
+
+	for (int r = 0; r < size; r++) {
+		for (int c = 0; c < size; c++) {
+
+			if (grid[r][c].getColour() != Empty) {
+
+				emptyBoard = false;
+				break;
+			}
+		}
+	}
+
+	unNotifyAll();
 }
 
 //
@@ -680,7 +654,13 @@ void Board::hint() {
 // Scrambles the board randomly, while making sure
 // no matched squares are made while scrambling.
 //
-void Board::scramble() {
+void Board::scramble(bool force) {
+
+	if (!force && validMove() != "no moves left, scramble?") {
+
+		view->print("there are still moves left, need a hint?");
+		return;
+	}
 
 	PRNG rand;
 	
@@ -732,12 +712,39 @@ void Board::scramble() {
 			grid[r][c].notify();
 			
 			// Rescramble if matches are found.
-			if (grid[r][c].isReady()) scramble();
+			if (grid[r][c].isReady()) scramble(true);
 		}
 	}
 
 	unNotifyAll();
 }
+//
+// Notifies all squares to check for matches.
+// 
+void Board::notifyAll() {
+
+	for (int r = 0; r < size; r++) {
+		for (int c = 0; c < size; c++) {
+
+			grid[r][c].notify();
+		}
+	}
+}
+
+//
+// Clears notification status for all squares.
+//
+void Board::unNotifyAll() {
+
+	for (int r = 0; r < size; r++) {
+		for (int c = 0; c < size; c++) {
+
+			grid[r][c].setNotified(false);
+		}
+	}
+}
+
+
 
 // debuggin purposes
 void Board::printGridInfo() {

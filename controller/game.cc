@@ -28,9 +28,7 @@ bool isValidSwap(int row, int col, Direction dir) {
 
 Game::Game(int size) {
 
-	// if (board) {delete board;}
 	board = new Board(size);
-	board->start();
 
 	string cmd;
 
