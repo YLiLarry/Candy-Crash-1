@@ -4,7 +4,7 @@
 #include <vector>
 using namespace std;
 
-void TextCell:: draw() const {
+void TextCell:: draw() {
 	
     string str(this->lock ? "l" : "_");
     switch (this->cellType) {
@@ -37,7 +37,7 @@ TextView:: ~TextView() {
     this->end();
 }
 
-void TextView:: draw() const {
+void TextView:: draw() {
     #if DEBUG
         cout << endl;
         for (int i = 0; i < this->size; i++) {
@@ -113,16 +113,14 @@ void TextView:: swap(int r, int c, Direction d) {
 }
 
 void TextView:: drop(int column, Colour colour, Type type = Basic) {
-    int row = 0;
-    while (row < this->size && this->board[row][column].colour == Empty) {row++;}
-    this->board[row][column].colour = colour;
-    this->board[row][column].cellType = type;
+    this->board[0][column].colour = colour;
+    this->board[0][column].cellType = type;
+    this->fall(0, column);
 }
 
 void TextView:: fall(int r, int c) {
     int i = r;
-    cerr << "fall" << endl;
-    while (i < this->size - 1 && this->board[i+1][c].colour == Empty) {i++; cerr << i << endl;}
+    while (i < this->size - 1 && this->board[i+1][c].colour == Empty) {i++;}
     _swap(this->board[r][c], this->board[i][c]);
 };
 

@@ -13,7 +13,7 @@
             bool lock = false;
             Colour colour = Empty;
             Type cellType = Basic;
-            virtual void draw() const = 0;
+            virtual void draw() = 0;
             virtual ~CellViewAbstract() {};
     };
 
@@ -42,7 +42,7 @@
             // View(int);
             virtual ~ViewAbstract() {};
             
-            virtual void draw() const = 0; 
+            virtual void draw() = 0; 
             
             /* setters */
             virtual void setColour(int,int,Colour) = 0;

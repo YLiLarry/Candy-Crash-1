@@ -19,7 +19,7 @@
             ~View();
 
             void init(int);
-            void draw() const;
+            void draw();
             
             void setColour(int,int,Colour);
             void setType(int,int,Type);

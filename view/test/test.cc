@@ -5,9 +5,33 @@ using namespace std;
 
 
 int main() {
-    View* view = NULL;
+    View* view = new View(5);
     int r, c;
     string str;
+    
+    view->drop(3,Red,Basic);
+    // view->drop(3,Red,Basic);
+    // view->drop(3,Red,Basic);
+    // view->drop(3,Red,Basic);
+    // view->drop(3,Red,Basic);
+    // view->destroy(4,3);
+    // view->destroy(3,3);
+    // view->destroy(2,3);
+    // view->destroy(1,3);
+    // view->destroy(0,3);
+    // view->drop(3,Blue,Basic);
+    // view->drop(3,Blue,Basic);
+    // view->drop(3,Blue,Basic);
+    // view->drop(3,Blue,Basic);
+    // view->drop(3,Blue,Basic);
+    // view->destroy(4,3);
+    // view->destroy(3,3);
+    // view->destroy(2,3);
+    // view->destroy(1,3);
+    // view->destroy(0,3);
+    
+    // view->swap(0,0,Down);
+    // view->swap(0,0,Down);
     
     while (cin >> str) {
         if (str == "new") {
@@ -56,7 +80,7 @@ int main() {
             cin >> r;
             view->setHiScore(r);
         } else 
-        if (str == "dp") {
+        if (str == "drop") {
             string str1, str2;
             cin >> c >> str1 >> str2;
             view->drop(c, str2colour(str1), str2type(str2));

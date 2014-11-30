@@ -11,18 +11,19 @@
 #include "animation.h"
 #include <thread>
 #include <chrono>
+#include <vector>
     
     class GraphicCell;
     class GraphicView;
 
     class MoveAnimation : public Animation {
+        
         private :
             GraphicCell* target;
-            int desX;
-            int desY;
+            
         public :
-            bool during();
-            void animate();
+            bool during(std::vector<int>);
+            void animate(std::vector<int>);
             void to(int,int);
             MoveAnimation(GraphicCell*);
     };
@@ -31,27 +32,33 @@
         public:
             int x;
             int y;
-            Xwindow* window;
-            Colour colour;
-            GraphicView* outer;
-            MoveAnimation* move;
+            int lx;
+            int ly;
+            bool needDraw = true;
+            Colour colour = Empty;
+            Xwindow* window = NULL;
+            GraphicView* outer = NULL;
+            MoveAnimation* move = NULL;
             
             GraphicCell();
-            void draw() const;
+            void draw();
     };
 
     class GraphicView : public ViewAbstract {
         
+        private :
+            bool toggle = true;
+            int droppingNum = 0;
+        
         public :
-            GraphicCell*** board;
-            Xwindow* window;
+            GraphicCell*** board = NULL;
+            Xwindow* window = NULL;
             int windowWidth;
             int windowHeight;
             int cellSize;
             int marginLeft;
             int marginTop;
-            int fps;
-            std::thread* main;
+            std::chrono::milliseconds fps;
             
             void refresh();
             
@@ -59,8 +66,10 @@
             GraphicView(int);
             ~GraphicView();
             
+            void waitAllAnimationsFinish();
+            
             void init(int);
-            void draw() const;
+            void draw();
             
             void setColour(int,int,Colour);
             void setType(int,int,Type);

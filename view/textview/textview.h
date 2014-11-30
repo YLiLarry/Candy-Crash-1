@@ -10,7 +10,7 @@
     
     class TextCell : public CellViewAbstract {
         public:
-            void draw() const;
+            void draw();
     };
     
     class TextView : public ViewAbstract {
@@ -23,7 +23,7 @@
             ~TextView();
             
             void init(int);
-            void draw() const;
+            void draw();
             
             void setColour(int,int,Colour);
             void setType(int,int,Type);
