@@ -14,7 +14,7 @@ class Board {
 
 	View *view;
 	Generator *generate;
-	Square **grid;
+	Square ***grid;
 	int size;
 
 	int cleared;
@@ -37,13 +37,13 @@ class Board {
 
 	void checkLevel();
 
-	void collectMatched(Square &root);
+	void collectMatched(Square *root);
 
-	void clearAt(Square &root);
-	void clear(Square &sq, int radius);
+	void clearAt(Square *root);
+	void clear(Square* sq, int radius);
 
-	void setNewSquare(Square &sq);
-	void setNewSquare(Square &sq, std::string strSquare);
+	void setNewSquare(Square* sq);
+	void setNewSquare(Square* sq, std::string strSquare);
 
 	void dropSquares();
 	void chainReaction();

@@ -18,17 +18,18 @@ Board::Board(int n) {
 
 	view = new View(n);
 	generate = new Generator();
-	grid = new Square *[n];
+	
+	grid = new Square**[n];
 
 	for (int r = 0; r < n; r++) {
-
 		// n coloumns
-		grid[r] = new Square[n];
+		grid[r] = new Square*[n];
 
 		for (int c = 0; c < n; c++) {
 
+			grid[r][c] = new Square();
 			// Initializing squares
-			grid[r][c].init(r, c, n, grid, view);
+			grid[r][c]->init(r, c, n, grid, view);
 		}
 	}
 
@@ -57,10 +58,11 @@ Board::Board(int n) {
 Board::~Board() {
 
 	for (int i = 0; i < size; i++) {
-
+		for (int j = 0; j < size; j++) {
+		    delete grid[i][j];
+		}
 		delete[] grid[i];
 	}
-
 	delete[] grid;
 
 	delete generate;
@@ -91,7 +93,7 @@ void Board::loadLevel(int level) {
 				file >> square;
 
 				setNewSquare(grid[r][c], square);
-				grid[r][c].setNeighbours();
+				grid[r][c]->setNeighbours();
 
 				if (r == size - 1 && c == size - 1) {
 
@@ -113,7 +115,7 @@ void Board::loadLevel(int level) {
 
 				string square = generate->randomSquare(level);
 				setNewSquare(grid[r][c], square);
-				grid[r][c].setNeighbours();
+				grid[r][c]->setNeighbours();
 			}
 		}
 
@@ -164,21 +166,21 @@ void Board::swap(int row, int col, Direction d) {
 	emptyBoard = false;
 
 	// swaps the square with its neighbour
-	grid[row][col].swapWith(d);
+	grid[row][col]->swapWith(d);
 	
 	// draw the board to see the swap take place
 	view->draw();
 
 	// start clearing matched squares originating
 	// from neighbour
-	clearAt(*grid[row][col].neighbour[d]);
+	clearAt(grid[row][col]->neighbour[d]);
 
 	// start clearing matched squares at the original
 	// coordinates
 	clearAt(grid[row][col]);
 
 	// if nothing was cleared, swap back
-	if (!cleared) grid[row][col].swapWith(d);
+	if (!cleared) grid[row][col]->swapWith(d);
 
 	// clear notification status from squares
 	// required for matching to work properly next turn
@@ -218,29 +220,29 @@ void Board::swap(int row, int col, Direction d) {
 // in hMatch or vMatch vectors depending on the orientation.
 // The orientation is relative the referenced root square.
 //
-void Board::collectMatched(Square &root) {
+void Board::collectMatched(Square* root) {
 
 	// Clear vectors before collecting.
 	hMatch.clear();
 	vMatch.clear();
 
 	// for easier referencing.
-	int row = root.getRow();
-	int col = root.getCol();
+	int row = root->getRow();
+	int col = root->getCol();
 
 	// Collect all matched square in horizontal direction.
 	for (int r = 0; r < size; r++) {
-		if (grid[r][col].isReady()) {
+		if (grid[r][col]->isReady()) {
 
-			vMatch.push_back(&grid[r][col]);
+			vMatch.push_back(grid[r][col]);
 		}
 	}
 
 	// Collect all matched squares in the vertical direction.
 	for (int c = 0; c < size; c++) {
-		if (grid[row][c].isReady()) {
+		if (grid[row][c]->isReady()) {
 
-			hMatch.push_back(&grid[row][c]);
+			hMatch.push_back(grid[row][c]);
 		}
 	}
 }
@@ -249,13 +251,13 @@ void Board::collectMatched(Square &root) {
 // Starts clearing matched squares from a given
 // row and column of the square reference.
 //
-void Board::clearAt(Square &root) {
+void Board::clearAt(Square* root) {
 
 	// Push the matched squares on hMatch and vMatch vectors.
 	collectMatched(root);
 
 	// Backup the colour, required for settings special squares.
-	Colour backup = root.getColour();
+	Colour backup = root->getColour();
 
 	// The radius of the bomb. Initialized to 0.
 	int radius = 0;
@@ -283,14 +285,14 @@ void Board::clearAt(Square &root) {
 		// In this version both types of matches
 		// will award the player with an Unstable square.
 
-		for (int i = 0; i < 3; i++) { clear(*hMatch[i], radius); }
-		for (int i = 0; i < 3; i++) { clear(*vMatch[i], radius); }
+		for (int i = 0; i < 3; i++) { clear(hMatch[i], radius); }
+		for (int i = 0; i < 3; i++) { clear(vMatch[i], radius); }
 
-		root.setColour(backup);
-		root.setType(Unstable);
+		root->setColour(backup);
+		root->setType(Unstable);
 
-		view->setColour(root.getRow(), root.getCol(), backup);
-		view->setType(root.getRow(), root.getCol(), Unstable);
+		view->setColour(root->getRow(), root->getCol(), backup);
+		view->setType(root->getRow(), root->getCol(), Unstable);
 
 	} else if (hMatch.size() > vMatch.size()) {
 
@@ -301,21 +303,21 @@ void Board::clearAt(Square &root) {
 
 		int n = (int)hMatch.size();
 
-		for (int i = 0; i < n; i++) { clear(*hMatch[i], radius); }
+		for (int i = 0; i < n; i++) { clear(hMatch[i], radius); }
 
 		if (n == 4) {
 			
-			root.setColour(backup);
-			root.setType(Lateral);
-			view->setColour(root.getRow(), root.getCol(), backup);
-			view->setType(root.getRow(), root.getCol(), Lateral);
+			root->setColour(backup);
+			root->setType(Lateral);
+			view->setColour(root->getRow(), root->getCol(), backup);
+			view->setType(root->getRow(), root->getCol(), Lateral);
 
 		} else if (n == 5) {
 
-			root.setColour(backup);
-			root.setType(Psychedelic);
-			view->setColour(root.getRow(), root.getCol(), backup);
-			view->setType(root.getRow(), root.getCol(), Psychedelic);
+			root->setColour(backup);
+			root->setType(Psychedelic);
+			view->setColour(root->getRow(), root->getCol(), backup);
+			view->setType(root->getRow(), root->getCol(), Psychedelic);
 		}
 
 	} else if (hMatch.size() < vMatch.size()) {
@@ -327,21 +329,21 @@ void Board::clearAt(Square &root) {
 
 		int n = (int)vMatch.size();
 
-		for (int i = 0; i < n; i++) { clear(*vMatch[i], radius); }
+		for (int i = 0; i < n; i++) { clear(vMatch[i], radius); }
 
 		if (n == 4) {
 			
-			root.setColour(backup);
-			root.setType(Upright);
-			view->setColour(root.getRow(), root.getCol(), backup);
-			view->setType(root.getRow(), root.getCol(), Upright);
+			root->setColour(backup);
+			root->setType(Upright);
+			view->setColour(root->getRow(), root->getCol(), backup);
+			view->setType(root->getRow(), root->getCol(), Upright);
 
 		} else if (n == 5) {
 
-			root.setColour(backup);
-			root.setType(Psychedelic);
-			view->setColour(root.getRow(), root.getCol(), backup);
-			view->setType(root.getRow(), root.getCol(), Psychedelic);
+			root->setColour(backup);
+			root->setType(Psychedelic);
+			view->setColour(root->getRow(), root->getCol(), backup);
+			view->setType(root->getRow(), root->getCol(), Psychedelic);
 		}
 	}
 }
@@ -351,17 +353,17 @@ void Board::clearAt(Square &root) {
 // the radius which should be cleared if an Unstable square is
 // found. It overrides the radius if 3+ squares have been cleared.
 //
-void Board::clear(Square &sq, int r) {
+void Board::clear(Square* sq, int r) {
 
 	// Ignore empty squares.
-	if (sq.getColour() == Empty)  return;
+	if (sq->getColour() == Empty)  return;
 
 	// Unlock a locked square.
-	if (sq.isLocked()) {
+	if (sq->isLocked()) {
 
-		sq.setLocked(false);
-		sq.setReady(false);
-		view->setLocked(sq.getRow(), sq.getCol(), false);
+		sq->setLocked(false);
+		sq->setReady(false);
+		view->setLocked(sq->getRow(), sq->getCol(), false);
 
 		unlocked++;
 		
@@ -370,14 +372,14 @@ void Board::clear(Square &sq, int r) {
 
 	// Backing up the Colour and Type of te square,
 	// that is being cleared.
-	Colour tColour = sq.getColour();
-	Type tType = sq.getType();
+	Colour tColour = sq->getColour();
+	Type tType = sq->getType();
 
 	// Clear an unlocked square
-	sq.setColour(Empty);
-	sq.setType(Basic);
-	sq.setReady(false);
-
+	sq->setColour(Empty);
+	sq->setType(Basic);
+	sq->setReady(false);
+	    
 	cleared++;
 
 	// Override the given.
@@ -398,8 +400,8 @@ void Board::clear(Square &sq, int r) {
 	if (chainMode) turnScore *= pow(2, chain);
 	
 	// For easier referencing.
-	int row = sq.getRow();
-	int col = sq.getCol();
+	int row = sq->getRow();
+	int col = sq->getCol();
 
 	// Clears the square on the view side.
 	view->destroy(row, col);
@@ -447,13 +449,14 @@ void Board::clear(Square &sq, int r) {
 			// Clears all squares with colour: tColour.
 			for (int r = 0; r < size; r++) {
 				for (int c = 0; c < size; c++) {
-					if (grid[r][c].getColour() == tColour) {
+					if (grid[r][c]->getColour() == tColour) {
 						clear(grid[r][c], r);
 					}
 				}
 			}
 		} break;
 	}
+	
 }
 
 //
@@ -461,18 +464,18 @@ void Board::clear(Square &sq, int r) {
 // new colour and type information, this method is called
 // to set the square with new colour and type.
 //
-void Board::setNewSquare(Square &sq) {
+void Board::setNewSquare(Square* sq) {
 
 	if (level == 0) {
 
 		Colour newColour = (Colour)(levelZeroColours[0] - '0');
 		Type newType = Basic;
 
-		sq.setColour(newColour);
-		sq.setType(newType);
+		sq->setColour(newColour);
+		sq->setType(newType);
 
-		view->setColour(sq.getRow(), sq.getCol(), newColour);
-		view->setType(sq.getRow(), sq.getCol(), newType);
+		view->setColour(sq->getRow(), sq->getCol(), newColour);
+		view->setType(sq->getRow(), sq->getCol(), newType);
 
 		// recycles the colours
 		char c = levelZeroColours[0];
@@ -489,7 +492,7 @@ void Board::setNewSquare(Square &sq) {
 // Parses strSquare and sets the referenced square
 // as specified by the string representation.
 //
-void Board::setNewSquare(Square &sq, string strSquare) {
+void Board::setNewSquare(Square* sq, string strSquare) {
 
 	// The locked status of the square
 	bool locked = (strSquare[0] == 'l');
@@ -511,12 +514,12 @@ void Board::setNewSquare(Square &sq, string strSquare) {
 	}
 
 	// Setting the actual scquare
-	sq.setLocked(locked);
-	sq.setColour(colour);
-	sq.setType(type);
+	sq->setLocked(locked);
+	sq->setColour(colour);
+	sq->setType(type);
 
-	int r = sq.getRow();
-	int c = sq.getCol();
+	int r = sq->getRow();
+	int c = sq->getCol();
 
 	// Updating the view
 	view->setLocked(r, c, locked);
@@ -528,17 +531,66 @@ void Board::setNewSquare(Square &sq, string strSquare) {
 // Drops squares that are floating.
 //
 void Board::dropSquares() {
+	// inefficient call chain in Square::drop(), very inefficient
+	// for (int c = 0; c < size; c++) {
+	// 	grid[0][c]->drop();
 
-	for (int c = 0; c < size; c++) {
-		grid[0][c].drop();
+	// 	// Supply the top row with new squares.
+	// 	while (grid[0][c]->getColour() == Empty) {
 
-		// Supply the top row with new squares.
-		while (grid[0][c].getColour() == Empty) {
-
-			setNewSquare(grid[0][c]);
-			grid[0][c].drop();
+	// 		setNewSquare(grid[0][c]);
+	// 		grid[0][c]->drop();
+	// 	}
+	// }
+	//
+	
+	/* scan all floating squares and drop them */
+	for (int r = this->size - 1; r >= 0; r--) { 
+	    for (int c = 0; c < this->size; c++) { // for all squares on the gird, scanning from bottom to top
+	    	
+	    	Square*& sq = this->grid[r][c]; // for each square 'sq'
+	    	
+	        if (sq->colour == Empty) {continue;} // if 'sq' is empty dont drop
+	        
+	        // find the first empty block that is above a solid block
+    		int i = r; 
+    		while (i < this->size - 1 && this->grid[i+1][c]->colour == Empty) {i++;}
+			// if there's no such empty block (can't drop), skip
+			if (i == r) {continue;}
+			// if there is, then swap 'sq' with this empty block, done.
+    		Square*& des = this->grid[i][c];
+    		
+    		std::swap(sq->row, des->row);
+    		std::swap(sq->col, des->col);
+			std::swap(sq, des);   
+    		
+    		// update view
+    		this->view->fall(r, c);
 		}
 	}
+		
+	/* drop new squares */
+	for (int c = 0; c < this->size; c++) { // for each column
+		int i = 0;
+    	while (i < this->size - 1 && this->grid[i][c]->colour == Empty) {i++;} // find i = the # of rows that're empty
+    	
+		while (i > 0) { // drop 'i' # of new squares at this column
+			setNewSquare(grid[0][c]);
+	    	Square*& sq = this->grid[0][c];
+	        // find the first empty block that is above a solid block
+    		int j = 0; 
+    		while (j < this->size - 1 && this->grid[j+1][c]->colour == Empty) {j++;}
+    		Square*& des = this->grid[j][c];
+    		
+    		std::swap(sq->row, des->row);
+    		std::swap(sq->col, des->col);
+			std::swap(sq, des);  
+
+			this->view->drop(c, this->grid[0][c]->colour, this->grid[0][c]->type);
+			i--;
+	    }
+	}
+	
 }
 
 //
@@ -557,7 +609,7 @@ void Board::chainReaction() {
 	for (int r = 0; r < size; r++) {
 		for (int c = 0; c < size; c++) {
 
-			if (grid[r][c].isReady()) {
+			if (grid[r][c]->isReady()) {
 
 				// Increment number of chains
 				if (!chainMode) chain++;
@@ -574,7 +626,7 @@ void Board::chainReaction() {
 	for (int r = 0; r < size; r++) {
 		for (int c = 0; c < size; c++) {
 
-			if (grid[r][c].getColour() != Empty) {
+			if (grid[r][c]->getColour() != Empty) {
 
 				emptyBoard = false;
 				break;
@@ -605,13 +657,13 @@ string Board::validMove() {
 
 				// Invisibly swap squares with it's neighbours
 				// If the neighbour exists (not NULL).
-				if (grid[r][c].neighbour[d]) {
+				if (grid[r][c]->neighbour[d]) {
 
-					grid[r][c].swap((Direction)d);
+					grid[r][c]->swap((Direction)d);
 
 					// A match is found
-					if (grid[r][c].isReady() ||
-						grid[r][c].neighbour[d]->isReady()) {
+					if (grid[r][c]->isReady() ||
+						grid[r][c]->neighbour[d]->isReady()) {
 
 						ss << "swap " << r << " " << c << " "
 						   << dir2str((Direction)d);
@@ -620,15 +672,15 @@ string Board::validMove() {
 					}
 
 					// Clear matched status and notifications.
-					grid[r][c].clearReady();
-					grid[r][c].clearNotified();
+					grid[r][c]->clearReady();
+					grid[r][c]->clearNotified();
 
 					// Swap back.
-					grid[r][c].swap((Direction)d);
+					grid[r][c]->swap((Direction)d);
 
 					// Clear matched status and notifications.
-					grid[r][c].clearReady();
-					grid[r][c].clearNotified();
+					grid[r][c]->clearReady();
+					grid[r][c]->clearNotified();
 
 					// Return the first move found
 					if (foundMatch) return ss.str();
@@ -675,35 +727,35 @@ void Board::scramble(bool force) {
 
 			// Swapping with the randomly selected square.
 			// This is done invisibly.
-			grid[r][c].swap(grid[rndR][rndC]);
+			grid[r][c]->swap(*grid[rndR][rndC]);
 
 			// Checking for matched squares.
-			if (grid[r][c].isReady() ||
-				grid[rndR][rndC].isReady()) {
+			if (grid[r][c]->isReady() ||
+				grid[rndR][rndC]->isReady()) {
 
 				// If matched squarse are found, swap back.
-				grid[r][c].swap(grid[rndR][rndC]);
+				grid[r][c]->swap(*grid[rndR][rndC]);
 
 			} else {
 
 				// If no matches occur, update the view.
-				view->setLocked(r, c, grid[r][c].isLocked());
-				view->setColour(r, c, grid[r][c].getColour());
-				view->setType(r, c, grid[r][c].getType());
+				view->setLocked(r, c, grid[r][c]->isLocked());
+				view->setColour(r, c, grid[r][c]->getColour());
+				view->setType(r, c, grid[r][c]->getType());
 
 				// Updating the view at the randomly selected coordinate.
-				view->setLocked(rndR, rndC, grid[rndR][rndC].isLocked());
-				view->setColour(rndR, rndC, grid[rndR][rndC].getColour());
-				view->setType(rndR, rndC, grid[rndR][rndC].getType());
+				view->setLocked(rndR, rndC, grid[rndR][rndC]->isLocked());
+				view->setColour(rndR, rndC, grid[rndR][rndC]->getColour());
+				view->setType(rndR, rndC, grid[rndR][rndC]->getType());
 			}
 
 			// Clears matched status and notifications
 
-			grid[r][c].clearReady();
-			grid[r][c].clearNotified();
+			grid[r][c]->clearReady();
+			grid[r][c]->clearNotified();
 
-			grid[rndR][rndC].clearReady();
-			grid[rndR][rndC].clearNotified();
+			grid[rndR][rndC]->clearReady();
+			grid[rndR][rndC]->clearNotified();
 		}
 	}
 
@@ -711,10 +763,10 @@ void Board::scramble(bool force) {
 	for (int r = 0; r < size; r++) {
 		for (int c = 0; c < size; c++) {
 
-			grid[r][c].notify();
+			grid[r][c]->notify();
 			
 			// Rescramble if matches are found.
-			if (grid[r][c].isReady()) scramble(true);
+			if (grid[r][c]->isReady()) scramble(true);
 		}
 	}
 
@@ -728,7 +780,7 @@ void Board::notifyAll() {
 	for (int r = 0; r < size; r++) {
 		for (int c = 0; c < size; c++) {
 
-			grid[r][c].notify();
+			grid[r][c]->notify();
 		}
 	}
 }
@@ -741,7 +793,7 @@ void Board::unNotifyAll() {
 	for (int r = 0; r < size; r++) {
 		for (int c = 0; c < size; c++) {
 
-			grid[r][c].setNotified(false);
+			grid[r][c]->setNotified(false);
 		}
 	}
 }
@@ -754,7 +806,7 @@ void Board::printGridInfo() {
 	for (int i = 0; i < size; i++) {
 		for (int j = 0; j < size; j++) {
 
-			cerr << grid[i][j].isNotified() << grid[i][j].isReady() << " ";
+			cerr << grid[i][j]->isNotified() << grid[i][j]->isReady() << " ";
 		}
 		cerr << endl;
 	}

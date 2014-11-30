@@ -224,6 +224,7 @@ void GraphicView:: swap(int r, int c, Direction d) {
     }
     (*gc1)->move->to(newX, newY);
     (*gc2)->move->to(r*s, c*s);
+    this_thread:: sleep_for(chrono::seconds(1));
     GraphicCell* tmp;
     tmp = *gc1;
     *gc1 = *gc2;
@@ -259,23 +260,24 @@ void GraphicView:: fall(int r, int c) {
     #if DEBUG_GRAPHIC
         fprintf(stderr,">> square %d %d fall ", r, c);
     #endif
+    GraphicCell*& ori = this->board[r][c];
     int i = r;
     while (i < this->size - 1 && this->board[i+1][c]->colour == Empty) {i++;}
     #if DEBUG_GRAPHIC
         fprintf(stderr,"to row %d\n", i);
     #endif
-    GraphicCell*& ori = this->board[r][c];
     GraphicCell*& des = this->board[i][c];
     if (i > 0) {
         des->x = des->lx = r * this->cellSize;
         des->y = des->ly = c * this->cellSize;
     }
-    cerr << "checkpoint to" << ori->move << endl;
+    // cerr << "checkpoint to" << ori->move << endl;
     ori->move->to(i*this->cellSize, c*this->cellSize);
-    #if DEBUG_GRAPHIC
-        fprintf(stderr,"before swap ori = \"%p\", des = \"%p\"\n", this->board[r][c], this->board[i][c]);
-    #endif
+    // #if DEBUG_GRAPHIC
+    //     fprintf(stderr,"before swap ori = \"%p\", des = \"%p\"\n", this->board[r][c], this->board[i][c]);
+    // #endif
     std::swap(ori, des);
+    this_thread:: sleep_for(chrono::milliseconds(500));
     // #if DEBUG_GRAPHIC
     //     fprintf(stderr,"after swap!! ori = \"%p\", des = \"%p\"\n", this->board[r][c], this->board[i][c]);
     // #endif

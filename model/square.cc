@@ -2,6 +2,7 @@
 #include <iostream>
 #include <sstream>
 #include <cmath>
+#include <algorithm>
 using namespace std;
 
 Square::Square() {
@@ -26,7 +27,7 @@ Square::Square() {
 	view = NULL;
 }
 
-void Square::init(int r, int c, int n, Square **g, View *v) {
+void Square::init(int r, int c, int n, Square ***g, View *v) {
 
 	row = r;
 	col = c;
@@ -39,22 +40,22 @@ void Square::setNeighbours() {
 
 	if (row - 1 >=0) {
 
-		neighbour[Up] = &grid[row - 1][col];
+		neighbour[Up] = grid[row - 1][col];
 	}
 
 	if (row + 1 < gridSize) {
 
-		neighbour[Down] = &grid[row + 1][col];
+		neighbour[Down] = grid[row + 1][col];
 	}
 
 	if (col - 1 >= 0) {
 
-		neighbour[Left] = &grid[row][col - 1];
+		neighbour[Left] = grid[row][col - 1];
 	}
 
 	if (col + 1 < gridSize) {
 
-		neighbour[Right] = &grid[row][col + 1];
+		neighbour[Right] = grid[row][col + 1];
 	}
 }
 
@@ -156,25 +157,45 @@ void Square::clearNotified() {
 }
 
 void Square::drop() {
+	
+	// if (this->colour == Empty) {return;}
+	
+ //    int i = this->row;
+ //    while (i < this->gridSize - 1 && this->grid[i+1][this->col]->colour == Empty) {i++;} // find the destination block
+	
+	// if (i != this->row) {
+		
+ //    	Square*& ori = this->grid[this->row][this->col];
+ //    	Square*& des = this->grid[i][this->col];
+    	
+ //    	this->view->fall(this->row, this->col);
+    	
+ //    	std::swap(ori->row, des->row);
+ //    	std::swap(ori->col, des->col);
+	// 	std::swap(ori, des);    
+    	
+ //    }
+    
+    
+	// // inefficient call chain
+	// if (! neighbour[Down]) {return;}
 
-	if (neighbour[Down]) {
-
-		if (neighbour[Down]->getColour() == Empty) {
-
-			neighbour[Down]->setColour(colour);
-			neighbour[Down]->setType(type);
-
-			setColour(Empty);
-			setType(Basic);
-
-			view->fall(row, col);
-
-			if (neighbour[Up]) neighbour[Up]->drop();
-
-		} else {
-			neighbour[Down]->drop();
-		}
-	}
+	// if (neighbour[Down]->getColour() == Empty) {
+		
+	// 	neighbour[Down]->setColour(colour);
+	// 	neighbour[Down]->setType(type);
+		
+	// 	setColour(Empty);
+	// 	setType(Basic);
+		
+	// 	// view->fall(row, col); cannot be used here, as will be called `size` times
+		
+	// 	if (neighbour[Up]) neighbour[Up]->drop();
+		
+	// } else {
+	// 	neighbour[Down]->drop();
+	// }
+	
 }
 
 int Square::getRow() { return row; }

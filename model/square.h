@@ -9,6 +9,8 @@ const int NEIGHBOURS = 4;
 
 class Square {
 
+	public :
+
 	int row;
 	int col;
 
@@ -22,7 +24,7 @@ class Square {
 	bool notified;
 
 	View *view;
-	Square **grid;
+	Square ***grid;
 
 	void notifyNeighbours();
 
@@ -31,7 +33,7 @@ class Square {
 	Square *neighbour[NEIGHBOURS];
 
 	Square();
-	void init(int row, int col, int size, Square **grid, View *view);
+	void init(int row, int col, int size, Square ***grid, View *view);
 
 	void setNeighbours();
 

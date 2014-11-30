@@ -17,9 +17,9 @@ void Animation:: loop() {
         // #endif
         this->queue.pop_front();
         while (true) {this_thread:: yield(); break;}
-        #if DEBUG_GRAPHIC
-            fprintf(stderr,"!! THREAD END\n");
-        #endif
+        // #if DEBUG_GRAPHIC
+        //     fprintf(stderr,"!! THREAD END\n");
+        // #endif
     }
     this->loop();
 }
