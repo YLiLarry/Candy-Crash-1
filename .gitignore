@@ -1,5 +1,9 @@
 *.o
 *.d
-*.pdf
+*.aux
+*.fdb_latexmk
+*.fls
+*.log
+ss5k.pdf
 main
 ss5k

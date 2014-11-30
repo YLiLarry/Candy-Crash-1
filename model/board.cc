@@ -560,40 +560,33 @@ void Board::setNewSquare(Square* sq, string strSquare) {
 // Drops squares that are floating.
 //
 void Board::dropSquares() {
-	// inefficient call chain in Square::drop(), very inefficient
-	// for (int c = 0; c < size; c++) {
-	// 	grid[0][c]->drop();
 
-	// 	// Supply the top row with new squares.
-	// 	while (grid[0][c]->getColour() == Empty) {
+	// for all squares on the gird, scanning from bottom to top
+	for (int r = size - 1; r >= 0; r--) { 
+	    for (int c = 0; c < size; c++) {
 
-	// 		setNewSquare(grid[0][c]);
-	// 		grid[0][c]->drop();
-	// 	}
-	// }
-	//
-	/* scan all floating squares and drop them */
-	for (int r = this->size - 1; r >= 0; r--) { 
-	    for (int c = 0; c < this->size; c++) { // for all squares on the gird, scanning from bottom to top
-	    	
-	    	Square*& sq = this->grid[r][c]; // for each square 'sq'
-	    	
-	        if (sq->colour == Empty) {continue;} // if 'sq' is empty dont drop
+			// for each square 'sq'
+	    	Square*& sq = grid[r][c];
+
+			// if 'sq' is empty dont drop
+	        if (sq->colour == Empty) { continue; }
 	        
 	        // find the first empty block that is above a solid block
     		int i = r; 
-    		while (i < this->size - 1 && this->grid[i+1][c]->colour == Empty) {i++;}
+
+    		while (i < size - 1 && grid[i+1][c]->colour == Empty) { i++; }
+
 			// if there's no such empty block (can't drop), skip
-			if (i == r) {continue;}
+			if (i == r) { continue; }
     		#if DEBUG_GRAPHIC
     		    fprintf(stderr,"fall: %d %d colour %d to row %d\n", r, c, sq->colour,i);
     		#endif
+
 			// if there is, then swap 'sq' with this empty block, done.
-    		Square*& des = this->grid[i][c];
+    		Square*& des = grid[i][c];
     		
     		// update view
-    		this->view->fall(r, c);
-    		// printGridInfo();
+    		view->fall(r, c);
 			
     		std::swap(sq->row, des->row);
     		std::swap(sq->col, des->col);
@@ -601,26 +594,33 @@ void Board::dropSquares() {
     		
 		}
 	}
-	this->view->draw();
 	
-	/* drop new squares */
-	for (int c = 0; c < this->size; c++) { // for each column
-		int i = 0;
-    	while (i < this->size - 1 && this->grid[i][c]->colour == Empty) {i++;} // find i = the # of rows that're empty
+	view->draw();
+	
+	// drop new squares
+	for (int c = 0; c < size; c++) { // for each column
 
-		while (i > 0) { // drop 'i' # of new squares at this column
+		int i = 0;
+
+		// find i = the # of rows that're empty
+    	while (i < size - 1 && grid[i][c]->colour == Empty) { i++; } 
+
+		// drop 'i' # of new squares at this column
+		while (i > 0) {
+
 			setNewSquare(grid[0][c]);
-	    	Square*& sq = this->grid[0][c];
+	    	Square*& sq = grid[0][c];
+
 	        // find the first empty block that is above a solid block
     		int j = 0; 
-    		while (j < this->size - 1 && this->grid[j+1][c]->colour == Empty) {j++;}
+    		while (j < size - 1 && grid[j+1][c]->colour == Empty) { j++; }
+
     		#if DEBUG_GRAPHIC
     		    fprintf(stderr,"new square: 0 %d colour %d to row %d\n", c, sq->colour, j);
     		#endif
-    		Square*& des = this->grid[j][c];
+    		Square*& des = grid[j][c];
     		
-			this->view->drop(c, sq->colour, sq->type);
-			// printGridInfo();
+			view->drop(c, sq->colour, sq->type);
 			
     		std::swap(sq->row, des->row);
     		std::swap(sq->col, des->col);
@@ -629,8 +629,8 @@ void Board::dropSquares() {
 			i--;
 	    }
 	}
-	this->view->draw();
-	
+
+	view->draw();
 }
 
 //
@@ -812,6 +812,7 @@ void Board::scramble(bool force) {
 
 	unNotifyAll();
 }
+
 //
 // Notifies all squares to check for matches.
 // 
@@ -860,6 +861,6 @@ void Board::printGridInfo() {
 	// }
 }
 
-void Board::levelUp() {this->loadLevel(++this->level);}
-void Board::levelDown() {this->loadLevel(--this->level);}
-void Board::restart() {this->loadLevel(this->level);}
+void Board::levelUp() { loadLevel(++level); }
+void Board::levelDown() { loadLevel(--level); }
+void Board::restart() { loadLevel(level); }
