@@ -78,8 +78,19 @@ Board::~Board() {
 void Board::loadLevel(int level) {
 
 	if (level == 0) {
+		
 
-		ifstream file("sequence.txt");
+		#ifdef DEBUG
+				// cerr << "File: ";
+		
+				// string f;
+				// cin >> f;
+		
+				ifstream file("sequence.txt");
+				// ifstream file(f.c_str());
+		#else
+				ifstream file("sequence.txt");
+		#endif
 
 		if (! file.good()) {
 			throw string("unable to read the sequence.txt file");
@@ -95,15 +106,29 @@ void Board::loadLevel(int level) {
 				setNewSquare(grid[r][c], square);
 				grid[r][c]->setNeighbours();
 
-				if (r == size - 1 && c == size - 1) {
-
-					file >> levelZeroColours;
-				}
+				// logic error, what if there're extra initializations before the bottom sequence line?
+				// if (r == size - 1 && c == size - 1) {
+				// 	file >> levelZeroColours;
+				// }
 			}
 		}
 		
-		view->setScore(score);
-		view->setLevel(level);
+		// load the string at bottom from sequence.txt
+		string tmp1;
+		string tmp2;
+		while (true) {
+			getline(file, tmp1);
+			if (file.eof()) {levelZeroColours = tmp2; break;}
+			getline(file, tmp2);
+			if (file.eof()) {levelZeroColours = tmp1; break;}
+		}
+		
+		#if DEBUG
+			cerr << "load levelZeroColours square sequence :" << levelZeroColours << endl;
+		#endif
+		
+		view->setScore(score); // ?
+		view->setLevel(level); // ?
 
 	} else {
 		
@@ -123,9 +148,9 @@ void Board::loadLevel(int level) {
 		// random. e.g. "every 5th square is a special square"
 		scramble(true);
 		
-		view->setLevel(level);
-		view->setScore(score);
-		view->draw();
+		view->setLevel(level);	// ??
+		view->setScore(score);	// ??
+		view->draw(); 			// ??  draw twice?
 	}
 
 	view->draw();
@@ -379,7 +404,7 @@ void Board::clear(Square* sq, int r) {
 	sq->setColour(Empty);
 	sq->setType(Basic);
 	sq->setReady(false);
-	    
+	
 	cleared++;
 
 	// Override the given.
@@ -468,11 +493,15 @@ void Board::setNewSquare(Square* sq) {
 
 	if (level == 0) {
 
-		Colour newColour = (Colour)(levelZeroColours[0] - '0');
+		Colour newColour = char2colour(levelZeroColours[0]);
 		Type newType = Basic;
 
 		sq->setColour(newColour);
 		sq->setType(newType);
+		
+		#if DEBUG_GRAPHIC
+		    fprintf(stderr,"new colour %c = %c\n", colour2char(sq->colour), colour2char(newColour));
+		#endif
 
 		view->setColour(sq->getRow(), sq->getCol(), newColour);
 		view->setType(sq->getRow(), sq->getCol(), newType);
@@ -543,7 +572,6 @@ void Board::dropSquares() {
 	// 	}
 	// }
 	//
-	
 	/* scan all floating squares and drop them */
 	for (int r = this->size - 1; r >= 0; r--) { 
 	    for (int c = 0; c < this->size; c++) { // for all squares on the gird, scanning from bottom to top
@@ -557,39 +585,51 @@ void Board::dropSquares() {
     		while (i < this->size - 1 && this->grid[i+1][c]->colour == Empty) {i++;}
 			// if there's no such empty block (can't drop), skip
 			if (i == r) {continue;}
+    		#if DEBUG_GRAPHIC
+    		    fprintf(stderr,"fall: %d %d colour %d to row %d\n", r, c, sq->colour,i);
+    		#endif
 			// if there is, then swap 'sq' with this empty block, done.
     		Square*& des = this->grid[i][c];
     		
+    		// update view
+    		this->view->fall(r, c);
+    		// printGridInfo();
+			
     		std::swap(sq->row, des->row);
     		std::swap(sq->col, des->col);
 			std::swap(sq, des);   
     		
-    		// update view
-    		this->view->fall(r, c);
 		}
 	}
-		
+	this->view->draw();
+	
 	/* drop new squares */
 	for (int c = 0; c < this->size; c++) { // for each column
 		int i = 0;
     	while (i < this->size - 1 && this->grid[i][c]->colour == Empty) {i++;} // find i = the # of rows that're empty
-    	
+
 		while (i > 0) { // drop 'i' # of new squares at this column
 			setNewSquare(grid[0][c]);
 	    	Square*& sq = this->grid[0][c];
 	        // find the first empty block that is above a solid block
     		int j = 0; 
     		while (j < this->size - 1 && this->grid[j+1][c]->colour == Empty) {j++;}
+    		#if DEBUG_GRAPHIC
+    		    fprintf(stderr,"new square: 0 %d colour %d to row %d\n", c, sq->colour, j);
+    		#endif
     		Square*& des = this->grid[j][c];
     		
+			this->view->drop(c, sq->colour, sq->type);
+			// printGridInfo();
+			
     		std::swap(sq->row, des->row);
     		std::swap(sq->col, des->col);
 			std::swap(sq, des);  
 
-			this->view->drop(c, this->grid[0][c]->colour, this->grid[0][c]->type);
 			i--;
 	    }
 	}
+	this->view->draw();
 	
 }
 
@@ -802,14 +842,22 @@ void Board::unNotifyAll() {
 
 // debuggin purposes
 void Board::printGridInfo() {
-
-	for (int i = 0; i < size; i++) {
+	
+    for (int i = 0; i < size; i++) {
 		for (int j = 0; j < size; j++) {
-
-			cerr << grid[i][j]->isNotified() << grid[i][j]->isReady() << " ";
+			cerr << colour2char(this->grid[i][j]->colour) << " ";
 		}
 		cerr << endl;
+		
 	}
+			
+	// for (int i = 0; i < size; i++) {
+	// 	for (int j = 0; j < size; j++) {
+
+	// 		cerr << grid[i][j]->isNotified() << grid[i][j]->isReady() << " ";
+	// 	}
+	// 	cerr << endl;
+	// }
 }
 
 void Board::levelUp() {this->loadLevel(++this->level);}

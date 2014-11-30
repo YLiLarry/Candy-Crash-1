@@ -33,7 +33,10 @@
     std::string dir2str(Direction);
     Direction str2dir(std::string& str);
     Colour str2colour(std::string& str);
+    Colour char2colour(char& str);
+    char colour2char(Colour c);
     Type str2type(std::string& str);
+    char type2char(Type& t);
     
 
 #endif

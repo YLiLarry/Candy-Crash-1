@@ -27,15 +27,15 @@ bool MoveAnimation:: during(std::vector<int> c) {
     // this->target->colour);
         
     // #endif
-    return (this->target->x != c[0] || this->target->y != c[1]);
+    return ((this->target->x != c[0] || this->target->y != c[1]) && (this->target->acc = 1));
 };
 
 void MoveAnimation:: animate(std::vector<int> c) {
     this->target->needDraw = true;
-    if (this->target->x < c[0]) {this->target->x++;} 
-    else if (this->target->x > c[0]) {this->target->x--;}
-    if (this->target->y < c[1]) {this->target->y++;} 
-    else if (this->target->y > c[1]) {this->target->y--;}
+    if (this->target->x < c[0]) {this->target->x += 1;} 
+    else if (this->target->x > c[0]) {this->target->x -= 1;}
+    if (this->target->y < c[1]) {this->target->y += 1;} 
+    else if (this->target->y > c[1]) {this->target->y -= 1;}
 }
 
 void MoveAnimation:: to(int desX, int desY) {
@@ -58,6 +58,7 @@ GraphicCell:: GraphicCell() {
     this->y = 0;
     this->lx = 0;
     this->ly = 0;
+    this->acc = 1;
     this->needDraw = true;
     this->colour = Empty;
     this->window = NULL;
@@ -96,7 +97,12 @@ GraphicView:: GraphicView(int size) {
     this->toggle = true;
     this->board = NULL;
     this->window = NULL;
-    this->droppingNum = vector<int>(4,0);
+    this->droppingNum = vector<int>(size,0);
+    #if DEBUG_GRAPHIC
+        for (int i = 0; i < this->droppingNum.size(); i++) {
+            fprintf(stderr,"this->droppingNum[%d] = %d\n", i, this->droppingNum[i]);
+        }
+    #endif
     
     this->windowWidth = 500;  // default
     this->windowHeight = 500; // default
@@ -109,10 +115,10 @@ GraphicView:: GraphicView(int size) {
 }
 
 GraphicView:: ~GraphicView() {
+    this->end();
     #if DEBUG_GRAPHIC
         fprintf(stderr,"GRAPHICVIEW DESTROIED\n");
     #endif
-    this->end();
 }
 
 void GraphicView:: init(int size) {
@@ -136,10 +142,27 @@ void GraphicView:: init(int size) {
     //     fprintf(stderr,"GraphicView:: init done");
     // #endif
     
-    thread(&GraphicView::refresh, this).detach();
+    this->td = new thread(&GraphicView::refresh, this);
 }
 
 void GraphicView:: end() {
+    #if DEBUG_GRAPHIC
+        fprintf(stderr,"call GraphicView:: end()\n");
+    #endif
+
+    #if DEBUG_GRAPHIC
+        fprintf(stderr,"thread try join %p\n", this->td);
+        if (! this->td->joinable()) {cerr << "cannot join" << endl;}
+    #endif
+    this->toggle = false;
+    this->td->join();
+    #if DEBUG_GRAPHIC
+        fprintf(stderr,"refresh thread join\n");
+    #endif
+    delete this->td;
+    delete this->window;
+    
+    // refresh was still using the board!
     for (int i = 0; i < this->size; i++) {
         for (int j = 0; j < this->size; j++) {
             delete this->board[i][j];
@@ -147,7 +170,6 @@ void GraphicView:: end() {
         delete [] this->board[i];
     }
     delete [] this->board;
-    this->toggle = false;
 }
 
 void GraphicView:: draw() {
@@ -241,9 +263,14 @@ void GraphicView:: drop(int column, Colour colour, Type type = Basic) {
     // int i = 0;
     // while (i < this->size - 1 && this->board[i+1][column]->colour == Empty) {i++;}
     nc->x = 0 - (this->cellSize * this->droppingNum[column]);
-    // cerr << "nc->x = " << nc->x;
+    #if DEBUG_GRAPHIC
+        for (int i = 0; i < this->droppingNum.size(); i++) {
+            fprintf(stderr,"this->droppingNum[%d] = %d\n", i, this->droppingNum[i]);
+        }
+    #endif
+    cerr << "nc->x = " << nc->x;
     nc->y = this->marginLeft + column * this->cellSize;
-    this_thread::sleep_for(chrono::seconds(1)); // to be deleted
+    // this_thread::sleep_for(chrono::milliseconds(250)); // to be deleted
     // #if DEBUG_GRAPHIC
         // fprintf(stderr,"set colour to %d\nthe addrss is %p", colour, this->board[0][column]);
     // #endif
@@ -273,11 +300,11 @@ void GraphicView:: fall(int r, int c) {
     }
     // cerr << "checkpoint to" << ori->move << endl;
     ori->move->to(i*this->cellSize, c*this->cellSize);
+    this_thread::sleep_for(chrono::milliseconds(250)); // to be deleted
     // #if DEBUG_GRAPHIC
     //     fprintf(stderr,"before swap ori = \"%p\", des = \"%p\"\n", this->board[r][c], this->board[i][c]);
     // #endif
     std::swap(ori, des);
-    this_thread:: sleep_for(chrono::milliseconds(500));
     // #if DEBUG_GRAPHIC
     //     fprintf(stderr,"after swap!! ori = \"%p\", des = \"%p\"\n", this->board[r][c], this->board[i][c]);
     // #endif
@@ -290,9 +317,9 @@ void GraphicView:: destroy(int r,int c) {
     #if DEBUG_GRAPHIC
         fprintf(stderr,">> destory %d %d", r, c);
     #endif
-    this_thread:: sleep_for(chrono::milliseconds(500));
     // if (this->board[r][c]->move->done()) {
         this->waitAllAnimationsFinish();
+        this->droppingNum = vector<int>(this->size, 0);
         this->board[r][c]->colour = Empty;
         this->board[r][c]->needDraw = true;
     // } else {
@@ -305,8 +332,12 @@ void GraphicView:: restart(int) {
 };
 
 void GraphicView:: refresh() {
-    if (! this->toggle) {return;}
-    // cerr << "refresh" << endl;
+    if (! this->toggle) {
+        #if DEBUG_GRAPHIC
+            fprintf(stderr,"refresh thread end\n");
+        #endif
+        return;
+    }
     for (int i = 0; i < this->size; i++) {
         for (int j = 0; j < this->size; j++) {
             this->board[i][j]->draw();

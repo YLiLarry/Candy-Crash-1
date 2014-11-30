@@ -7,11 +7,11 @@ using namespace std;
 
 
 int main() {
-    View* view = new View(5);
+    View* view = new View(10);
     int r, c;
     string str;
     
-    view->setColour(4,3,Red);
+    // view->setColour(4,3,Red);
     // view->drop(3,Red,Basic);
     // view->drop(3,Red,Basic);
     // view->drop(3,Red,Basic);
@@ -38,15 +38,15 @@ int main() {
     
     while (cin >> str) {
         if (str == "new") {
-            if (view) {delete view;}
-            view = new View(5);
+            delete view;
+            view = new View(10);
             view->draw();
         } else
         if (str == "//") {
             cin.ignore(1024, '\n');
             continue;
         } else
-        if (str == "dw") {
+        if (str == "draw") {
             view->draw();
         } else 
         if (str == "swap") {
@@ -58,28 +58,28 @@ int main() {
             cin >> r >> c;
             view->fall(r, c);
         } else
-        if (str == "sc") {
+        if (str == "setColour") {
             cin >> r >> c >> str;
             view->setColour(r, c, str2colour(str));
             view->draw();
         } else
-        if (str == "st") {
+        if (str == "setType") {
             cin >> r >> c >> str;
             view->setType(r, c, str2type(str));
         } else
-        if (str == "ss") {
+        if (str == "setScore") {
             cin >> r;
             view->setScore(r);
         } else 
-        if (str == "sl") {
+        if (str == "setLevel") {
             cin >> r;
             view->setLevel(r);
         } else
-        if (str == "sm") {
+        if (str == "setMovesRemain") {
             cin >> r;
             view->setMovesRemain(r);
         } else 
-        if (str == "sh") {
+        if (str == "setHiScore") {
             cin >> r;
             view->setHiScore(r);
         } else 
@@ -93,7 +93,7 @@ int main() {
             cin >> str1;
             view->setLabel(str1);
         } else 
-        if (str == "dy") {
+        if (str == "destroy") {
             cin >> r >> c;
             view->destroy(r, c);
         } else 

@@ -8,6 +8,7 @@ string dir2str(Direction d) {
         case Left: return "left";
         case Right: return "right";
     }
+    return "?";
 }
 
 Colour str2colour(string& str) {
@@ -16,7 +17,25 @@ Colour str2colour(string& str) {
     if (str == "1") {return Red;}
     if (str == "2") {return Green;}
     if (str == "3") {return Blue;}
-    return White;
+    return Empty;
+};
+
+Colour char2colour(char& c) {
+    if (c == '_') {return Empty;}
+    if (c == '0') {return White;}
+    if (c == '1') {return Red;}
+    if (c == '2') {return Green;}
+    if (c == '3') {return Blue;}
+    return Empty;
+};
+
+char colour2char(Colour c) {
+    if (c == Empty) {return '_';}
+    if (c == White) {return '0';}
+    if (c == Red) {return '1';}
+    if (c == Green) {return '2';}
+    if (c == Blue) {return '3';}
+    return '?';
 };
 
 Direction str2dir(string& str) {
@@ -34,4 +53,13 @@ Type str2type(string& str) {
     if (str == "b") {return Unstable;}
     if (str == "p") {return Psychedelic;}
     return Basic;
+}
+
+char type2char(Type& t) {
+    if (t == Basic) {return '_';}
+    if (t == Lateral) {return 'h';}
+    if (t == Upright) {return 'v';}
+    if (t == Unstable) {return 'b';}
+    if (t == Psychedelic) {return 'p';}
+    return '?';
 }

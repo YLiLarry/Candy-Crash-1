@@ -1,0 +1,29 @@
+setColour 0 4 1
+setColour 1 4 3
+setColour 2 4 3
+setColour 3 4 2
+setColour 4 4 3
+setColour 5 4 3
+setColour 6 4 1
+setColour 7 4 2
+setColour 8 4 0
+setColour 9 4 3
+setColour 0 4 1
+swap 0 0 right
+destroy 1 4
+destroy 0 4
+destroy 2 4
+destroy 3 4
+setColour 0 4 1
+setColour 1 4 3
+setColour 2 4 3
+setColour 3 4 2
+setColour 4 4 3
+setColour 5 4 3
+setColour 6 4 1
+setColour 7 4 2
+setColour 8 4 0
+setColour 9 4 3
+setColour 0 4 1
+
+drop 4 1 _

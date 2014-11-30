@@ -34,6 +34,7 @@
             int y;
             int lx;
             int ly;
+            int acc;
             bool needDraw;
             Colour colour;
             Xwindow* window;
@@ -49,6 +50,7 @@
         private :
             bool toggle;
             std::vector<int> droppingNum;
+            std::thread* td;
         
         public :
             GraphicCell*** board;

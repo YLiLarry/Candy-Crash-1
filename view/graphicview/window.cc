@@ -11,6 +11,8 @@ using namespace std;
 
 Xwindow::Xwindow(int width, int height): width(width), height(height) {
 
+  // XInitThreads();
+  
   d = XOpenDisplay(NULL);
   if (d == NULL) {
     cerr << "Cannot open display" << endl;
