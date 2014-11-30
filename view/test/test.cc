@@ -10,10 +10,10 @@ int main() {
     string str;
     
     view->drop(3,Red,Basic);
-    // view->drop(3,Red,Basic);
-    // view->drop(3,Red,Basic);
-    // view->drop(3,Red,Basic);
-    // view->drop(3,Red,Basic);
+    view->drop(3,Red,Basic);
+    view->drop(3,Red,Basic);
+    view->drop(3,Red,Basic);
+    view->drop(3,Red,Basic);
     // view->destroy(4,3);
     // view->destroy(3,3);
     // view->destroy(2,3);

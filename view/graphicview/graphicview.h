@@ -48,7 +48,7 @@
         
         private :
             bool toggle = true;
-            int droppingNum = 0;
+            std::vector<int> droppingNum = {0,0,0,0};
         
         public :
             GraphicCell*** board = NULL;

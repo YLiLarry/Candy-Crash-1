@@ -8,28 +8,38 @@ MoveAnimation:: MoveAnimation(GraphicCell* gc) {
 };
 
 bool MoveAnimation:: during(std::vector<int> c) {
-    #if DEBUG_GRAPHIC
-        if (this->target->x == c[0] && this->target->y == c[1]) {
-            fprintf(stderr,"animate done:\ncurrent pos: %d %d, colour %d",
-                    this->target->x, 
-                    this->target->y,
-                    this->target->colour);
-        }
-    #endif
+    // #if DEBUG_GRAPHIC
+    //     if (this->target->x == c[0] && this->target->y == c[1]) {
+    //         fprintf(stderr,"animate done:\ncurrent %p pos: %d %d, colour %d\n",
+    //                 this->target, 
+    //                 this->target->x, 
+    //                 this->target->y,
+    //                 this->target->colour);
+    //     }
+        
+    // fprintf(stderr,"current %p pos: %d %d, colour %d\n",
+    // this->target, 
+    // this->target->x, 
+    // this->target->y,
+    // this->target->colour);
+        
+    // #endif
     return (this->target->x != c[0] || this->target->y != c[1]);
 };
 
 void MoveAnimation:: animate(std::vector<int> c) {
+    this->target->needDraw = true;
     if (this->target->x < c[0]) {this->target->x++;} 
     else if (this->target->x > c[0]) {this->target->x--;}
     if (this->target->y < c[1]) {this->target->y++;} 
     else if (this->target->y > c[1]) {this->target->y--;}
-    this->target->needDraw = true;
 }
 
 void MoveAnimation:: to(int desX, int desY) {
     #if DEBUG_GRAPHIC
-        fprintf(stderr,"MoveAnimation to %d %d\n", desX, desY);
+        fprintf(stderr,"MoveAnimation from %d %d to %d %d\n", 
+                this->target->x, this->target->y,
+                desX, desY);
     #endif
     std::vector<int> c;
     c.push_back(desX);
@@ -44,7 +54,7 @@ GraphicCell:: GraphicCell() {
 }
 
 void GraphicCell:: draw() {
-    // if (! this->needDraw) {return;}
+    if (! this->needDraw) {return;}
     // x/y in the two calls might not be the same because of concurrency 
     int tmpX = this->x;
     int tmpY = this->y;
@@ -62,7 +72,7 @@ void GraphicCell:: draw() {
         case Psychedelic : str += "p"; break;
     }
     this->window->drawBigString(this->y + 5, this->x + outer->cellSize / 2 + 10, str, Xwindow::White);    
-    this->needDraw = true;
+    this->needDraw = false;
 }
 
 
@@ -106,9 +116,9 @@ void GraphicView:: init(int size) {
             gc->outer = this;
         }
     }
-    #if DEBUG_GRAPHIC
-        fprintf(stderr,"GraphicView:: init done");
-    #endif
+    // #if DEBUG_GRAPHIC
+    //     fprintf(stderr,"GraphicView:: init done");
+    // #endif
     
     thread(&GraphicView::refresh, this).detach();
 }
@@ -208,22 +218,25 @@ void GraphicView:: drop(int column, Colour colour, Type type = Basic) {
     #if DEBUG_GRAPHIC
         fprintf(stderr,"drpp %d %d %d", column, colour, type);
     #endif
-    this->droppingNum++;
+    this->droppingNum[column]++;
     GraphicCell*& nc = this->board[0][column];
     // init
-    nc->x = 0 - (this->cellSize*this->droppingNum);
+    // int i = 0;
+    // while (i < this->size - 1 && this->board[i+1][column]->colour == Empty) {i++;}
+    nc->x = 0 - (this->cellSize * this->droppingNum[column]);
+    // cerr << "nc->x = " << nc->x;
     nc->y = this->marginLeft + column * this->cellSize;
     this_thread::sleep_for(chrono::seconds(1)); // to be deleted
-    #if DEBUG_GRAPHIC
-        fprintf(stderr,"set colour to %d\nthe addrss is %p", colour, this->board[0][column]);
-    #endif
+    // #if DEBUG_GRAPHIC
+        // fprintf(stderr,"set colour to %d\nthe addrss is %p", colour, this->board[0][column]);
+    // #endif
     nc->colour = colour;
     nc->cellType = type;
-    // this->fall(0, column);
-    nc->move->to(0, column*this->cellSize);
-    #if DEBUG_GRAPHIC
-        fprintf(stderr,"drpp returns\n");
-    #endif
+    this->fall(0, column);
+    // nc->move->to(0, column*this->cellSize);
+    // #if DEBUG_GRAPHIC
+    //     fprintf(stderr,"drpp returns\n");
+    // #endif
 }
 
 void GraphicView:: fall(int r, int c) {
@@ -237,26 +250,28 @@ void GraphicView:: fall(int r, int c) {
     #endif
     GraphicCell*& ori = this->board[r][c];
     GraphicCell*& des = this->board[i][c];
-    des->x = r * this->cellSize;
-    des->y = c * this->cellSize;
+    if (r > 0) {
+        des->x = des->lx = r * this->cellSize;
+        des->y = des->ly = c * this->cellSize;
+    }
     ori->move->to(i*this->cellSize, c*this->cellSize);
-    #if DEBUG_GRAPHIC
-        fprintf(stderr,"before swap ori = \"%p\", des = \"%p\"\n", this->board[r][c], this->board[i][c]);
-    #endif
+    // #if DEBUG_GRAPHIC
+    //     fprintf(stderr,"before swap ori = \"%p\", des = \"%p\"\n", this->board[r][c], this->board[i][c]);
+    // #endif
     std::swap(ori, des);
-    #if DEBUG_GRAPHIC
-        fprintf(stderr,"after swap!! ori = \"%p\", des = \"%p\"\n", this->board[r][c], this->board[i][c]);
-    #endif
-    #if DEBUG_GRAPHIC
-        fprintf(stderr,">> fall returns\n");
-    #endif
+    // #if DEBUG_GRAPHIC
+    //     fprintf(stderr,"after swap!! ori = \"%p\", des = \"%p\"\n", this->board[r][c], this->board[i][c]);
+    // #endif
+    // #if DEBUG_GRAPHIC
+    //     fprintf(stderr,">> fall returns\n");
+    // #endif
 };
 
 void GraphicView:: destroy(int r,int c) {
     #if DEBUG_GRAPHIC
         fprintf(stderr,">> destory %d %d", r, c);
     #endif
-    // this_thread:: sleep_for(chrono::milliseconds(500));
+    this_thread:: sleep_for(chrono::milliseconds(500));
     // if (this->board[r][c]->move->done()) {
         this->waitAllAnimationsFinish();
         this->board[r][c]->colour = Empty;

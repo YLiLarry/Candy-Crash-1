@@ -189,7 +189,7 @@ void Board::swap(int row, int col, Direction d) {
 	
 	view->draw();
 
-	printGridInfo();
+	// printGridInfo();
 
 	clearAt(*grid[row][col].neighbour[d]);
 	clearAt(grid[row][col]);
@@ -199,9 +199,9 @@ void Board::swap(int row, int col, Direction d) {
 	grid[row][col].clearNotified();
 
 	do {
-		view->draw();
+		// view->draw();
 		dropSquares();
-		view->draw();
+		// view->draw();
 		chainReaction();
 
 	} while (chainMode && !emptyBoard);
@@ -271,7 +271,7 @@ void Board::chainReaction() {
 	chainMode = false;
 
 	notifyAll();
-	printGridInfo();
+	// printGridInfo();
 
 	for (int r = 0; r < size; r++) {
 		for (int c = 0; c < size; c++) {
@@ -413,7 +413,7 @@ void Board::clear(Square &sq, int r) {
 	view->destroy(row, col);
 
 	view->setScore(score + turnScore);
-	view->draw();
+	// view->draw();
 
 	switch (tType) {
 
