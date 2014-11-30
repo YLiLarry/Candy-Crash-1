@@ -9,6 +9,8 @@
 
 using namespace std;
 
+// change
+
 //
 // Constructing a new board of size n.
 //
