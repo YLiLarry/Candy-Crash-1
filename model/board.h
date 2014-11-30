@@ -12,20 +12,14 @@
 
 class Board {
 
-	/*
-	 *#if DEBUG_BOARD
-	 *    public:
-	 *#endif
-	 */
-
 	View *view;
-
 	Generator *generate;
 	Square **grid;
 	int size;
 
 	int cleared;
 	int chain;
+	int unlocked;
 
 	unsigned int score;
 	unsigned int initScore;
@@ -51,6 +45,9 @@ class Board {
 	bool hasMove();
 
 
+	void load(int level);
+	void checkLevel();
+
 	//void getMatches(Square &root);
 	void collectMatched(Square &root);
 
@@ -65,6 +62,7 @@ class Board {
 
 	void dropSquares();
 	void setNewSquare(Square &sq);
+	void setNewSquare(Square &sq, std::string strSquare);
 
 
 	void notifyAll();

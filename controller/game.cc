@@ -34,11 +34,10 @@ Game::Game(int size) {
 
 	string cmd;
 
-	#ifndef DEBUG
-		cout << "command: ";
-	#endif
-	
-	int currentLevel = board->level, previousLevel = board->level;
+	int currentLevel = board->level;
+	int previousLevel = board->level;
+
+	cout << "command: ";
 
 	while (cin >> cmd) {
 
@@ -48,7 +47,6 @@ Game::Game(int size) {
         } else if (cmd == "swap") {
 			this->swap();
 		} else if (cmd == "hint") {
-			cerr << "you called hint! board->level = " << board->level << endl;
 			this->hint();
 		} else if (cmd == "scramble") {
 			this->scramble();
@@ -62,6 +60,7 @@ Game::Game(int size) {
 			break;
 		}
 
+		// detect level change
 		if (currentLevel != board->level) {
 
 			previousLevel = currentLevel;
@@ -70,9 +69,7 @@ Game::Game(int size) {
 			board->loadLevel(currentLevel);
 		}
 
-		#ifndef DEBUG
-			cout << "command: ";
-		#endif
+		cout << "command: ";
 	}
 }
 

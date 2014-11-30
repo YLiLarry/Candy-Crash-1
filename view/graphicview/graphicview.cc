@@ -216,7 +216,7 @@ void GraphicView:: swap(int r, int c, Direction d) {
 
 void GraphicView:: drop(int column, Colour colour, Type type = Basic) {
     #if DEBUG_GRAPHIC
-        fprintf(stderr,"drpp %d %d %d", column, colour, type);
+        fprintf(stderr,"new square at col %d:\ncolour %d, type %d", column, colour, type);
     #endif
     this->droppingNum[column]++;
     GraphicCell*& nc = this->board[0][column];
@@ -241,12 +241,12 @@ void GraphicView:: drop(int column, Colour colour, Type type = Basic) {
 
 void GraphicView:: fall(int r, int c) {
     #if DEBUG_GRAPHIC
-        fprintf(stderr,">> fall %d %d\n", r, c);
+        fprintf(stderr,">> square %d %d fall ", r, c);
     #endif
     int i = r;
     while (i < this->size - 1 && this->board[i+1][c]->colour == Empty) {i++;}
     #if DEBUG_GRAPHIC
-        fprintf(stderr,">> fall to row %d\n", i);
+        fprintf(stderr,"to row %d\n", i);
     #endif
     GraphicCell*& ori = this->board[r][c];
     GraphicCell*& des = this->board[i][c];

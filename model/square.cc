@@ -75,12 +75,15 @@ void Square::swap(Direction d) {
 
 void Square::swap(Square &other) {
 
+	bool tLocked = locked;
 	Colour tColour = colour;
 	Type tType = type;
 
+	locked = other.locked;
 	colour = other.colour;
 	type = other.type;
 
+	other.locked = tLocked;
 	other.colour = tColour;
 	other.type = tType;
 
