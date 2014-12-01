@@ -133,6 +133,7 @@ void Board::loadLevel(int level) {
 
 		vector<string> levelSquares;
 
+		// Get the set of Squares for the level
 		for (int r = 0; r < size; r++) {
 			for (int c = 0; c < size; c++) {
 
@@ -141,6 +142,7 @@ void Board::loadLevel(int level) {
 			}
 		}
 
+		// Randomize
 		shuffle(levelSquares.begin(), levelSquares.end(), default_random_engine(Global::SEED));
 
 		for (int r = 0; r < size; r++) {
@@ -150,12 +152,8 @@ void Board::loadLevel(int level) {
 			}
 		}
 
-		// This is necessary as the squares are not fully
-		// random. e.g. "every 5th square is a special square"
-		//scramble(true);
-		
-		//view->setLevel(level);	// ??
-		//view->setScore(score);	// ??
+		// Make sur nothing is already matched
+		scramble(true);
 	}
 
 	view->setLevel(level);	// ??
