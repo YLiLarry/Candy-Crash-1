@@ -169,10 +169,12 @@ void Board::checkLevel() {
 	if (score >= initScore + 200 && level == 0) {
 		
 		level = 1;
+		//loadLevel(level);
 
 	} else if (score >= initScore + 300 && level == 1) {
 
 		level = 2;
+		//loadLevel(level);
 
 	} else if (score >= initScore + 500 && level == 2 && unlocked == 20) {
 
