@@ -26,7 +26,7 @@ int main(int nargs, const char** arglist) {
 
         if (argstr.find("-no-op") != string::npos) {
             Global:: OPTIMIZED = false;
-            cerr << ">> optimized mode on" << endl;
+            cerr << ">> optimized mode off" << endl;
             p = string::npos;
         } else {
             Global:: OPTIMIZED = true;
