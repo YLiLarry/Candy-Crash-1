@@ -16,16 +16,30 @@
     class GraphicCell;
     class GraphicView;
 
-    class MoveAnimation : public Animation {
-        
-        private :
+    class CellAnimation : public Animation {
+        protected :
             GraphicCell* target;
-            
+        public :
+            CellAnimation() {};
+            CellAnimation(GraphicCell* gc) : target(gc) {};
+    };
+
+    class MoveAnimation : public CellAnimation {
         public :
             bool during(std::vector<int>);
             void animate(std::vector<int>);
             void to(int,int);
-            MoveAnimation(GraphicCell*);
+            MoveAnimation() {};
+            MoveAnimation(GraphicCell* gc) : CellAnimation(gc) {};
+    };
+    
+    class FallAnimation : public CellAnimation {
+        public :
+            bool during(std::vector<int>);
+            void animate(std::vector<int>);
+            void to(int, int);
+            FallAnimation() {};
+            FallAnimation(GraphicCell* gc) : CellAnimation(gc) {};
     };
 
     class GraphicCell : public CellViewAbstract {
@@ -34,12 +48,14 @@
             int y;
             int lx;
             int ly;
-            int acc;
+            int speed;
             bool needDraw;
             Colour colour;
             Xwindow* window;
             GraphicView* outer;
-            MoveAnimation* move;
+            
+            MoveAnimation move;
+            FallAnimation fall;
             
             GraphicCell();
             void draw();

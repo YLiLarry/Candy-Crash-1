@@ -3,39 +3,17 @@
 using namespace std;
 
 /* MoveAnimation */
-MoveAnimation:: MoveAnimation(GraphicCell* gc) {
-    #if DEBUG_GRAPHIC
-        fprintf(stderr,"NEW MoveAnimation\n");
-    #endif
-    this->target = gc;
-};
 
 bool MoveAnimation:: during(std::vector<int> c) {
-    // #if DEBUG_GRAPHIC
-    //     if (this->target->x == c[0] && this->target->y == c[1]) {
-    //         fprintf(stderr,"animate done:\ncurrent %p pos: %d %d, colour %d\n",
-    //                 this->target, 
-    //                 this->target->x, 
-    //                 this->target->y,
-    //                 this->target->colour);
-    //     }
-        
-    // fprintf(stderr,"current %p pos: %d %d, colour %d\n",
-    // this->target, 
-    // this->target->x, 
-    // this->target->y,
-    // this->target->colour);
-        
-    // #endif
-    return ((this->target->x != c[0] || this->target->y != c[1]) && (this->target->acc = 1));
+    return (this->target->x != c[0] || this->target->y != c[1]);
 };
 
 void MoveAnimation:: animate(std::vector<int> c) {
-    this->target->needDraw = true;
     if (this->target->x < c[0]) {this->target->x += 1;} 
     else if (this->target->x > c[0]) {this->target->x -= 1;}
     if (this->target->y < c[1]) {this->target->y += 1;} 
     else if (this->target->y > c[1]) {this->target->y -= 1;}
+    this->target->needDraw = true;
 }
 
 void MoveAnimation:: to(int desX, int desY) {
@@ -50,15 +28,39 @@ void MoveAnimation:: to(int desX, int desY) {
     this->push(c);
 }
 
+/* FallAnimation */
+bool FallAnimation:: during(std::vector<int> v) {
+    return (target->x < v[0]);
+}
+
+void FallAnimation:: animate(std::vector<int> v) {
+    int midX = v[1];
+    if (target->x < midX) {
+        target->speed++;
+    } else if (target->speed > 1) {
+        target->speed--;
+    }
+    target->x += target->speed;
+    target->needDraw = true;
+}
+
+void FallAnimation:: to(int d, int m) {
+    vector<int> v;
+    v.push_back(d);
+    v.push_back(m);
+    this->push(v);
+}
+
 /* GraphicCell */
 
 GraphicCell:: GraphicCell() {
-    this->move = new MoveAnimation(this);
+    this->move = MoveAnimation(this);
+    this->fall = FallAnimation(this);
     this->x = 0;
     this->y = 0;
     this->lx = 0;
     this->ly = 0;
-    this->acc = 1;
+    this->speed = 0;
     this->needDraw = true;
     this->colour = Empty;
     this->window = NULL;
@@ -160,7 +162,10 @@ void GraphicView:: end() {
         fprintf(stderr,"refresh thread join\n");
     #endif
     delete this->td;
-    delete this->window;
+    
+    #if DEBUG_GRAPHIC
+        fprintf(stderr,"delete board");
+    #endif
     
     // refresh was still using the board!
     for (int i = 0; i < this->size; i++) {
@@ -244,8 +249,8 @@ void GraphicView:: swap(int r, int c, Direction d) {
             break;
         }
     }
-    (*gc1)->move->to(newX, newY);
-    (*gc2)->move->to(r*s, c*s);
+    (*gc1)->move.to(newX, newY);
+    (*gc2)->move.to(r*s, c*s);
     this_thread:: sleep_for(chrono::seconds(1));
     GraphicCell* tmp;
     tmp = *gc1;
@@ -277,7 +282,7 @@ void GraphicView:: drop(int column, Colour colour, Type type = Basic) {
     nc->colour = colour;
     nc->cellType = type;
     this->fall(0, column);
-    // nc->move->to(0, column*this->cellSize);
+    // nc->move.to(0, column*this->cellSize);
     // #if DEBUG_GRAPHIC
     //     fprintf(stderr,"drpp returns\n");
     // #endif
@@ -299,8 +304,10 @@ void GraphicView:: fall(int r, int c) {
         des->y = des->ly = c * this->cellSize;
     }
     // cerr << "checkpoint to" << ori->move << endl;
-    ori->move->to(i*this->cellSize, c*this->cellSize);
-    this_thread::sleep_for(chrono::milliseconds(50)); // to be deleted
+    ori->speed = 0;
+    // ori->fall.to(i*this->cellSize, (i*this->cellSize - ori->x) / 2);
+    ori->move.to(i*this->cellSize, c*this->cellSize);
+    this_thread::sleep_for(chrono::milliseconds(500)); // to be deleted
     // #if DEBUG_GRAPHIC
     //     fprintf(stderr,"before swap ori = \"%p\", des = \"%p\"\n", this->board[r][c], this->board[i][c]);
     // #endif
@@ -351,7 +358,7 @@ void GraphicView:: refresh() {
 void GraphicView:: waitAllAnimationsFinish() {
     for (int i = 0; i < this->size; i++) {
         for (int j = 0; j < this->size; j++) {
-            this->board[i][j]->move->join();
+            this->board[i][j]->move.join();
         }
     }
 }

@@ -50,7 +50,7 @@ void Animation:: push(std::vector<int> c) {
 }
 
 Animation:: ~Animation() {
-    cerr << "Animation destroied." << endl;
+    if (! this->td) {return;}
     this->td->join();
     this->end();
     delete this->td;
