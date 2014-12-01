@@ -27,6 +27,10 @@
             void to(int,int);
             MoveAnimation(GraphicCell*);
     };
+    
+    class FallAnimation : public Animation {
+        
+    }
 
     class GraphicCell : public CellViewAbstract {
         public:

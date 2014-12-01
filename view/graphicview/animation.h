@@ -6,8 +6,6 @@
 #include <vector>
 class Animation {
     
-    protected :
-    
     private :
         void loop();
         bool toggle; // true is not threadsafe.
