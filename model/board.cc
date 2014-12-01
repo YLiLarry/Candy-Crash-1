@@ -147,7 +147,7 @@ void Board::loadLevel(int level) {
 		}
 		
 
-		// Make sur nothing is already matched
+		// Make sure nothing is already matched
 		scramble(true);
 	}
 

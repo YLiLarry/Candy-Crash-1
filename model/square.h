@@ -9,7 +9,9 @@ const int NEIGHBOURS = 4;
 
 class Square {
 
-	public :
+	View *view;
+	Square ***grid;
+	int gridSize;
 
 	int row;
 	int col;
@@ -18,13 +20,8 @@ class Square {
 	Colour colour;
 	Type type;
 
-	int gridSize;
-
 	bool ready;
 	bool notified;
-
-	View *view;
-	Square ***grid;
 
 	void notifyNeighbours();
 

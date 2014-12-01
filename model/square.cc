@@ -5,6 +5,9 @@
 #include <algorithm>
 using namespace std;
 
+//
+// Square default constructor
+//
 Square::Square() {
 
 	row = 0;
@@ -27,6 +30,9 @@ Square::Square() {
 	view = NULL;
 }
 
+//
+// Initilizes the particular "node" in grid of Squares.
+//
 void Square::init(int r, int c, int n, Square ***g, View *v) {
 
 	row = r;
