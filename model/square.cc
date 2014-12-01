@@ -31,7 +31,7 @@ Square::Square() {
 }
 
 //
-// Initilizes the particular "node" in grid of Squares.
+// Initializes the square with rudimentary information
 //
 void Square::init(int r, int c, int n, Square ***g, View *v) {
 
@@ -42,6 +42,9 @@ void Square::init(int r, int c, int n, Square ***g, View *v) {
 	view = v;
 }
 
+//
+// The square adds the neighbours to their appropriate slot.
+//
 void Square::setNeighbours() {
 
 	if (row - 1 >=0) {
@@ -65,8 +68,10 @@ void Square::setNeighbours() {
 	}
 }
 
-
-
+//
+// Swap colour and type with another square.
+// Does notify the view.
+//
 void Square::swap(Square &other) {
 
 	bool tLocked = locked;
@@ -85,17 +90,30 @@ void Square::swap(Square &other) {
 	notify();
 }
 
+//
+// Swap colour and type with neighbour in specified direction.
+// Does not notify the view.
+//
 void Square::swap(Direction d) {
 
 	swap(*neighbour[d]);
 }
 
+//
+// Swap colour and type with neighbour in specified direction.
+// Notifies the view.
+//
 void Square::swapWith(Direction d) {
 
 	swap(*neighbour[d]);
 	view->swap(row, col, d);
 }
 
+//
+// Notify the neighbours in horizontal and vertical directions.
+// If and only if they exist and match with selfs colour.
+// This square becomes 'notified'.
+//
 void Square::notify() {
 
 	if (colour == Empty) return;
@@ -104,7 +122,7 @@ void Square::notify() {
 
 	if (neighbour[Left] && neighbour[Right]) {
 		if (neighbour[Left]->colour == colour &&
-				neighbour[Right]->colour == colour) {
+			neighbour[Right]->colour == colour) {
 
 			this->ready = true;
 			neighbour[Left]->ready = true;
@@ -114,7 +132,7 @@ void Square::notify() {
 
 	if (neighbour[Up] && neighbour[Down]) {
 		if (neighbour[Up]->colour == colour &&
-				neighbour[Down]->colour == colour) {
+			neighbour[Down]->colour == colour) {
 
 			ready = true;
 			neighbour[Up]->ready = true;
@@ -125,19 +143,27 @@ void Square::notify() {
 	notifyNeighbours();
 }
 
+//
+// Notify all neighbours, if they exist, is not notified,
+// and has a colour which matches with self.
+//
 void Square::notifyNeighbours() {
 
 	for (int d = 0; d < 4; d++) {
 		if (neighbour[d] &&
-				neighbour[d]->colour == this->colour &&
-				neighbour[d]->colour != Empty &&
-				neighbour[d]->notified == false) {
+			neighbour[d]->notified == false &&
+			neighbour[d]->colour != Empty &&
+			neighbour[d]->colour == this->colour) {
 
 			neighbour[d]->notify();
 		}
 	}
 }
 
+//
+// If a neighbour exists, and is ready to be cleared,
+// remove its eagerness to be cleared.
+//
 void Square::clearReady() {
 
 	ready = false;
@@ -150,6 +176,10 @@ void Square::clearReady() {
 	}
 }
 
+//
+// If a neighbour exists, and is notified,
+// make it forget that it was.
+//
 void Square::clearNotified() {
 
 	notified = false;
@@ -160,48 +190,6 @@ void Square::clearNotified() {
 			neighbour[d]->clearNotified();
 		}
 	}
-}
-
-void Square::drop() {
-	
-	// if (this->colour == Empty) {return;}
-	
- //    int i = this->row;
- //    while (i < this->gridSize - 1 && this->grid[i+1][this->col]->colour == Empty) {i++;} // find the destination block
-	
-	// if (i != this->row) {
-		
- //    	Square*& ori = this->grid[this->row][this->col];
- //    	Square*& des = this->grid[i][this->col];
-    	
- //    	this->view->fall(this->row, this->col);
-    	
- //    	std::swap(ori->row, des->row);
- //    	std::swap(ori->col, des->col);
-	// 	std::swap(ori, des);    
-    	
- //    }
-    
-    
-	// // inefficient call chain
-	// if (! neighbour[Down]) {return;}
-
-	// if (neighbour[Down]->getColour() == Empty) {
-		
-	// 	neighbour[Down]->setColour(colour);
-	// 	neighbour[Down]->setType(type);
-		
-	// 	setColour(Empty);
-	// 	setType(Basic);
-		
-	// 	// view->fall(row, col); cannot be used here, as will be called `size` times
-		
-	// 	if (neighbour[Up]) neighbour[Up]->drop();
-		
-	// } else {
-	// 	neighbour[Down]->drop();
-	// }
-	
 }
 
 int Square::getRow() { return row; }
@@ -225,6 +213,7 @@ void Square::setReady(bool t) { ready = t; }
 bool Square::isNotified() { return notified; }
 void Square::setNotified(bool t) { notified = t; }
 
+#ifdef DEBUG
 void Square::printInfo() {
 	cerr << "---- Square (" << this->row << "," << this->col << ") ----" << endl;
 	cerr << "colour  : " << colour << endl;
@@ -233,3 +222,4 @@ void Square::printInfo() {
 	cerr << "notified: " << notified << endl;
 	cerr << "----------------------" << endl;
 }
+#endif

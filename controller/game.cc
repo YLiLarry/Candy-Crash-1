@@ -33,7 +33,6 @@ Game::Game(int size) {
 	string cmd;
 
 	int currentLevel = board->level;
-	int previousLevel = board->level;
 
 	cout << "command: ";
 
@@ -62,9 +61,7 @@ Game::Game(int size) {
 		// detect level change
 		if (currentLevel != board->level) {
 
-			previousLevel = currentLevel;
 			currentLevel = board->level;
-
 			board->loadLevel(currentLevel);
 		}
 
