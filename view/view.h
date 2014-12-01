@@ -1,6 +1,10 @@
 /*
-    An super abstract class for GraphicView & TextView.
-    The Model class should hold pointers to this class for polymorphism.
+    This is a super wrapper class for GraphicView & TextView to make them run at the same time.
+    The Model class should hold pointers to this class.
+    
+    
+    Instructor: please read view.cc in this folder for ducumentation of view.
+    
 */
 
 #ifndef __VIEW__H__

@@ -8,7 +8,7 @@ using namespace std;
 int main(int nargs, const char** arglist) {
     try {
         
-        // parse arglist
+        /* parse commandline argument */
         string argstr;
         for (int i = 0; i < nargs; i++) {
             argstr += arglist[i];
@@ -75,7 +75,7 @@ int main(int nargs, const char** arglist) {
             cin >> i;
             Game game(i);
         #else
-            Game game(10);
+            Game game(10); // a 10 x 10 game begins
         #endif
             
     } catch (const string& e) {
