@@ -38,5 +38,11 @@
     Type str2type(std::string& str);
     char type2char(Type& t);
     
+namespace Global {
+    extern bool TEXTMODE;
+    extern int SEED;
+    extern std::string SCRIPTFILE;
+    extern int STARTLEVEL;
+}
 
 #endif

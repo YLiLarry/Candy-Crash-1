@@ -39,6 +39,7 @@ Game::Game(int size) {
 
 	while (cin >> cmd) {
 
+		// commented input for debug
         if (cmd == "//") {
             cin.ignore(1024, '\n');
             continue;
