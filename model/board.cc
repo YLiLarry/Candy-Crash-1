@@ -77,6 +77,12 @@ Board::~Board() {
 // the Generator.
 //
 void Board::loadLevel(int level) {
+	
+	// guard
+	if (level > 2) {
+		view->print(string("The highest level is 2"));
+		level = 2;
+	}
 
 	if (level == 0 || Global::SCRIPTFILE.length()) {
 		
@@ -433,6 +439,7 @@ void Board::clear(Square* sq, int r) {
 	// Clears the square on the view side.
 	view->destroy(row, col);
 	view->setScore(score);
+	view->setLabel(string("New score: ") + to_string(turnScore));
 
 	// Show the cleared square.
 	view->draw();
@@ -866,6 +873,15 @@ void Board::printGridInfo() {
 	// }
 }
 
-void Board::levelUp() { loadLevel(++level); }
-void Board::levelDown() { loadLevel(--level); }
+void Board::levelUp() { 
+	loadLevel(++level);
+}
+void Board::levelDown() { 
+	if (level == 0) { 
+		view->print(string("Lowest level"));
+		restart(); 
+	} else {
+		loadLevel(--level);
+	};
+}
 void Board::restart() { loadLevel(level); }

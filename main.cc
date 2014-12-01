@@ -12,6 +12,7 @@ int main(int nargs, const char** arglist) {
         string argstr;
         for (int i = 0; i < nargs; i++) {
             argstr += arglist[i];
+            argstr += " ";
         }
         
         unsigned long p = string::npos;
@@ -33,7 +34,7 @@ int main(int nargs, const char** arglist) {
         }        
         
         if ((p = argstr.find("-seed")) != string::npos) {
-            string tmp = argstr.substr(p+5) + " "; // to ensure after taking the seed number, ss is nonempty
+            string tmp = argstr.substr(p+5);
             stringstream ss(tmp.c_str());
             int i = 0;
             ss >> i;
@@ -46,7 +47,7 @@ int main(int nargs, const char** arglist) {
         }
         
         if ((p = argstr.find("-scriptfile")) != string::npos) {
-            string tmp = argstr.substr(p+11) + " ";
+            string tmp = argstr.substr(p+11);
             stringstream ss(tmp.c_str());
             string filename;
             ss >> filename;
@@ -57,7 +58,7 @@ int main(int nargs, const char** arglist) {
         }
         
         if ((p = argstr.find("-startlevel")) != string::npos) {
-            string tmp = argstr.substr(p+11) + " ";
+            string tmp = argstr.substr(p+11);
             stringstream ss(tmp.c_str());
             int i;
             ss >> i;

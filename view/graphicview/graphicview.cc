@@ -98,11 +98,11 @@ GraphicView:: GraphicView(int size) {
     this->board = NULL;
     this->window = NULL;
     this->droppingNum = vector<int>(size,0);
-    // #if DEBUG_GRAPHIC
-    //     for (int i = 0; i < this->droppingNum.size(); i++) {
-    //         fprintf(stderr,"this->droppingNum[%d] = %d\n", i, this->droppingNum[i]);
-    //     }
-    // #endif
+    #if DEBUG_GRAPHIC
+        for (int i = 0; i < this->droppingNum.size(); i++) {
+            fprintf(stderr,"this->droppingNum[%d] = %d\n", i, this->droppingNum[i]);
+        }
+    #endif
     
     this->windowWidth = 500;  // default
     this->windowHeight = 500; // default
@@ -262,7 +262,7 @@ void GraphicView:: drop(int column, Colour colour, Type type = Basic) {
     // init
     // int i = 0;
     // while (i < this->size - 1 && this->board[i+1][column]->colour == Empty) {i++;}
-    // nc->x = 0 - (this->cellSize * this->droppingNum[column]);
+    nc->x = 0 - (this->cellSize * this->droppingNum[column]);
     // #if DEBUG_GRAPHIC
     //     for (int i = 0; i < this->droppingNum.size(); i++) {
     //         fprintf(stderr,"this->droppingNum[%d] = %d\n", i, this->droppingNum[i]);
