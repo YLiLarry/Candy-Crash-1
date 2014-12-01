@@ -43,7 +43,7 @@ Board::Board(int n) {
 	matchScore = 0;
 	turnScore = 0;
 
-	level = 0;
+	level = (Global:: STARTLEVEL) ? Global:: STARTLEVEL : 0;
 
 	chainMode = false;
 	emptyBoard = false;
@@ -77,23 +77,18 @@ Board::~Board() {
 //
 void Board::loadLevel(int level) {
 
-	if (level == 0) {
+	if (level == 0 || Global::SCRIPTFILE.length()) {
 		
-
-		#ifdef DEBUG
-				// cerr << "File: ";
+		ifstream file;
 		
-				// string f;
-				// cin >> f;
-		
-				ifstream file("sequence.txt");
-				// ifstream file(f.c_str());
-		#else
-				ifstream file("sequence.txt");
-		#endif
+		if (Global::SCRIPTFILE.length()) {
+			file.open(Global::SCRIPTFILE.c_str());
+		} else {
+			file.open("sequence.txt");
+		}
 
 		if (! file.good()) {
-			throw string("unable to read the sequence.txt file");
+			throw string("unable to read the initialization file");
 		}
 
 		string square;
@@ -106,10 +101,6 @@ void Board::loadLevel(int level) {
 				setNewSquare(grid[r][c], square);
 				grid[r][c]->setNeighbours();
 
-				// logic error, what if there're extra initializations before the bottom sequence line?
-				// if (r == size - 1 && c == size - 1) {
-				// 	file >> levelZeroColours;
-				// }
 			}
 		}
 		
@@ -132,6 +123,7 @@ void Board::loadLevel(int level) {
 
 	} else {
 		
+		
 		// Reset the number of produced squares for this level.
 		generate->produced = 0;
 
@@ -143,9 +135,11 @@ void Board::loadLevel(int level) {
 				grid[r][c]->setNeighbours();
 			}
 		}
+		
 
 		// This is necessary as the squares are not fully
 		// random. e.g. "every 5th square is a special square"
+		
 		scramble(true);
 		
 		view->setLevel(level);	// ??
@@ -757,8 +751,8 @@ void Board::scramble(bool force) {
 	}
 
 	PRNG rand;
-	rand.seed(SEED);
-	
+	rand.seed(Global:: SEED);
+
 	for (int r = 0; r < size; r++) {
 		for (int c = 0; c < size; c++) {
 
@@ -807,6 +801,8 @@ void Board::scramble(bool force) {
 			grid[r][c]->notify();
 			
 			// Rescramble if matches are found.
+			// TBD
+		
 			if (grid[r][c]->isReady()) scramble(true);
 		}
 	}

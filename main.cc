@@ -14,13 +14,11 @@ int main(int nargs, const char** arglist) {
             argstr += arglist[i];
         }
         
-        cerr << argstr;
-        
         unsigned long p = string::npos;
         
         if (argstr.find("-text") != string::npos) {
             Global:: TEXTMODE = true;
-            cerr << "graphic mode on" << endl;
+            cerr << ">> text-only mode on" << endl;
             p = string::npos;
         } else {
             Global:: TEXTMODE = false;
@@ -28,41 +26,44 @@ int main(int nargs, const char** arglist) {
 
         if (argstr.find("-no-op") != string::npos) {
             Global:: OPTIMIZED = false;
-            cerr << "optimized mode on" << endl;
+            cerr << ">> optimized mode on" << endl;
             p = string::npos;
         } else {
             Global:: OPTIMIZED = true;
         }        
         
         if ((p = argstr.find("-seed")) != string::npos) {
-            stringstream ss(argstr.substr(p));
-            int i;
+            string tmp = argstr.substr(p+5) + " "; // to ensure after taking the seed number, ss is nonempty
+            stringstream ss(tmp.c_str());
+            int i = 0;
             ss >> i;
             if (! ss.good()) {throw string("\nERROR: missing -seed number");} 
             Global:: SEED = i;
-            cerr << "seed set to: " << i << endl;
+            cerr << ">> set seed to " << i << endl;
             p = string::npos;
         } else {
             Global:: SEED = 0;
         }
         
         if ((p = argstr.find("-scriptfile")) != string::npos) {
-            stringstream ss(argstr.substr(p));
+            string tmp = argstr.substr(p+11) + " ";
+            stringstream ss(tmp.c_str());
             string filename;
             ss >> filename;
             if (! ss.good()) {throw string("\nERROR: missing scriptfile name");} 
             Global:: SCRIPTFILE = filename;
-            cerr << "using scriptfile: "<< filename << endl;
+            cerr << ">> using scriptfile: "<< filename << endl;
             p = string::npos;
         }
         
         if ((p = argstr.find("-startlevel")) != string::npos) {
-            stringstream ss(argstr.substr(p));
+            string tmp = argstr.substr(p+11) + " ";
+            stringstream ss(tmp.c_str());
             int i;
             ss >> i;
             if (! ss.good()) {throw string("\nERROR: missing -startlevel number");} 
             Global:: STARTLEVEL = i;
-            cerr << "seed startlevel to: " << i << endl;
+            cerr << ">> set startlevel to " << i << endl;
             p = string::npos;
         } else {
             Global:: STARTLEVEL = 0;
@@ -76,7 +77,9 @@ int main(int nargs, const char** arglist) {
         #else
             Game game(10);
         #endif
+            
     } catch (const string& e) {
         cerr << e << endl;
     }
 }
+
