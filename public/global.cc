@@ -63,3 +63,10 @@ char type2char(Type& t) {
     if (t == Psychedelic) {return 'p';}
     return '?';
 }
+
+namespace Global {
+    bool TEXTMODE = false;
+    int SEED = 0;
+    std::string SCRIPTFILE;
+    int STARTLEVEL = 0;
+}

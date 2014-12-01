@@ -66,7 +66,7 @@ GraphicCell:: GraphicCell() {
 }
 
 void GraphicCell:: draw() {
-    if (! this->needDraw) {return;}
+    // if (! this->needDraw) {return;}
     // x/y in the two calls might not be the same because of concurrency 
     int tmpX = this->x;
     int tmpY = this->y;
@@ -83,7 +83,7 @@ void GraphicCell:: draw() {
         case Unstable : str += "b"; break;
         case Psychedelic : str += "p"; break;
     }
-    this->window->drawString(this->y + 5, this->x + outer->cellSize / 2 + 10, str, Xwindow::White);    
+    this->window->drawString(this->y + 5, this->x + outer->cellSize / 2 + 10, str, 4);    
     this->needDraw = false;
 }
 
@@ -98,11 +98,11 @@ GraphicView:: GraphicView(int size) {
     this->board = NULL;
     this->window = NULL;
     this->droppingNum = vector<int>(size,0);
-    #if DEBUG_GRAPHIC
-        for (int i = 0; i < this->droppingNum.size(); i++) {
-            fprintf(stderr,"this->droppingNum[%d] = %d\n", i, this->droppingNum[i]);
-        }
-    #endif
+    // #if DEBUG_GRAPHIC
+    //     for (int i = 0; i < this->droppingNum.size(); i++) {
+    //         fprintf(stderr,"this->droppingNum[%d] = %d\n", i, this->droppingNum[i]);
+    //     }
+    // #endif
     
     this->windowWidth = 500;  // default
     this->windowHeight = 500; // default
@@ -262,12 +262,12 @@ void GraphicView:: drop(int column, Colour colour, Type type = Basic) {
     // init
     // int i = 0;
     // while (i < this->size - 1 && this->board[i+1][column]->colour == Empty) {i++;}
-    nc->x = 0 - (this->cellSize * this->droppingNum[column]);
-    #if DEBUG_GRAPHIC
-        for (int i = 0; i < this->droppingNum.size(); i++) {
-            fprintf(stderr,"this->droppingNum[%d] = %d\n", i, this->droppingNum[i]);
-        }
-    #endif
+    // nc->x = 0 - (this->cellSize * this->droppingNum[column]);
+    // #if DEBUG_GRAPHIC
+    //     for (int i = 0; i < this->droppingNum.size(); i++) {
+    //         fprintf(stderr,"this->droppingNum[%d] = %d\n", i, this->droppingNum[i]);
+    //     }
+    // #endif
     cerr << "nc->x = " << nc->x;
     nc->y = this->marginLeft + column * this->cellSize;
     // this_thread::sleep_for(chrono::milliseconds(250)); // to be deleted
@@ -321,6 +321,7 @@ void GraphicView:: destroy(int r,int c) {
         this->waitAllAnimationsFinish();
         this->droppingNum = vector<int>(this->size, 0);
         this->board[r][c]->colour = Empty;
+        this->board[r][c]->cellType = Basic;
         this->board[r][c]->needDraw = true;
     // } else {
         // this->destroy(r,c); // retry
