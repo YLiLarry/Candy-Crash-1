@@ -155,20 +155,6 @@ void Board::loadLevel(int level) {
 		
 		// Make sure nothing is already matched
 		scramble(true);
-
-/*
- *        for (int r = 0; r < size; r++) {
- *            for (int c = 0; c < size; c++) {
- *
- *                for (int d = 0; d < 4; d++) {
- *                    if (grid[r][c]->neighbour[d]) {
- *                        cerr << d << endl;
- *                        grid[r][c]->neighbour[d]->printInfo();
- *                    }
- *                }
- *            }
- *        }
- */
 	}
 
 	view->setLevel(level);
@@ -242,7 +228,7 @@ void Board::swap(int row, int col, Direction d) {
 		dropSquares();
 		// view->draw();
 		chainReaction();
-		view->draw();
+		//view->draw();
 
 	} while (chainMode && !emptyBoard);
 

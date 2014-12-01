@@ -9,8 +9,6 @@ const int NEIGHBOURS = 4;
 
 class Square {
 	
-	public :
-
 	public:
 
 	View *view;
