@@ -149,16 +149,30 @@ void Board::loadLevel(int level) {
 			for (int c = 0; c < size; c++) {
 
 				setNewSquare(grid[r][c], levelSquares[size * r + c]);
+				grid[r][c]->setNeighbours();
 			}
 		}
 		
-
 		// Make sure nothing is already matched
 		scramble(true);
+
+/*
+ *        for (int r = 0; r < size; r++) {
+ *            for (int c = 0; c < size; c++) {
+ *
+ *                for (int d = 0; d < 4; d++) {
+ *                    if (grid[r][c]->neighbour[d]) {
+ *                        cerr << d << endl;
+ *                        grid[r][c]->neighbour[d]->printInfo();
+ *                    }
+ *                }
+ *            }
+ *        }
+ */
 	}
 
-	view->setLevel(level);	// ??
-	view->setScore(score);	// ??
+	view->setLevel(level);
+	view->setScore(score);
 	view->draw();
 }
 
@@ -766,7 +780,7 @@ void Board::scramble(bool force) {
 	}
 
 	PRNG rand;
-	rand.seed(Global::SEED);
+	rand.seed(Global::SEED + score);
 	
 	for (int r = 0; r < size; r++) {
 		for (int c = 0; c < size; c++) {
@@ -800,7 +814,6 @@ void Board::scramble(bool force) {
 			}
 
 			// Clears matched status and notifications
-
 			grid[r][c]->clearReady();
 			grid[r][c]->clearNotified();
 
@@ -809,18 +822,17 @@ void Board::scramble(bool force) {
 		}
 	}
 
-	// recheck (necessary)
-	for (int r = 0; r < size; r++) {
-		for (int c = 0; c < size; c++) {
-
-			grid[r][c]->notify();
-			
-			// Rescramble if matches are found.
-			// TBD
-		
-			if (grid[r][c]->isReady()) scramble(true);
-		}
-	}
+/*
+ *    notifyAll();
+ *
+ *    // recheck (necessary)
+ *    for (int r = 0; r < size; r++) {
+ *        for (int c = 0; c < size; c++) {
+ *            // Rescramble if matches are found.
+ *            if (grid[r][c]->isReady()) scramble(true);
+ *        }
+ *    }
+ */
 
 	unNotifyAll();
 }
@@ -856,21 +868,33 @@ void Board::unNotifyAll() {
 // debuggin purposes
 void Board::printGridInfo() {
 	
-    for (int i = 0; i < size; i++) {
+	for (int i = 0; i < size; i++) {
 		for (int j = 0; j < size; j++) {
-			cerr << colour2char(this->grid[i][j]->colour) << " ";
+
+			cerr << grid[i][j]->getColour() << " ";
 		}
 		cerr << endl;
-		
 	}
-			
-	// for (int i = 0; i < size; i++) {
-	// 	for (int j = 0; j < size; j++) {
 
-	// 		cerr << grid[i][j]->isNotified() << grid[i][j]->isReady() << " ";
-	// 	}
-	// 	cerr << endl;
-	// }
+	cerr << endl;
+
+	for (int i = 0; i < size; i++) {
+		for (int j = 0; j < size; j++) {
+
+			cerr << grid[i][j]->isNotified() << " ";
+		}
+		cerr << endl;
+	}
+
+	cerr << endl;
+
+	for (int i = 0; i < size; i++) {
+		for (int j = 0; j < size; j++) {
+
+			cerr << grid[i][j]->isReady() << " ";
+		}
+		cerr << endl;
+	}
 }
 
 void Board::levelUp() { 

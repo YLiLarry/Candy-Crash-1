@@ -47,25 +47,10 @@ void Square::init(int r, int c, int n, Square ***g, View *v) {
 //
 void Square::setNeighbours() {
 
-	if (row - 1 >=0) {
-
-		neighbour[Up] = grid[row - 1][col];
-	}
-
-	if (row + 1 < gridSize) {
-
-		neighbour[Down] = grid[row + 1][col];
-	}
-
-	if (col - 1 >= 0) {
-
-		neighbour[Left] = grid[row][col - 1];
-	}
-
-	if (col + 1 < gridSize) {
-
-		neighbour[Right] = grid[row][col + 1];
-	}
+	neighbour[Up] = (row - 1 >= 0)? grid[row - 1][col] : NULL;
+	neighbour[Down] = (row + 1 < gridSize)? grid[row + 1][col] : NULL;
+	neighbour[Left] = (col - 1 >= 0)? grid[row][col - 1] : NULL;
+	neighbour[Right] = (col + 1 < gridSize)? grid[row][col + 1] : NULL;
 }
 
 //
@@ -134,7 +119,7 @@ void Square::notify() {
 		if (neighbour[Up]->colour == colour &&
 			neighbour[Down]->colour == colour) {
 
-			ready = true;
+			this->ready = true;
 			neighbour[Up]->ready = true;
 			neighbour[Down]->ready = true;
 		}
@@ -213,7 +198,6 @@ void Square::setReady(bool t) { ready = t; }
 bool Square::isNotified() { return notified; }
 void Square::setNotified(bool t) { notified = t; }
 
-#ifdef DEBUG
 void Square::printInfo() {
 	cerr << "---- Square (" << this->row << "," << this->col << ") ----" << endl;
 	cerr << "colour  : " << colour << endl;
@@ -222,4 +206,3 @@ void Square::printInfo() {
 	cerr << "notified: " << notified << endl;
 	cerr << "----------------------" << endl;
 }
-#endif
