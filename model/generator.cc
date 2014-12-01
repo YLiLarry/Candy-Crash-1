@@ -11,7 +11,7 @@ string Generator::randomSquare(int level) {
 
 	produced++;
 	string randomSquare = "";
-	default_random_engine gen(SEED);
+	default_random_engine gen(Global::SEED + produced);
 
 	if (level == 1) {
 		
