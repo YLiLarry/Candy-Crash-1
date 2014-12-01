@@ -1,6 +1,7 @@
 #include <fstream>
 #include <sstream>
 #include <cmath>
+#include <algorithm>
 #include "board.h"
 #include "generator.h"
 #include "../view/textview/textview.h"
@@ -100,7 +101,6 @@ void Board::loadLevel(int level) {
 
 				setNewSquare(grid[r][c], square);
 				grid[r][c]->setNeighbours();
-
 			}
 		}
 		
@@ -122,31 +122,37 @@ void Board::loadLevel(int level) {
 		view->setLevel(level); // ?
 
 	} else {
-		
-		
 		// Reset the number of produced squares for this level.
 		generate->produced = 0;
 
+		vector<string> levelSquares;
+
+		// Get the set of Squares for the level
 		for (int r = 0; r < size; r++) {
 			for (int c = 0; c < size; c++) {
 
 				string square = generate->randomSquare(level);
-				setNewSquare(grid[r][c], square);
-				grid[r][c]->setNeighbours();
+				levelSquares.push_back(square);
+			}
+		}
+
+		// Randomize
+		shuffle(levelSquares.begin(), levelSquares.end(), default_random_engine(Global::SEED));
+
+		for (int r = 0; r < size; r++) {
+			for (int c = 0; c < size; c++) {
+
+				setNewSquare(grid[r][c], levelSquares[size * r + c]);
 			}
 		}
 		
 
-		// This is necessary as the squares are not fully
-		// random. e.g. "every 5th square is a special square"
-		
+		// Make sur nothing is already matched
 		scramble(true);
-		
-		view->setLevel(level);	// ??
-		view->setScore(score);	// ??
-		view->draw(); 			// ??  draw twice?
 	}
 
+	view->setLevel(level);	// ??
+	view->setScore(score);	// ??
 	view->draw();
 }
 
@@ -751,8 +757,8 @@ void Board::scramble(bool force) {
 	}
 
 	PRNG rand;
-	rand.seed(Global:: SEED);
-
+	rand.seed(Global::SEED);
+	
 	for (int r = 0; r < size; r++) {
 		for (int c = 0; c < size; c++) {
 

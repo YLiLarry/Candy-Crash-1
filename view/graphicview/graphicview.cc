@@ -268,7 +268,7 @@ void GraphicView:: drop(int column, Colour colour, Type type = Basic) {
     //         fprintf(stderr,"this->droppingNum[%d] = %d\n", i, this->droppingNum[i]);
     //     }
     // #endif
-    // cerr << "nc->x = " << nc->x;
+
     nc->y = this->marginLeft + column * this->cellSize;
     // this_thread::sleep_for(chrono::milliseconds(250)); // to be deleted
     // #if DEBUG_GRAPHIC
