@@ -11,7 +11,7 @@
 #include "../public/global.h"
 
 class Board {
-
+	
 	View *view;
 	Generator *generate;
 	Square ***grid;
