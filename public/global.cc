@@ -66,6 +66,7 @@ char type2char(Type& t) {
 
 namespace Global {
     bool TEXTMODE = false;
+    bool OPTIMIZED = true;
     int SEED = 0;
     std::string SCRIPTFILE;
     int STARTLEVEL = 0;

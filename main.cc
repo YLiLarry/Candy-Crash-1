@@ -25,7 +25,14 @@ int main(int nargs, const char** arglist) {
         } else {
             Global:: TEXTMODE = false;
         }
-        
+
+        if (argstr.find("-no-op") != string::npos) {
+            Global:: OPTIMIZED = false;
+            cerr << "optimized mode on" << endl;
+            p = string::npos;
+        } else {
+            Global:: OPTIMIZED = true;
+        }        
         
         if ((p = argstr.find("-seed")) != string::npos) {
             stringstream ss(argstr.substr(p));

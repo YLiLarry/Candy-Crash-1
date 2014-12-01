@@ -4,12 +4,18 @@ using namespace std;
 
 View:: View(int size) {
     tv = new TextView(size);
-    gv = new GraphicView(size);
+    
+    if (! Global:: TEXTMODE) {
+        gv = new GraphicView(size);
+    }
 }
 
 View:: ~View() {
     delete tv;
-    delete gv;
+    
+    if (! Global:: TEXTMODE) {
+        delete gv;
+    }
 }
 
 void View:: init(int size) {    
@@ -17,7 +23,10 @@ void View:: init(int size) {
         fprintf(stderr,"VIEW >> call method \"init %d\"\n", size);
     #endif
     tv->init(size);
-    gv->init(size);
+    
+    if (! Global:: TEXTMODE) {
+        gv->init(size);
+    }
 };
 
 void View:: draw() {
@@ -25,7 +34,10 @@ void View:: draw() {
         fprintf(stderr,"VIEW >> call method \"draw\"\n");
     #endif
     tv->draw();
-    gv->draw();
+    
+    if (! Global:: TEXTMODE) {
+        gv->draw();
+    }
 };
 
 void View:: setColour(int row, int col, Colour c) {
@@ -33,7 +45,10 @@ void View:: setColour(int row, int col, Colour c) {
         fprintf(stderr,"VIEW >> call method \"setColour %d %d %c\"\n", row, col, colour2char(c));
     #endif
     tv->setColour(row,col,c);
-    gv->setColour(row,col,c);
+    
+    if (! Global:: TEXTMODE) {
+        gv->setColour(row,col,c);
+    }
 };
 
 void View:: setType(int row,int col,Type t) {
@@ -41,7 +56,10 @@ void View:: setType(int row,int col,Type t) {
         fprintf(stderr,"VIEW >> call method \"setType %d %d %c\"\n", row,col, type2char(t));
     #endif
     tv->setType(row, col, t);
-    gv->setType(row, col, t);
+    
+    if (! Global:: TEXTMODE) {
+        gv->setType(row, col, t);
+    }
 };
 
 void View:: setScore(int x) {
@@ -49,7 +67,10 @@ void View:: setScore(int x) {
         fprintf(stderr,"VIEW >> call method \"setScore %d\"\n", x);
     #endif
     tv->setScore(x);
-    gv->setScore(x);
+    
+    if (! Global:: TEXTMODE) {
+        gv->setScore(x);
+    }
 };
 
 void View:: setLevel(int x) {
@@ -57,7 +78,10 @@ void View:: setLevel(int x) {
         fprintf(stderr,"VIEW >> call method \"setLevel %d\"\n", x);
     #endif
     tv->setLevel(x);
-    gv->setLevel(x);
+    
+    if (! Global:: TEXTMODE) {
+        gv->setLevel(x);
+    }
 };
 
 void View:: setLocked(int r, int c, bool x) {
@@ -65,7 +89,10 @@ void View:: setLocked(int r, int c, bool x) {
         fprintf(stderr,"VIEW >> call method \"setLocked %d %d %d\"\n", r,c,x);
     #endif
     tv->setLocked(r,c,x);
-    gv->setLocked(r,c,x);
+    
+    if (! Global:: TEXTMODE) {
+        gv->setLocked(r,c,x);
+    }
 };
 
 void View:: setMovesRemain(int x) {
@@ -73,7 +100,10 @@ void View:: setMovesRemain(int x) {
         fprintf(stderr,"VIEW >> call method \"setMovesRemain %d\"\n", x);
     #endif
     tv->setMovesRemain(x);
-    gv->setMovesRemain(x);
+    
+    if (! Global:: TEXTMODE) {
+        gv->setMovesRemain(x);
+    }
 };
 
 void View:: setHiScore(int x) {
@@ -81,7 +111,10 @@ void View:: setHiScore(int x) {
         fprintf(stderr,"VIEW >> call method \"setHiScore %d\"\n", x);
     #endif
     tv->setHiScore(x);
-    gv->setHiScore(x);
+    
+    if (! Global:: TEXTMODE) {
+        gv->setHiScore(x);
+    }
 };
 
 void View:: swap(int r,int c, Direction d) {
@@ -89,7 +122,10 @@ void View:: swap(int r,int c, Direction d) {
         fprintf(stderr,"VIEW >> call method \"swap %d %d %s\"\n", r,c,dir2str(d).c_str());
     #endif
     tv->swap(r,c,d);
-    gv->swap(r,c,d);
+    
+    if (! Global:: TEXTMODE) {
+        gv->swap(r,c,d);
+    }
 };
 
 void View:: drop(int col, Colour c, Type t) {
@@ -97,7 +133,10 @@ void View:: drop(int col, Colour c, Type t) {
         fprintf(stderr,"VIEW >> call method \"drop %d %c %c\"\n", col,colour2char(c),type2char(t));
     #endif
     tv->drop(col,c,t);
-    gv->drop(col,c,t);
+    
+    if (! Global:: TEXTMODE) {
+        gv->drop(col,c,t);
+    }
 };
 
 void View:: fall(int row, int col) {
@@ -105,7 +144,10 @@ void View:: fall(int row, int col) {
         fprintf(stderr,"VIEW >> call method \"fall %d %d\"\n", row,col);
     #endif
     tv->fall(row,col);
-    gv->fall(row,col);
+    
+    if (! Global:: TEXTMODE) {
+        gv->fall(row,col);
+    }
 };
 
 void View:: destroy(int r,int c) {
@@ -113,7 +155,10 @@ void View:: destroy(int r,int c) {
         fprintf(stderr,"VIEW >> call method \"destroy %d %d\"\n", r,c);
     #endif
     tv->destroy(r,c);
-    gv->destroy(r,c);
+    
+    if (! Global:: TEXTMODE) {
+        gv->destroy(r,c);
+    }
 };
 
 void View:: end() {
@@ -121,7 +166,10 @@ void View:: end() {
         fprintf(stderr,"VIEW >> call method \"end\"\n");
     #endif
     tv->end();
-    gv->end();
+    
+    if (! Global:: TEXTMODE) {
+        gv->end();
+    }
 };
 
 void View:: restart(int size) {
@@ -129,7 +177,10 @@ void View:: restart(int size) {
         fprintf(stderr,"VIEW >> call method \"restart %d\"\n",size);
     #endif
     tv->restart(size);
-    gv->restart(size);
+    
+    if (! Global:: TEXTMODE) {
+        gv->restart(size);
+    }
 };
 
 void View:: print(const string& str) {
@@ -137,7 +188,10 @@ void View:: print(const string& str) {
         fprintf(stderr,"VIEW >> call method \"print %s\"\n", str.c_str());
     #endif
     tv->print(str);
-    gv->print(str);
+    
+    if (! Global:: TEXTMODE) {
+        gv->print(str);
+    }
 }
 
 void View:: setLabel(const string& str) {
@@ -145,5 +199,8 @@ void View:: setLabel(const string& str) {
         fprintf(stderr,"VIEW >> call method \"setLabel %s\"\n", str.c_str());
     #endif
     tv->setLabel(str);
-    gv->setLabel(str);
+    
+    if (! Global:: TEXTMODE) {
+        gv->setLabel(str);
+    }
 }

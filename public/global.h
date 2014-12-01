@@ -40,6 +40,7 @@
     
 namespace Global {
     extern bool TEXTMODE;
+    extern bool OPTIMIZED;
     extern int SEED;
     extern std::string SCRIPTFILE;
     extern int STARTLEVEL;

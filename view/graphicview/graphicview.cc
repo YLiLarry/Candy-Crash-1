@@ -66,7 +66,7 @@ GraphicCell:: GraphicCell() {
 }
 
 void GraphicCell:: draw() {
-    // if (! this->needDraw) {return;}
+    if (Global:: OPTIMIZED && ! this->needDraw) {return;}
     // x/y in the two calls might not be the same because of concurrency 
     int tmpX = this->x;
     int tmpY = this->y;
@@ -268,7 +268,7 @@ void GraphicView:: drop(int column, Colour colour, Type type = Basic) {
     //         fprintf(stderr,"this->droppingNum[%d] = %d\n", i, this->droppingNum[i]);
     //     }
     // #endif
-    cerr << "nc->x = " << nc->x;
+    // cerr << "nc->x = " << nc->x;
     nc->y = this->marginLeft + column * this->cellSize;
     // this_thread::sleep_for(chrono::milliseconds(250)); // to be deleted
     // #if DEBUG_GRAPHIC
