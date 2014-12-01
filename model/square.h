@@ -11,6 +11,8 @@ class Square {
 	
 	public :
 
+	public:
+
 	View *view;
 	Square ***grid;
 	int gridSize;
@@ -27,7 +29,6 @@ class Square {
 
 	void notifyNeighbours();
 
-	public:
 
 	Square *neighbour[NEIGHBOURS];
 
