@@ -593,13 +593,17 @@ void Board::dropSquares() {
 
 			// if there is, then swap 'sq' with this empty block, done.
     		Square*& des = grid[i][c];
+
+			sq->swap(*des);
     		
     		// update view
     		view->fall(r, c);
 			
-    		std::swap(sq->row, des->row);
-    		std::swap(sq->col, des->col);
-			std::swap(sq, des);   
+			/*
+             *wap(sq->row, des->row);
+             *wap(sq->col, des->col);
+			 *std::swap(sq, des);   
+			 */
     		
 		}
 	}
@@ -629,11 +633,14 @@ void Board::dropSquares() {
     		#endif
     		Square*& des = grid[j][c];
     		
+			sq->swap(*des);
 			view->drop(c, sq->colour, sq->type);
 			
-    		std::swap(sq->row, des->row);
-    		std::swap(sq->col, des->col);
-			std::swap(sq, des);  
+			/*
+             *wap(sq->row, des->row);
+             *wap(sq->col, des->col);
+			 *std::swap(sq, des);  
+			 */
 
 			i--;
 	    }

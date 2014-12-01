@@ -105,6 +105,14 @@ void Square::notify() {
 
 	notified = true;
 
+	if (row == 7 && col == 5) {
+
+		cerr << "IT'S ME" << endl;
+		printInfo();
+		neighbour[Left]->printInfo();
+		neighbour[Right]->printInfo();
+	}
+
 	if (neighbour[Left] && neighbour[Right]) {
 		if (neighbour[Left]->colour == colour &&
 			neighbour[Right]->colour == colour) {

@@ -50,10 +50,11 @@ class Board {
 	
 	std::string validMove();
 
+	public:
 	void notifyAll();
 	void unNotifyAll();
 
-	public:
+	//public:
 
 	int level;
 

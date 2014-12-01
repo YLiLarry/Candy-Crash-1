@@ -14,8 +14,7 @@ bool isValidSwap(int row, int col, Direction dir) {
 	bool validRow = isBetween(0, 9, row);
 	bool validCol = isBetween(0, 9, col);
 
-	switch (dir) {
-		case Up: row--; break;
+	switch (dir) { case Up: row--; break;
 		case Down: row++; break;
 		case Left: col--; break;
 		case Right: col++; break;
@@ -26,11 +25,7 @@ bool isValidSwap(int row, int col, Direction dir) {
 	return validRow && validCol && validDir;
 }
 
-Game::Game(int size) {
-
-	board = new Board(size);
-
-	string cmd;
+Game::Game(int size) { board = new Board(size); string cmd;
 
 	int currentLevel = board->level;
 
@@ -56,6 +51,11 @@ Game::Game(int size) {
 			this->restart();
 		} else if (cmd == "quit") {
 			break;
+		} else if (cmd == "grid") {
+			board->notifyAll();
+			board->printGridInfo();
+			board->unNotifyAll();
+			board->printGridInfo();
 		}
 
 		// detect level change

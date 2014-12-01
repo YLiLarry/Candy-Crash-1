@@ -9,7 +9,7 @@ const int NEIGHBOURS = 4;
 
 class Square {
 	
-	public:
+	//public:
 
 	View *view;
 	Square ***grid;
@@ -17,6 +17,8 @@ class Square {
 
 	int row;
 	int col;
+
+	public:
 
 	bool locked;
 	Colour colour;
