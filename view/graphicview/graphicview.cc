@@ -223,7 +223,7 @@ void GraphicView:: print(const std::string& s) {
 void GraphicView:: setLabel(const std::string& s) {
 };
 
-void GraphicView:: setLocked(int r,int c,bool b) {this->board[r][c]->lock = b;}
+void GraphicView:: setLocked(int r,int c,bool b) {this->board[r][c]->lock = b; this->board[r][c]->needDraw = true;}
 
 void GraphicView:: swap(int r, int c, Direction d) {
     GraphicCell** gc1 = &this->board[r][c];

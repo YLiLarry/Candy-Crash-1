@@ -191,6 +191,13 @@ void Board::checkLevel() {
 //
 void Board::swap(int row, int col, Direction d) {
 
+	if (grid[row][col]->isLocked() ||
+		grid[row][col]->neighbour[d]->isLocked()) {
+
+		view->print("Locked!");
+		return;
+	}
+
 	// resets the score tracking variables
 	cleared = 0;
 	turnScore = 0;
@@ -240,12 +247,7 @@ void Board::swap(int row, int col, Direction d) {
 	// view->draw(); // what is this for?
 
 	#if DEBUG_BOARD
-		ostringstream ss;
-		ss << "cleared:  " << cleared << endl;
-		if (level >= 2) ss << "unlocked: " << unlocked << endl;
-		ss << "chains :  " << chain << endl;
-		ss << "scored : +" << turnScore << endl;
-		view->print(ss.str());
+
 	#endif
 
 	checkLevel();
@@ -542,7 +544,7 @@ void Board::setNewSquare(Square* sq, string strSquare) {
 	// The locked status of the square
 	bool locked = (strSquare[0] == 'l');
 
-	// THe colour of the square
+	// The colour of the square
 	Colour colour = (Colour)(strSquare[2] - '0');
 
 	// The type of the square
@@ -642,7 +644,14 @@ void Board::dropSquares() {
 
 	view->print(string("\n***********************************\n>> The grid refilled :"));
 	view->draw();
+
+	ostringstream ss;
+	ss << "cleared:  " << cleared << endl;
+	if (level >= 2) ss << "unlocked: " << unlocked << endl;
+	ss << "chains :  " << chain << endl;
+	view->print(ss.str());
 }
+
 
 //
 // Checks for matches across the whole grid.
