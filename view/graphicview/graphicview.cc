@@ -298,7 +298,7 @@ void GraphicView:: fall(int r, int c) {
     ori->speed = 1;
     ori->fall.to(i*this->cellSize, (i*this->cellSize + ori->x) / 2);
     // ori->move.to(i*this->cellSize, c*this->cellSize);
-    this_thread::sleep_for(chrono::milliseconds(250)); // to be deleted
+    //this_thread::sleep_for(chrono::milliseconds(250)); // to be deleted
     std::swap(ori, des);
 };
 
