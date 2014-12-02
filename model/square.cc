@@ -107,13 +107,15 @@ void Square::notify() {
 
 	notified = true;
 
-	if (row == 7 && col == 5) {
-
-		cerr << "IT'S ME" << endl;
-		printInfo();
-		neighbour[Left]->printInfo();
-		neighbour[Right]->printInfo();
-	}
+	#if DEBUG_SQUARE
+		if (row == 7 && col == 5) {
+			
+			    fprintf(stderr,"",);
+				printInfo();
+				neighbour[Left]->printInfo();
+				neighbour[Right]->printInfo();
+		}
+	#endif
 
 	if (neighbour[Left] && neighbour[Right]) {
 		if (neighbour[Left]->colour == colour &&
