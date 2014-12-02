@@ -9,12 +9,9 @@ const int NEIGHBOURS = 4;
 
 class Square {
 	
-	//public:
-
 	View *view;
 	Square ***grid;
 	int gridSize;
-
 	int row;
 	int col;
 

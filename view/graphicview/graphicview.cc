@@ -307,7 +307,7 @@ void GraphicView:: fall(int r, int c) {
     ori->speed = 0;
     // ori->fall.to(i*this->cellSize, (i*this->cellSize - ori->x) / 2);
     ori->move.to(i*this->cellSize, c*this->cellSize);
-    this_thread::sleep_for(chrono::milliseconds(500)); // to be deleted
+    this_thread::sleep_for(chrono::milliseconds(50)); // to be deleted
     // #if DEBUG_GRAPHIC
     //     fprintf(stderr,"before swap ori = \"%p\", des = \"%p\"\n", this->board[r][c], this->board[i][c]);
     // #endif

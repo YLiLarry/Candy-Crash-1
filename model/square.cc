@@ -59,6 +59,8 @@ void Square::setNeighbours() {
 //
 void Square::swap(Square &other) {
 
+	int tRow = row;
+	int tCol = col;
 	bool tLocked = locked;
 	Colour tColour = colour;
 	Type tType = type;
