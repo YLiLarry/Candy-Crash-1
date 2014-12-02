@@ -196,9 +196,9 @@ void TextView:: restart(int size = 0) {
 }
 
 void TextView:: print(const string& str) {
-    system("tput setaf 1");
+    // system("tput setaf 1");
     cout << ">> " << str << endl;
-    system("tput setaf 0");
+    // system("tput setaf 0");
 }
 
 void TextView:: setLabel(const string& str) {
