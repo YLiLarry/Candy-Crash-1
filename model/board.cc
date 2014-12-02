@@ -604,13 +604,6 @@ void Board::dropSquares() {
     		
     		// update view
     		view->fall(r, c);
-			
-			/*
-             *wap(sq->row, des->row);
-             *wap(sq->col, des->col);
-			 *std::swap(sq, des);   
-			 */
-    		
 		}
 	}
 	
@@ -643,12 +636,6 @@ void Board::dropSquares() {
 			view->drop(c, sq->colour, sq->type);
 			sq->swap(*des);
 			
-			/*
-             *wap(sq->row, des->row);
-             *wap(sq->col, des->col);
-			 *std::swap(sq, des);  
-			 */
-
 			i--;
 	    }
 	}
