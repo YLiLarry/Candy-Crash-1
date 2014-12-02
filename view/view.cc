@@ -69,6 +69,7 @@ void View:: setColour(int row, int col, Colour c) {
     #if DEBUG_VIEW
         fprintf(stderr,"VIEW >> call method \"setColour %d %d %c\"\n", row, col, colour2char(c));
     #endif
+        
     tv->setColour(row,col,c);
     
     if (! Global:: TEXTMODE) {
@@ -205,6 +206,7 @@ void View:: drop(int col, Colour c, Type t) {
     #if DEBUG_VIEW
         fprintf(stderr,"VIEW >> call method \"drop %d %c %c\"\n", col,colour2char(c),type2char(t));
     #endif
+                
     tv->drop(col,c,t);
     
     if (! Global:: TEXTMODE) {

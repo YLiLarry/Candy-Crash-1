@@ -56,8 +56,8 @@ Animation:: ~Animation() {
     delete this->td;
 }
 
-Animation:: Animation() {
+Animation:: Animation(std::chrono::milliseconds fps) {
     this->toggle = false;
     this->td = NULL;
-    this->fps = std::chrono::milliseconds(1000/50);
+    this->fps = fps;
 }

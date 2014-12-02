@@ -64,7 +64,10 @@ void TextView:: draw() {
     #endif
 }
 
-void TextView:: setColour(int row, int col, Colour c) {this->board[row][col].colour = c;}
+void TextView:: setColour(int row, int col, Colour c) {
+    if (c == Empty) {throw string("ERROR: Attempted to set square ") + to_string(row) + " " + to_string(col) + " to Empty, use view::destroy instead.";}
+    this->board[row][col].colour = c;
+}
 void TextView:: setType(int row, int col, Type t) {this->board[row][col].cellType = t;}
 // void TextView:: set(vector<Cell*>) {
 //     // requires Cell* header
@@ -88,37 +91,45 @@ void _swap(TextCell& a, TextCell& b) {
 }
 
 void TextView:: swap(int r, int c, Direction d) {
+    bool fail = false;
     switch (d) {
         case Up : {
-            // if (r <= 0) {return;}
-            _swap(this->board[r][c], this->board[r-1][c]);
+            if (r <= 0) {fail = true;} 
+            else {_swap(this->board[r][c], this->board[r-1][c]);}
             break;
         }
         case Down : {
-            // if (r >= this->size - 1) {return;}
-            _swap(this->board[r][c], this->board[r+1][c]);
+            if (r >= this->size - 1) {fail = true;} 
+            else {_swap(this->board[r][c], this->board[r+1][c]);}
             break;
         }
         case Left : {
-            // if (c <= 0) {return;}
-            _swap(this->board[r][c], this->board[r][c-1]);
+            if (c <= 0) {fail = true;} 
+            else {_swap(this->board[r][c], this->board[r][c-1]);}
             break;
         }
         case Right : {
-            // if (c >= this->size - 1) {return;}
-            _swap(this->board[r][c], this->board[r][c+1]);
+            if (c >= this->size - 1) {fail = true;} 
+            else {_swap(this->board[r][c], this->board[r][c+1]);}
             break;
         }
+    }
+    if (fail) {
+        throw string("Error: Attempted to swap block ") + to_string(r) + " " + to_string(c) + " to " + dir2str(d);
     }
 }
 
 void TextView:: drop(int column, Colour colour, Type type = Basic) {
+    if (colour == Empty) {throw string("Error: Attempted to drop an Empty block at column: ") + to_string(column);}
     this->board[0][column].colour = colour;
     this->board[0][column].cellType = type;
     this->fall(0, column);
 }
 
 void TextView:: fall(int r, int c) {
+    if (this->board[r][c].colour == Empty) {
+        string("Error: Attempted to call view::fall on an Empty block: ") + to_string(r) + " " + to_string(c);
+    }
     int i = r;
     while (i < this->size - 1 && this->board[i+1][c].colour == Empty) {i++;}
     _swap(this->board[r][c], this->board[i][c]);
@@ -126,6 +137,9 @@ void TextView:: fall(int r, int c) {
 
 
 void TextView:: destroy(int r, int c) {
+    if (this->board[r][c].colour == Empty) {
+        string("Error: Attempted to call view::destroy on an Empty block: ") + to_string(r) + " " + to_string(c);
+    }
     this->board[r][c].colour = Empty;
     this->board[r][c].cellType = Basic;
 }

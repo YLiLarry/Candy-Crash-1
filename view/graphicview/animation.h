@@ -20,7 +20,8 @@ class Animation {
         void push(std::vector<int>);
         virtual bool during(std::vector<int>) = 0;
         virtual void animate(std::vector<int>) = 0;
-        Animation();
+        Animation() {};
+        Animation(std::chrono::milliseconds);
         virtual ~Animation();
 };
 #endif

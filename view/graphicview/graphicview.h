@@ -21,7 +21,7 @@
             GraphicCell* target;
         public :
             CellAnimation() {};
-            CellAnimation(GraphicCell* gc) : target(gc) {};
+            CellAnimation(GraphicCell* gc, std::chrono::milliseconds fps) : Animation(fps), target(gc) {};
     };
 
     class MoveAnimation : public CellAnimation {
@@ -30,7 +30,7 @@
             void animate(std::vector<int>);
             void to(int,int);
             MoveAnimation() {};
-            MoveAnimation(GraphicCell* gc) : CellAnimation(gc) {};
+            MoveAnimation(GraphicCell* gc, std::chrono::milliseconds fps) : CellAnimation(gc, fps) {};
     };
     
     class FallAnimation : public CellAnimation {
@@ -39,7 +39,7 @@
             void animate(std::vector<int>);
             void to(int, int);
             FallAnimation() {};
-            FallAnimation(GraphicCell* gc) : CellAnimation(gc) {};
+            FallAnimation(GraphicCell* gc, std::chrono::milliseconds fps) : CellAnimation(gc, fps) {};
     };
 
     class GraphicCell : public CellViewAbstract {
@@ -48,7 +48,7 @@
             int y;
             int lx;
             int ly;
-            int speed;
+            double speed;
             bool needDraw;
             Colour colour;
             Xwindow* window;
@@ -57,7 +57,8 @@
             MoveAnimation move;
             FallAnimation fall;
             
-            GraphicCell();
+            GraphicCell() {};
+            GraphicCell(int, int, GraphicView*);
             void draw();
     };
 

@@ -36,9 +36,9 @@ bool FallAnimation:: during(std::vector<int> v) {
 void FallAnimation:: animate(std::vector<int> v) {
     int midX = v[1];
     if (target->x < midX) {
-        target->speed++;
+        target->speed+=0.1;
     } else if (target->speed > 1) {
-        target->speed--;
+        target->speed-=0.1;
     }
     target->x += target->speed;
     target->needDraw = true;
@@ -53,18 +53,16 @@ void FallAnimation:: to(int d, int m) {
 
 /* GraphicCell */
 
-GraphicCell:: GraphicCell() {
-    this->move = MoveAnimation(this);
-    this->fall = FallAnimation(this);
-    this->x = 0;
-    this->y = 0;
-    this->lx = 0;
-    this->ly = 0;
+GraphicCell:: GraphicCell(int r, int c, GraphicView* outer) {
+    this->outer = outer;
+    this->lx = this->x = r * outer->cellSize + outer->marginTop;
+    this->ly = this->y = c * outer->cellSize + outer->marginLeft;
     this->speed = 0;
     this->needDraw = true;
     this->colour = Empty;
-    this->window = NULL;
-    this->outer = NULL;
+    this->window = outer->window;
+    this->move = MoveAnimation(this, outer->fps);
+    this->fall = FallAnimation(this, outer->fps);
 }
 
 void GraphicCell:: draw() {
@@ -132,12 +130,7 @@ void GraphicView:: init(int size) {
     for (int i = 0; i < size; i++) {
         this->board[i] = new GraphicCell*[size];
         for (int j = 0; j < size; j++) {
-            GraphicCell*& gc = this->board[i][j] = new GraphicCell;
-            // init
-            gc->x = gc->lx = this->marginTop + i * this->cellSize;
-            gc->y = gc->ly = this->marginLeft + j * this->cellSize;
-            gc->window = this->window;
-            gc->outer = this;
+            this->board[i][j] = new GraphicCell(i, j, this);
         }
     }
     // #if DEBUG_GRAPHIC
@@ -264,28 +257,13 @@ void GraphicView:: drop(int column, Colour colour, Type type = Basic) {
     #endif
     this->droppingNum[column]++;
     GraphicCell*& nc = this->board[0][column];
-    // init
-    // int i = 0;
-    // while (i < this->size - 1 && this->board[i+1][column]->colour == Empty) {i++;}
     nc->x = 0 - (this->cellSize * this->droppingNum[column]);
-    // #if DEBUG_GRAPHIC
-    //     for (int i = 0; i < this->droppingNum.size(); i++) {
-    //         fprintf(stderr,"this->droppingNum[%d] = %d\n", i, this->droppingNum[i]);
-    //     }
-    // #endif
 
     nc->y = this->marginLeft + column * this->cellSize;
     // this_thread::sleep_for(chrono::milliseconds(250)); // to be deleted
-    // #if DEBUG_GRAPHIC
-        // fprintf(stderr,"set colour to %d\nthe addrss is %p", colour, this->board[0][column]);
-    // #endif
     nc->colour = colour;
     nc->cellType = type;
     this->fall(0, column);
-    // nc->move.to(0, column*this->cellSize);
-    // #if DEBUG_GRAPHIC
-    //     fprintf(stderr,"drpp returns\n");
-    // #endif
 }
 
 void GraphicView:: fall(int r, int c) {
@@ -303,36 +281,22 @@ void GraphicView:: fall(int r, int c) {
         des->x = des->lx = r * this->cellSize;
         des->y = des->ly = c * this->cellSize;
     }
-    // cerr << "checkpoint to" << ori->move << endl;
     ori->speed = 0;
     // ori->fall.to(i*this->cellSize, (i*this->cellSize - ori->x) / 2);
     ori->move.to(i*this->cellSize, c*this->cellSize);
-    this_thread::sleep_for(chrono::milliseconds(50)); // to be deleted
-    // #if DEBUG_GRAPHIC
-    //     fprintf(stderr,"before swap ori = \"%p\", des = \"%p\"\n", this->board[r][c], this->board[i][c]);
-    // #endif
+    this_thread::sleep_for(chrono::milliseconds(250)); // to be deleted
     std::swap(ori, des);
-    // #if DEBUG_GRAPHIC
-    //     fprintf(stderr,"after swap!! ori = \"%p\", des = \"%p\"\n", this->board[r][c], this->board[i][c]);
-    // #endif
-    // #if DEBUG_GRAPHIC
-    //     fprintf(stderr,">> fall returns\n");
-    // #endif
 };
 
 void GraphicView:: destroy(int r,int c) {
     #if DEBUG_GRAPHIC
         fprintf(stderr,">> destory %d %d", r, c);
     #endif
-    // if (this->board[r][c]->move->done()) {
         this->waitAllAnimationsFinish();
         this->droppingNum = vector<int>(this->size, 0);
         this->board[r][c]->colour = Empty;
         this->board[r][c]->cellType = Basic;
         this->board[r][c]->needDraw = true;
-    // } else {
-        // this->destroy(r,c); // retry
-    // }
 };
 
 void GraphicView:: restart(int) {
@@ -359,6 +323,7 @@ void GraphicView:: waitAllAnimationsFinish() {
     for (int i = 0; i < this->size; i++) {
         for (int j = 0; j < this->size; j++) {
             this->board[i][j]->move.join();
+            this->board[i][j]->fall.join();
         }
     }
 }

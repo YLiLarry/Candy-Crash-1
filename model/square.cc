@@ -109,7 +109,6 @@ void Square::notify() {
 
 	#if DEBUG_SQUARE
 		if (row == 7 && col == 5) {
-			
 			    fprintf(stderr,"",);
 				printInfo();
 				neighbour[Left]->printInfo();

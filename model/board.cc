@@ -580,9 +580,8 @@ void Board::dropSquares() {
 			// if 'sq' is empty dont drop
 	        if (sq->colour == Empty) { continue; }
 	        
-	        // find the first empty block that is above a solid block
+	        // find the last empty block below it
     		int i = r; 
-
     		while (i < size - 1 && grid[i+1][c]->colour == Empty) { i++; }
 
 			// if there's no such empty block (can't drop), skip
@@ -616,7 +615,7 @@ void Board::dropSquares() {
 		int i = 0;
 
 		// find i = the # of rows that're empty
-    	while (i < size - 1 && grid[i][c]->colour == Empty) { i++; } 
+    	while (i < size && grid[i][c]->colour == Empty) { i++; } 
 
 		// drop 'i' # of new squares at this column
 		while (i > 0) {
@@ -624,7 +623,7 @@ void Board::dropSquares() {
 			setNewSquare(grid[0][c]);
 	    	Square*& sq = grid[0][c];
 
-	        // find the first empty block that is above a solid block
+	        // find the last empty block below it
     		int j = 0; 
     		while (j < size - 1 && grid[j+1][c]->colour == Empty) { j++; }
 
@@ -633,8 +632,8 @@ void Board::dropSquares() {
     		#endif
     		Square*& des = grid[j][c];
     		
-			sq->swap(*des);
 			view->drop(c, sq->colour, sq->type);
+			sq->swap(*des);
 			
 			/*
              *wap(sq->row, des->row);
