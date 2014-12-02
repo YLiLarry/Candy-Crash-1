@@ -30,18 +30,28 @@ void MoveAnimation:: to(int desX, int desY) {
 
 /* FallAnimation */
 bool FallAnimation:: during(std::vector<int> v) {
-    return (target->x < v[0]);
+    if (target->x < v[0]) {return true;}
+    target->outer->fallingNum[target->col]--;
+    target->x = v[0];
+    target->needDraw = true;
+    if (target->row+1 < target->outer->size) {target->outer->board[target->row+1][target->col]->needDraw = true;}
+    if (target->row > 0) {target->outer->board[target->row-1][target->col]->needDraw = true;}
+    return false;
 }
 
 void FallAnimation:: animate(std::vector<int> v) {
     int midX = v[1];
     if (target->x < midX) {
-        target->speed+=0.1;
+        target->speed+=0.2;
     } else if (target->speed > 1) {
-        target->speed-=0.1;
+        target->speed-=0.2;
+    } else {
+        target->speed = 1;
     }
     target->x += target->speed;
     target->needDraw = true;
+    if (target->row+1 < target->outer->size) {target->outer->board[target->row+1][target->col]->needDraw = true;}
+    if (target->row > 0) {target->outer->board[target->row-1][target->col]->needDraw = true;}
 }
 
 void FallAnimation:: to(int d, int m) {
@@ -57,7 +67,9 @@ GraphicCell:: GraphicCell(int r, int c, GraphicView* outer) {
     this->outer = outer;
     this->lx = this->x = r * outer->cellSize + outer->marginTop;
     this->ly = this->y = c * outer->cellSize + outer->marginLeft;
-    this->speed = 0;
+    this->row = r;
+    this->col = c;
+    this->speed = 1;
     this->needDraw = true;
     this->colour = Empty;
     this->window = outer->window;
@@ -97,13 +109,7 @@ GraphicView:: GraphicView(int size) {
     this->toggle = true;
     this->board = NULL;
     this->window = NULL;
-    this->droppingNum = vector<int>(size,0);
-    #if DEBUG_GRAPHIC
-        for (int i = 0; i < this->droppingNum.size(); i++) {
-            fprintf(stderr,"this->droppingNum[%d] = %d\n", i, this->droppingNum[i]);
-        }
-    #endif
-    
+    this->fallingNum = vector<int>(size,0);
     this->windowWidth = 500;  // default
     this->windowHeight = 500; // default
     this->marginLeft = 0;     // default
@@ -115,7 +121,11 @@ GraphicView:: GraphicView(int size) {
 }
 
 GraphicView:: ~GraphicView() {
+    #if DEBUG_GRAPHIC
+        fprintf(stderr,"CALL GRAPHICVIEW DESTROY\n");
+    #endif
     this->end();
+    delete this->window;
     #if DEBUG_GRAPHIC
         fprintf(stderr,"GRAPHICVIEW DESTROIED\n");
     #endif
@@ -194,7 +204,8 @@ void GraphicView:: setScore(int) {
 };
 
 void GraphicView:: setLevel(int) {
-    
+    this->waitAllAnimationsFinish();
+    this_thread:: sleep_for(chrono::seconds(1));
 };
 
 void GraphicView:: setMovesRemain(int) {
@@ -255,9 +266,8 @@ void GraphicView:: drop(int column, Colour colour, Type type = Basic) {
     #if DEBUG_GRAPHIC
         fprintf(stderr,"new square at col %d:\ncolour %d, type %d", column, colour, type);
     #endif
-    this->droppingNum[column]++;
     GraphicCell*& nc = this->board[0][column];
-    nc->x = 0 - (this->cellSize * this->droppingNum[column]);
+    nc->x = 0 - (this->cellSize * (this->fallingNum[column]+1));
 
     nc->y = this->marginLeft + column * this->cellSize;
     // this_thread::sleep_for(chrono::milliseconds(250)); // to be deleted
@@ -270,6 +280,7 @@ void GraphicView:: fall(int r, int c) {
     #if DEBUG_GRAPHIC
         fprintf(stderr,">> square %d %d fall ", r, c);
     #endif
+    this->fallingNum[c]++;
     GraphicCell*& ori = this->board[r][c];
     int i = r;
     while (i < this->size - 1 && this->board[i+1][c]->colour == Empty) {i++;}
@@ -278,12 +289,15 @@ void GraphicView:: fall(int r, int c) {
     #endif
     GraphicCell*& des = this->board[i][c];
     if (i > 0) {
-        des->x = des->lx = r * this->cellSize;
-        des->y = des->ly = c * this->cellSize;
+        des->x = r * this->cellSize;
+        des->y = c * this->cellSize;
+        std::swap(des->row, ori->row);
+        std::swap(des->col, ori->col);
+        des->needDraw = true;
     }
-    ori->speed = 0;
-    // ori->fall.to(i*this->cellSize, (i*this->cellSize - ori->x) / 2);
-    ori->move.to(i*this->cellSize, c*this->cellSize);
+    ori->speed = 1;
+    ori->fall.to(i*this->cellSize, (i*this->cellSize + ori->x) / 2);
+    // ori->move.to(i*this->cellSize, c*this->cellSize);
     this_thread::sleep_for(chrono::milliseconds(250)); // to be deleted
     std::swap(ori, des);
 };
@@ -293,10 +307,21 @@ void GraphicView:: destroy(int r,int c) {
         fprintf(stderr,">> destory %d %d", r, c);
     #endif
         this->waitAllAnimationsFinish();
-        this->droppingNum = vector<int>(this->size, 0);
+        this->fallingNum = vector<int>(this->size, 0);
         this->board[r][c]->colour = Empty;
         this->board[r][c]->cellType = Basic;
         this->board[r][c]->needDraw = true;
+};
+
+void GraphicView:: destroy(vector<int> rows, vector<int> cols) {
+    int limR = rows.size();
+    int limC = cols.size();
+    if (limC != limR) {throw string("ERROR: The vectors' sizes passed in View::destroy don't match: rows.size() = ") + to_string(limR) + ", cols.size() = " + to_string(limC);}
+    this->waitAllAnimationsFinish();
+    this->fallingNum = vector<int>(this->size, 0);
+    for (int i = 0; i < limR; i++) {
+        this->destroy(rows[i], cols[i]);
+    }
 };
 
 void GraphicView:: restart(int) {
@@ -316,7 +341,7 @@ void GraphicView:: refresh() {
         }
     }    
     this_thread:: sleep_for(this->fps);
-    this->refresh();
+    return this->refresh();
 }
 
 void GraphicView:: waitAllAnimationsFinish() {

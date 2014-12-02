@@ -34,7 +34,13 @@ TextView:: TextView(int size) {
 
 /* Destructor */
 TextView:: ~TextView() {
+    #if DEBUG_VIEW
+        cerr << ">> CALL TEXTVIEW DESTROY" << endl;
+    #endif
     this->end();
+    #if DEBUG_VIEW
+        cerr << ">> TEXTVIEW DESTROIED" << endl;
+    #endif    
 }
 
 void TextView:: draw() {
@@ -144,6 +150,15 @@ void TextView:: destroy(int r, int c) {
     this->board[r][c].cellType = Basic;
 }
 
+void TextView:: destroy(vector<int> rows, vector<int> cols) {
+    int limR = rows.size();
+    int limC = cols.size();
+    if (limC != limR) {throw string("ERROR: The vectors' sizes passed in View::destroy don't match: rows.size() = ") + to_string(limR) + ", cols.size() = " + to_string(limC);}
+    for (int i = 0; i < limR; i++) {
+        this->destroy(rows[i], cols[i]);
+    }
+};
+
 void TextView:: init(int size) {
     #if DEBUG_VIEW
         cerr << ">> TEXTVIEW CONSTRUCTOR START" << endl;
@@ -167,10 +182,7 @@ void TextView:: init(int size) {
 }
 
 void TextView:: end() {
-    #if DEBUG_VIEW
-        cerr << ">> TEXTVIEW DESTORIED" << endl;
-    #endif
-        
+
     for (int i = 0; i < this->size; i++) {
             delete [] this->board[i];
     }
@@ -184,7 +196,9 @@ void TextView:: restart(int size = 0) {
 }
 
 void TextView:: print(const string& str) {
+    system("tput setaf 1");
     cout << ">> " << str << endl;
+    system("tput setaf 0");
 }
 
 void TextView:: setLabel(const string& str) {

@@ -39,6 +39,7 @@
             void drop(int,Colour,Type);
             void fall(int,int);
             void destroy(int,int);
+            void destroy(std::vector<int>,std::vector<int>);
             
             void end();
             void restart(int);

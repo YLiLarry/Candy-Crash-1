@@ -48,6 +48,8 @@
             int y;
             int lx;
             int ly;
+            int row;
+            int col;
             double speed;
             bool needDraw;
             Colour colour;
@@ -66,8 +68,8 @@
         
         private :
             bool toggle;
-            std::vector<int> droppingNum;
             std::thread* td;
+            void refresh();
         
         public :
             GraphicCell*** board;
@@ -78,8 +80,8 @@
             int marginLeft;
             int marginTop;
             std::chrono::milliseconds fps;
+            std::vector<int> fallingNum;
             
-            void refresh();
             
         public :
             GraphicView(int);
@@ -104,6 +106,7 @@
             void drop(int,Colour,Type);
             void fall(int,int);
             void destroy(int,int);
+            void destroy(std::vector<int>,std::vector<int>);
             
             void end();
             void restart(int);

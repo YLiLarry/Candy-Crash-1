@@ -62,9 +62,9 @@ Board::~Board() {
 		for (int j = 0; j < size; j++) {
 		    delete grid[i][j];
 		}
-		delete[] grid[i];
+		delete [] grid[i];
 	}
-	delete[] grid;
+	delete [] grid;
 
 	delete generate;
 	delete view;
@@ -83,6 +83,10 @@ void Board::loadLevel(int level) {
 		view->print(string("The highest level is 2"));
 		level = 2;
 	}
+
+	view->setLevel(level);
+	view->setScore(score);
+
 
 	if (level == 0 || Global::SCRIPTFILE.length()) {
 		
@@ -124,8 +128,6 @@ void Board::loadLevel(int level) {
 			cerr << "load levelZeroColours square sequence :" << levelZeroColours << endl;
 		#endif
 		
-		view->setScore(score); // ?
-		view->setLevel(level); // ?
 
 	} else {
 		// Reset the number of produced squares for this level.
@@ -157,8 +159,6 @@ void Board::loadLevel(int level) {
 		scramble(true);
 	}
 
-	view->setLevel(level);
-	view->setScore(score);
 	view->draw();
 }
 
@@ -202,6 +202,7 @@ void Board::swap(int row, int col, Direction d) {
 	grid[row][col]->swapWith(d);
 	
 	// draw the board to see the swap take place
+	view->print(string("\n***********************************\n>> After swap :"));
 	view->draw();
 
 	// start clearing matched squares originating
@@ -236,14 +237,16 @@ void Board::swap(int row, int col, Direction d) {
 	score += turnScore;
 
 	view->setScore(score);
-	view->draw();
+	// view->draw(); // what is this for?
 
-	ostringstream ss;
-	ss << "cleared:  " << cleared << endl;
-	if (level >= 2) ss << "unlocked: " << unlocked << endl;
-	ss << "chains :  " << chain << endl;
-	ss << "scored : +" << turnScore << endl;
-	view->print(ss.str());
+	#if DEBUG_BOARD
+		ostringstream ss;
+		ss << "cleared:  " << cleared << endl;
+		if (level >= 2) ss << "unlocked: " << unlocked << endl;
+		ss << "chains :  " << chain << endl;
+		ss << "scored : +" << turnScore << endl;
+		view->print(ss.str());
+	#endif
 
 	checkLevel();
 }
@@ -379,6 +382,10 @@ void Board::clearAt(Square* root) {
 			view->setType(root->getRow(), root->getCol(), Psychedelic);
 		}
 	}
+	
+	view->print(string("\n***********************************\n>> Matches cleared : "));
+	view->draw();
+
 }
 
 //
@@ -442,7 +449,7 @@ void Board::clear(Square* sq, int r) {
 	view->setLabel(string("New score: ") + to_string(turnScore));
 
 	// Show the cleared square.
-	view->draw();
+	// view->draw(); // TBD - moved to the end of clearAt to only print the finally cleared grid
 
 	// This switch block handles clearing special squares.
 	switch (tType) {
@@ -607,6 +614,7 @@ void Board::dropSquares() {
 		}
 	}
 	
+	view->print(string("\n***********************************\n>> Squares fell :"));
 	view->draw();
 	
 	// drop new squares
@@ -645,6 +653,7 @@ void Board::dropSquares() {
 	    }
 	}
 
+	view->print(string("\n***********************************\n>> The grid refilled :"));
 	view->draw();
 }
 
@@ -674,6 +683,7 @@ void Board::chainReaction() {
 			}
 		}
 	}
+
 
 	// Assume board is empty.
 	emptyBoard = true;

@@ -12,14 +12,7 @@ void Animation:: loop() {
         this->animate(this->queue.front());
         this_thread::sleep_for(this->fps);
     } else {
-        // #if DEBUG_GRAPHIC
-        //     fprintf(stderr,"Animation pop, after pop: %lu\n", this->queue.size());
-        // #endif
         this->queue.pop_front();
-        while (true) {this_thread:: yield(); break;}
-        // #if DEBUG_GRAPHIC
-        //     fprintf(stderr,"!! THREAD END\n");
-        // #endif
     }
     this->loop();
 }
@@ -50,10 +43,17 @@ void Animation:: push(std::vector<int> c) {
 }
 
 Animation:: ~Animation() {
-    if (! this->td) {return;}
-    this->td->join();
-    this->end();
-    delete this->td;
+    #if DEBUG_ANIMATE
+        fprintf(stderr,">> CALL DELETE ANIMATION %p\n", this);
+    #endif
+    if (this->td) {
+        this->end();
+        if (this->td->joinable()) {this->td->join();}
+        delete this->td;
+    }
+    #if DEBUG_ANIMATE
+        fprintf(stderr,">> ANIMATION DELETED\n");
+    #endif
 }
 
 Animation:: Animation(std::chrono::milliseconds fps) {

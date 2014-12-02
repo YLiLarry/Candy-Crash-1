@@ -11,7 +11,7 @@ using namespace std;
 
 Xwindow::Xwindow(int width, int height): width(width), height(height) {
 
-  // XInitThreads();
+  XInitThreads();
   
   d = XOpenDisplay(NULL);
   if (d == NULL) {

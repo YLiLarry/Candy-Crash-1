@@ -248,6 +248,17 @@ void View:: destroy(int r,int c) {
     }
 };
 
+void View:: destroy(std::vector<int> r, std::vector<int> c) {
+    #if DEBUG_VIEW
+        fprintf(stderr,"VIEW >> call method \"destroy %d %d\"\n", r,c);
+    #endif
+    tv->destroy(r,c);
+    
+    if (! Global:: TEXTMODE) {
+        gv->destroy(r,c);
+    }
+};
+
 /*  Method:       end
     Description:  Terminate both graphic and text view 
     Parameters:   None

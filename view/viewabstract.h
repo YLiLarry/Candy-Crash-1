@@ -19,12 +19,8 @@
     };
 
     class ViewAbstract {
-        
-        protected:
             
-        #if DEBUG_VIEW
-            public:
-        #endif
+        public:
                 
             int score;
             int movesRemain;
