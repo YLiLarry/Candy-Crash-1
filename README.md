@@ -1,3 +1,7 @@
+Candy Crash
+===========
+![Candy Crash gif demo](http://giant.gfycat.com/MarvelousBitterEquine.gif)
+
 [11-26-2014 05:32:42]
 <p>Pull the master branch and merge to your branch. </p>
 <p>I'm synced with the master branch.</p>
